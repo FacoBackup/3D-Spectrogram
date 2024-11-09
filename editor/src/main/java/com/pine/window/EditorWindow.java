@@ -48,6 +48,7 @@ public class EditorWindow extends AbstractWindow {
     private boolean isInitialized = false;
     private AbstractView pViewport;
     private AbstractView pInspector;
+    private boolean isFirst = true;
 
     @Override
     public void onInitialize() {
@@ -78,6 +79,10 @@ public class EditorWindow extends AbstractWindow {
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, new ImVec2(0, 0));
         if (ImGui.begin("Janela##TCC", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.AlwaysAutoResize)) {
             ImGui.columns(2);
+            if(isFirst) {
+                ImGui.setColumnWidth(0, windowService.getDisplayW() * .75f);
+                isFirst = false;
+            }
             if (ImGui.beginChild("viewport")) {
                 pViewport.render();
             }
@@ -90,6 +95,7 @@ public class EditorWindow extends AbstractWindow {
             ImGui.endChild();
         }
         ImGui.end();
+        ImGui.columns(1);
         ImGui.popStyleVar();
     }
 }

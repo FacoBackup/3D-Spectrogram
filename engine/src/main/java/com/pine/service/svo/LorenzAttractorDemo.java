@@ -22,7 +22,7 @@ public class LorenzAttractorDemo {
             x += dx * DT;
             y += dy * DT;
             z += dz * DT;
-            octree.insert(new Vector3f((float) x + octree.getOffset(), (float) z, (float) y + octree.getOffset()), new VoxelData(1, 1, 1));
+            octree.insert(new Vector3f((float) x + octree.getOffset(), (float) z + octree.getOffset()/2, (float) y + octree.getOffset()), new VoxelData(1, 1, 1));
         }
     }
 }

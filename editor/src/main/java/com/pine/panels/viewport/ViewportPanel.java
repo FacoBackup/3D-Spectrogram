@@ -86,7 +86,8 @@ public class ViewportPanel extends AbstractView {
         ImGui.textColored(GREEN, "Y: " + positionCamera.y);
         ImGui.sameLine();
         ImGui.textColored(BLUE, "Z: " + positionCamera.z);
-
+        ImGui.sameLine();
+        ImGui.textDisabled(" | " + io.getFramerate() + " fps");
         ImGui.image(engine.fboRepository.auxSampler, new ImVec2(ImGui.getWindowSize().x, ImGui.getWindowSize().y - 50), INV_Y, INV_X);
     }
 
