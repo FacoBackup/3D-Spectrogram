@@ -28,10 +28,10 @@ public class InspectorPanel extends AbstractView {
             voxelService.buildFromScratch();
         }
 
-        if (ImGui.button("Importar audio")) {
-            var file = nativeDialogService.selectFile().stream().findFirst().orElse(null);
+//        if (ImGui.button("Importar audio")) {
+//            var file = nativeDialogService.selectFile().stream().findFirst().orElse(null);
 
-        }
+//        }
         formPanel.setInspectable(voxelService.voxelRepository);
         super.render();
     }

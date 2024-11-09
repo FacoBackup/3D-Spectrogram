@@ -23,6 +23,11 @@ public class GridPass extends AbstractPass {
     }
 
     @Override
+    protected boolean isRenderable() {
+        return voxelRepository.showGrid;
+    }
+
+    @Override
     protected FrameBufferObject getTargetFBO() {
         return fboRepository.auxBuffer;
     }

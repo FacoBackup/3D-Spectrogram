@@ -157,7 +157,10 @@ bool showRayTestCount
             if (entryDist < minDistance) {
                 if (isLeafGroup) {
                     if (randomColors){
-                        finalColor.rgb = vec3(1, 0, 1);
+                        finalColor.rgb = randomColor(rand(newCenter.xz));
+                        finalColor.a = 1;
+                    }else{
+                        finalColor.rgb = vec3(newCenter.y);
                         finalColor.a = 1;
                     }
                     minDistance = entryDist;

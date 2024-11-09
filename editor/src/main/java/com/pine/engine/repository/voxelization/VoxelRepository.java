@@ -10,6 +10,7 @@ import org.joml.Vector3f;
 public class VoxelRepository extends Inspectable {
     public transient int[] voxels = null;
 
+
     @MutableField(label = "Object scale")
     public int gridScale = 100;
 
@@ -33,6 +34,9 @@ public class VoxelRepository extends Inspectable {
 
     @MutableField(label = "Show ray test count")
     public boolean showRayTestCount;
+
+    @MutableField(label = "Show grid")
+    public boolean showGrid = true;
 
     @Override
     public String getTitle() {

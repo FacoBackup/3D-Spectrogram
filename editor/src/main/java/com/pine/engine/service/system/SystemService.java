@@ -14,8 +14,8 @@ public class SystemService implements SyncTask {
     public PInjector pInjector;
 
     private List<AbstractPass> systems = List.of(
-            new VoxelVisualizerPass(),
-            new GridPass()
+            new GridPass(),
+            new VoxelVisualizerPass()
     );
 
     public List<AbstractPass> getSystems() {

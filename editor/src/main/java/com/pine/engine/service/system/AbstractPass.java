@@ -26,17 +26,13 @@ public abstract class AbstractPass {
     @PInject
     public CoreShaderRepository shaderRepository;
     @PInject
-    public RuntimeRepository runtimeRepository;
+    public VoxelRepository voxelRepository;
     @PInject
     public CoreSSBORepository ssboRepository;
-    @PInject
-    public CoreUBORepository uboRepository;
     @PInject
     public CoreFBORepository fboRepository;
     @PInject
     public CoreMeshRepository meshRepository;
-    @PInject
-    public VoxelRepository voxelRepository;
 
     final public void render() {
         if (!isRenderable()) {
