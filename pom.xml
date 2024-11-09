@@ -11,9 +11,7 @@
     <description>pine-engine</description>
 
     <modules>
-        <module>engine</module>
         <module>editor</module>
-        <module>common</module>
     </modules>
 
     <properties>

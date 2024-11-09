@@ -1,6 +1,6 @@
 package com.pine;
 
-import com.pine.injection.PInjector;
+import com.pine.engine.injection.PInjector;
 
 public class PineEngine {
     private static final PInjector INJECTOR = new PInjector(PineEngine.class.getPackageName());

@@ -7,13 +7,11 @@
         <File name="MAIN" fileName="engine.log">
             <PatternLayout pattern="%highlight{%d{HH:mm:ss.SSS}}{FATAL=red, ERROR=red, WARN=yellow, INFO=green, DEBUG=blue, TRACE=magenta} [%t] %-5level: %msg%n" />
         </File>
-        <InMemoryAppender name="InMemoryAppender"/>
     </Appenders>
     <Loggers>
         <Root level="ALL">
-            <AppenderRef ref="CONSOLE" level="ERROR"/>
+            <AppenderRef ref="CONSOLE" level="ALL"/>
             <AppenderRef ref="MAIN" level="ALL"/>
-            <AppenderRef ref="InMemoryAppender" level="WARN"/>
         </Root>
     </Loggers>
 </Configuration>
