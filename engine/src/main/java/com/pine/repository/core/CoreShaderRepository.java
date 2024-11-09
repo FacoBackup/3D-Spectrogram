@@ -34,12 +34,16 @@ public class CoreShaderRepository implements CoreRepository {
     public Shader brdfShader;
     public Shader debugVoxelShader;
     public Shader gBufferShading;
+    public Shader voxels;
+    public Shader gridShader;
 
     @PInject
     public ResourceService resources;
 
     @Override
     public void initialize() {
+        gridShader = (Shader) resources.addResource(new ShaderCreationData(LOCAL_SHADER + "tool/GRID.vert", LOCAL_SHADER + "tool/GRID.frag"));
+        voxels = (Shader) resources.addResource(new ShaderCreationData(LOCAL_SHADER + "QUAD.vert", LOCAL_SHADER + "VOXELS.frag").staticResource());
         gBufferShading = (Shader) resources.addResource(new ShaderCreationData(LOCAL_SHADER + "QUAD.vert", LOCAL_SHADER + "uber/G_BUFFER_SHADING.frag").staticResource());
         debugVoxelShader = (Shader) resources.addResource(new ShaderCreationData(ShaderCreationData.LOCAL_SHADER + "DEBUG_VOXEL.vert", ShaderCreationData.LOCAL_SHADER + "DEBUG_VOXEL.frag"));
         brdfShader = (Shader) resources.addResource(new ShaderCreationData(ShaderCreationData.LOCAL_SHADER + "QUAD.vert", ShaderCreationData.LOCAL_SHADER + "BRDF_GEN.frag"));

@@ -29,7 +29,7 @@ public class WindowService implements Disposable, Loggable {
     private long handle = -1;
     private int displayW;
     private int displayH;
-    public AbstractWindow window = new EditorWindow();
+    private final AbstractWindow window = new EditorWindow();
 
     @PInject
     public PInjector injector;
@@ -61,8 +61,15 @@ public class WindowService implements Disposable, Loggable {
         try {
             injector.inject(window);
             window.onInitialize();
+            try (MemoryStack stack = MemoryStack.stackPush()) {
+                final IntBuffer pWidth = stack.mallocInt(1);
+                final IntBuffer pHeight = stack.mallocInt(1);
 
-            setupWindow(window.getWindowScaleX(), window.getWindowScaleY());
+                GLFW.glfwGetWindowSize(handle, pWidth, pHeight);
+                GLFW.glfwSetWindowPos(handle, (displayW - pWidth.get(0) / 2), (displayH - pHeight.get(0)) / 2);
+                GLFW.glfwSetWindowSize(handle, pWidth.get(0), pHeight.get(0));
+            }
+            GLFW.glfwMaximizeWindow(handle);
             GLFW.glfwShowWindow(handle);
 
             while (!GLFW.glfwWindowShouldClose(handle) && !shouldStop) {
@@ -79,10 +86,6 @@ public class WindowService implements Disposable, Loggable {
         }
     }
 
-    public void stop() {
-        shouldStop = true;
-    }
-
     private void createGlfwContext() {
         GLFWErrorCallback.createPrint(System.err).set();
 
@@ -97,7 +100,7 @@ public class WindowService implements Disposable, Loggable {
         final GLFWVidMode vidmode = Objects.requireNonNull(GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor()));
         displayW = vidmode.width();
         displayH = vidmode.height();
-        handle = GLFW.glfwCreateWindow((int) (displayW * .75), (int) (displayH * .75), WINDOW_NAME, MemoryUtil.NULL, MemoryUtil.NULL);
+        handle = GLFW.glfwCreateWindow(displayW, displayH, WINDOW_NAME, MemoryUtil.NULL, MemoryUtil.NULL);
         if (handle == MemoryUtil.NULL) {
             throw new RuntimeException("Failed to create the GLFW window");
         }
@@ -108,20 +111,14 @@ public class WindowService implements Disposable, Loggable {
         GL.createCapabilities();
         GLFW.glfwSwapInterval(GLFW.GLFW_FALSE);
 
+
         clearBuffer();
         renderBuffer();
         initGlfwEvents();
     }
 
     private void setupWindow(float widthScale, float heightScale) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            final IntBuffer pWidth = stack.mallocInt(1);
-            final IntBuffer pHeight = stack.mallocInt(1);
 
-            GLFW.glfwGetWindowSize(handle, pWidth, pHeight);
-            GLFW.glfwSetWindowPos(handle, (int) ((displayW - pWidth.get(0) * widthScale) / 2), (int) ((displayH - pHeight.get(0) * heightScale) / 2));
-            GLFW.glfwSetWindowSize(handle, (int) (pWidth.get(0) * widthScale), (int) (pHeight.get(0) * heightScale));
-        }
     }
 
     private void initGlfwEvents() {
@@ -235,7 +232,4 @@ public class WindowService implements Disposable, Loggable {
         Objects.requireNonNull(GLFW.glfwSetErrorCallback(null)).free();
     }
 
-    public void maximize() {
-        GLFW.glfwMaximizeWindow(handle);
-    }
 }

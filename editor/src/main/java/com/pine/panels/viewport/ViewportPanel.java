@@ -2,12 +2,13 @@ package com.pine.panels.viewport;
 
 import com.pine.Engine;
 import com.pine.core.dock.AbstractDockPanel;
+import com.pine.core.view.AbstractView;
 import com.pine.injection.PInject;
-import com.pine.panels.header.ViewportHeaderPanel;
 import com.pine.repository.CameraRepository;
 import com.pine.repository.EditorRepository;
 import com.pine.repository.RuntimeRepository;
 import com.pine.service.camera.AbstractCameraService;
+import com.pine.service.camera.Camera;
 import com.pine.service.camera.CameraFirstPersonService;
 import com.pine.service.camera.CameraThirdPersonService;
 import com.pine.service.resource.ResourceService;
@@ -21,13 +22,13 @@ import imgui.extension.imguizmo.ImGuizmo;
 import imgui.extension.imguizmo.flag.Operation;
 import imgui.flag.ImGuiKey;
 import imgui.flag.ImGuiMouseButton;
+import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import org.joml.Vector3f;
 
 import static com.pine.core.dock.DockPanel.OPEN;
-import static com.pine.core.dock.DockWrapperPanel.FRAME_SIZE;
 
-public class ViewportPanel extends AbstractDockPanel {
+public class ViewportPanel extends AbstractView {
     private static final int CAMERA_FLAGS = ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoCollapse;
     private static final ImVec4 RED = new ImVec4(1, 0, 0, 1);
     private static final ImVec4 GREEN = new ImVec4(0, 1, 0, 1);
@@ -58,64 +59,60 @@ public class ViewportPanel extends AbstractDockPanel {
     private final ImVec2 sizeVec = new ImVec2();
     private final ImVec2 INV_X = new ImVec2(1, 0);
     private final ImVec2 INV_Y = new ImVec2(0, 1);
-    private GizmoPanel gizmo;
-    private ViewportContext context;
+    public final Camera camera = new Camera();
+
     private ImGuiIO io;
     private boolean isFirstMovement;
 
     @Override
     public void onInitialize() {
+        camera.pitch = (float) -(Math.PI / 4);
+        camera.yaw = (float) (Math.PI / 4);
+        camera.orbitRadius = 10;
+        camera.orbitalMode = true;
 
         this.fbo = (FrameBufferObject) resourceService.addResource(new FBOCreationData(false, false).addSampler());
-        appendChild(gizmo = new GizmoPanel(position, sizeVec));
-        context = (ViewportContext) getContext();
         io = ImGui.getIO();
     }
 
     @Override
     public void render() {
+
         tick();
-        ImGui.image(engine.getTargetFBO().getMainSampler(), sizeVec, INV_Y, INV_X);
 
-        gizmo.render();
+        Vector3f positionCamera = cameraRepository.currentCamera.position;
+        ImGui.textColored(RED, "X: " + positionCamera.x);
+        ImGui.sameLine();
+        ImGui.textColored(GREEN, "Y: " + positionCamera.y);
+        ImGui.sameLine();
+        ImGui.textColored(BLUE, "Z: " + positionCamera.z);
 
-        ImGui.setNextWindowPos(position.x + 8, position.y + size.y - 24);
-        ImGui.setNextWindowSize(size.x, 16);
-        if (ImGui.begin(imguiId + "cameraPos", OPEN, CAMERA_FLAGS)) {
-            Vector3f positionCamera = cameraRepository.currentCamera.position;
-            ImGui.textColored(RED, "X: " + positionCamera.x);
-            ImGui.sameLine();
-            ImGui.textColored(GREEN, "Y: " + positionCamera.y);
-            ImGui.sameLine();
-            ImGui.textColored(BLUE, "Z: " + positionCamera.z);
-            ImGui.end();
-        }
+        ImGui.image(engine.fboRepository.auxSampler, new ImVec2(ImGui.getWindowSize().x, ImGui.getWindowSize().y - 50), INV_Y, INV_X);
     }
 
     private void tick() {
-        cameraRepository.setCurrentCamera(context.camera);
+        cameraRepository.setCurrentCamera(camera);
 
         boolean focused = ImGui.isWindowFocused() && !ImGuizmo.isUsing();
         hotKeys(focused);
         updateCamera(focused);
-        engine.setTargetFBO(fbo);
         engine.render();
 
-        sizeVec.x = size.x;
-        sizeVec.y = size.y - FRAME_SIZE;
+        sizeVec.x = ImGui.getWindowSizeX();
+        sizeVec.y = ImGui.getWindowSizeY();
     }
 
     private void updateCamera(boolean focused) {
         AbstractCameraService cameraService;
-        if (context.camera.orbitalMode) {
+        if (camera.orbitalMode) {
             cameraService = cameraThirdPersonService;
             if (focused) {
                 if (io.getMouseWheel() != 0 && ImGui.isWindowHovered()) {
-                    cameraThirdPersonService.zoom(context.camera, io.getMouseWheel());
+                    cameraThirdPersonService.zoom(camera, io.getMouseWheel());
                 }
                 if (io.getMouseDown(ImGuiMouseButton.Left) && io.getMouseDown(ImGuiMouseButton.Right)) {
                     cameraThirdPersonService.isChangingCenter = true;
-                    cameraThirdPersonService.changeCenter(context.camera, isFirstMovement);
+                    cameraThirdPersonService.changeCenter(camera, isFirstMovement);
                 } else {
                     cameraThirdPersonService.isChangingCenter = false;
                 }
@@ -123,8 +120,8 @@ public class ViewportPanel extends AbstractDockPanel {
         } else {
             cameraService = cameraFirstPersonService;
         }
-        if (focused && (ImGui.isMouseDown(ImGuiMouseButton.Left) || ImGui.isMouseDown(ImGuiMouseButton.Right) || (ImGui.isMouseDown(ImGuiMouseButton.Middle) && context.camera.orbitalMode))) {
-            cameraService.handleInput(context.camera, isFirstMovement);
+        if (focused && (ImGui.isMouseDown(ImGuiMouseButton.Left) || ImGui.isMouseDown(ImGuiMouseButton.Right) || (ImGui.isMouseDown(ImGuiMouseButton.Middle) && camera.orbitalMode))) {
+            cameraService.handleInput(camera, isFirstMovement);
             isFirstMovement = false;
         } else {
             isFirstMovement = true;

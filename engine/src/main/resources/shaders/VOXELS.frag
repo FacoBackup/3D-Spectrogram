@@ -1,6 +1,5 @@
-layout (local_size_x = 8, local_size_y = 8) in;
-
-layout (binding = 0) uniform writeonly image2D outputImage;
+in vec2 texCoords;
+out vec4 finalColor;
 
 layout(std430, binding = 12) buffer OctreeBuffer {
 // NON LEAF NODES - First 16 bits are the index pointing to the position of this voxel's children | 8 bits are the child mask | 8 bits indicate if the node is a leaf
@@ -34,7 +33,7 @@ vec3 randomColor(float seed) {
 }
 
 vec3 createRay() {
-    vec2 pxNDS = (gl_GlobalInvocationID.xy/bufferResolution) * 2. - 1.;
+    vec2 pxNDS = texCoords * 2. - 1.;
     vec3 pointNDS = vec3(pxNDS, -1.);
     vec4 pointNDSH = vec4(pointNDS, 1.0);
     vec4 dirEye = invProjectionMatrix * pointNDSH;
@@ -182,8 +181,9 @@ void main() {
     settings.z == 1
     );
 
-
     if (length(outColor) > 0){
-        imageStore(outputImage, ivec2(gl_GlobalInvocationID.xy), outColor);
+        finalColor = vec4(outColor.rgb, 1);
+    } else {
+        discard;
     }
 }

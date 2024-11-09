@@ -11,7 +11,6 @@ import com.pine.repository.streaming.AbstractStreamableResource;
 import com.pine.service.FSService;
 import com.pine.service.FilesService;
 import com.pine.service.NativeDialogService;
-import com.pine.service.ProjectService;
 import com.pine.service.importer.ImporterService;
 import com.pine.theme.Icons;
 import imgui.ImGui;
@@ -37,8 +36,6 @@ public class FilesHeaderPanel extends AbstractView {
     public FilesService filesService;
     @PInject
     public EditorRepository editorRepository;
-    @PInject
-    public ProjectService projectService;
 
     private final ImString searchPath = new ImString();
     private FilesContext context;
@@ -101,7 +98,6 @@ public class FilesHeaderPanel extends AbstractView {
                 newChildren.add(new ResourceEntry(r.name, filesService.getType(r.getResourceType()), r.size, r.pathToFile, context.currentDirectory, r));
             }
             context.currentDirectory.children = newChildren;
-            projectService.saveSilently();
         });
     }
 

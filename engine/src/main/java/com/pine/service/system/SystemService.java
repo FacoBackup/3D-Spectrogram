@@ -14,13 +14,9 @@ public class SystemService implements SyncTask {
     public PInjector pInjector;
 
     private List<AbstractPass> systems = List.of(
-            new BRDFGenPass(),
             new ShaderDataSyncPass(),
-            new GBufferPass(),
-            new GBufferShadingPass(),
-            new AtmospherePass(),
             new VoxelVisualizerPass(),
-            new FrameCompositionPass()
+            new GridPass()
     );
 
     public List<AbstractPass> getSystems() {

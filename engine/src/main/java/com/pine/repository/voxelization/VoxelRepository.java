@@ -17,7 +17,7 @@ public class VoxelRepository extends Inspectable implements SerializableReposito
     public transient int[] voxels = null;
 
     @MutableField(label = "Object scale")
-    public int gridScale;
+    public int gridScale = 100;
 
     @MutableField(label = "Scene scale", min = 0)
     public int gridResolution = 20;
@@ -25,14 +25,14 @@ public class VoxelRepository extends Inspectable implements SerializableReposito
     @MutableField(label = "Center")
     public Vector3f center = new Vector3f(0);
 
-    @MutableField(label = "Max depth", min = 1, max = 10)
-    public int maxDepth = 4;
+    @MutableField(label = "Max depth", min = 1)
+    public int maxDepth = 10;
 
     @MutableField(label = "Voxelization step size", min = 0, max = 1)
     public float voxelizationStepSize = .1f;
 
     @MutableField(label = "Random colors")
-    public boolean randomColors;
+    public boolean randomColors = true;
 
     @MutableField(label = "Show ray search count")
     public boolean showRaySearchCount;

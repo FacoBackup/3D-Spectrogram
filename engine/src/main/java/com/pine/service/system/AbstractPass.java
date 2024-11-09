@@ -11,7 +11,6 @@ import com.pine.repository.RuntimeRepository;
 import com.pine.repository.core.*;
 import com.pine.repository.rendering.RenderingRepository;
 import com.pine.repository.voxelization.VoxelRepository;
-import com.pine.service.resource.ComputeService;
 import com.pine.service.resource.SSBOService;
 import com.pine.service.resource.ShaderService;
 import com.pine.service.resource.UBOService;
@@ -28,11 +27,7 @@ public abstract class AbstractPass extends MetricCollector {
     @PInject
     public RenderingRepository renderingRepository;
     @PInject
-    public ClockRepository clockRepository;
-    @PInject
     public UBOService uboService;
-    @PInject
-    public ComputeService computeService;
     @PInject
     public ShaderService shaderService;
     @PInject
@@ -49,8 +44,6 @@ public abstract class AbstractPass extends MetricCollector {
     public CoreUBORepository uboRepository;
     @PInject
     public CoreFBORepository fboRepository;
-    @PInject
-    public CoreComputeRepository computeRepository;
     @PInject
     public CoreMeshRepository meshRepository;
     @PInject

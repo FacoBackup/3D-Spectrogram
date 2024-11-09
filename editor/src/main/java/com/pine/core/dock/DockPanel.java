@@ -24,12 +24,8 @@ public class DockPanel extends AbstractView {
     private static final String NAME = "##main_window";
     private static final ImVec2 CENTER = new ImVec2(0.0f, 0.0f);
     private final ImInt dockMainId = new ImInt();
-    private static final float HEADER_HEIGHT = 62;
-
     @PInject
     public DockService dockService;
-
-    private AbstractView headerView;
 
     @Override
     public void render() {
@@ -38,8 +34,6 @@ public class DockPanel extends AbstractView {
         if (group == null) {
             return;
         }
-
-        renderHeader(viewport);
 
         dockService.updateForRemoval(this);
         beginMainWindowSetup(viewport);
@@ -62,20 +56,9 @@ public class DockPanel extends AbstractView {
         ImGui.end();
     }
 
-    private void renderHeader(ImGuiViewport viewport) {
-        ImGui.setNextWindowPos(viewport.getPosX(), 0);
-        ImGui.setNextWindowSize(viewport.getSizeX(), HEADER_HEIGHT);
-        windowStyle();
-        ImGui.begin(NAME + "2", OPEN, FLAGS | ImGuiWindowFlags.NoScrollbar);
-        endMainWindowSetup();
-
-        headerView.render();
-        ImGui.end();
-    }
-
     private void beginMainWindowSetup(ImGuiViewport viewport) {
-        ImGui.setNextWindowPos(viewport.getPos().x, viewport.getPos().y + HEADER_HEIGHT);
-        ImGui.setNextWindowSize(viewport.getSize().x, viewport.getSize().y - HEADER_HEIGHT);
+        ImGui.setNextWindowPos(viewport.getPos().x, viewport.getPos().y );
+        ImGui.setNextWindowSize(viewport.getSize().x, viewport.getSize().y );
         ImGui.setNextWindowViewport(viewport.getID());
 
         windowStyle();
@@ -91,10 +74,4 @@ public class DockPanel extends AbstractView {
         ImGui.popStyleVar(3);
     }
 
-    public void setHeader(AbstractView view) {
-        if (view != null) {
-            headerView = appendChild(view);
-            removeChild(headerView);
-        }
-    }
 }

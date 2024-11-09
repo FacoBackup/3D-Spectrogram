@@ -18,9 +18,6 @@ public class FilesService {
     public Engine engine;
 
     @PInject
-    public ProjectService projectService;
-
-    @PInject
     public EditorRepository editorRepository;
 
     @PInject
@@ -44,7 +41,6 @@ public class FilesService {
             if (selected.type != ResourceEntryType.DIRECTORY) {
                 new File(engine.getResourceTargetDirectory() + selected.streamableResource.pathToFile).delete();
             }
-            projectService.saveSilently();
         }
     }
 }

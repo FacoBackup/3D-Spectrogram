@@ -25,12 +25,7 @@ import java.util.List;
 public class Engine extends MetricCollector implements Loggable {
     public static final int MAX_ENTITIES = 100000;
     public static final int MAX_LIGHTS = 310;
-    private FrameBufferObject targetFBO;
 
-    @PInject
-    public EngineModulesService modules;
-    @PInject
-    public EngineSettingsRepository settingsRepository;
     @PInject
     public SystemService systemsService;
     @PInject
@@ -42,8 +37,6 @@ public class Engine extends MetricCollector implements Loggable {
     @PInject
     public CoreFBORepository fboRepository;
     @PInject
-    public CoreComputeRepository computeRepository;
-    @PInject
     public CoreMeshRepository primitiveRepository;
     @PInject
     public RuntimeRepository runtimeRepository;
@@ -54,7 +47,7 @@ public class Engine extends MetricCollector implements Loggable {
     private boolean ready = false;
     private String targetDirectory;
 
-    public void start(int displayW, int displayH, List<EngineExternalModule> modules, String targetDirectory) {
+    public void start(int displayW, int displayH) {
         runtimeRepository.setDisplayW(displayW);
         runtimeRepository.setDisplayH(displayH);
         runtimeRepository.setInvDisplayW(1f / displayW);
@@ -67,23 +60,9 @@ public class Engine extends MetricCollector implements Loggable {
         uboRepository.initialize();
         fboRepository.initialize();
         shaderRepository.initialize();
-        computeRepository.initialize();
         systemsService.initialize();
 
-        targetFBO = fboRepository.auxBuffer;
-
-        this.modules.addModules(modules);
         tasks.forEach(AbstractTask::start);
-
-        this.targetDirectory = targetDirectory;
-        try {
-            Path path = Paths.get(getResourceTargetDirectory());
-            if (!Files.exists(path)) {
-                Files.createDirectories(path);
-            }
-        } catch (Exception ex) {
-            getLogger().error(ex.getMessage(), ex);
-        }
 
         ready = true;
     }
@@ -104,12 +83,8 @@ public class Engine extends MetricCollector implements Loggable {
         }
 
         start();
-        GL46.glClearColor(settingsRepository.backgroundColor.x, settingsRepository.backgroundColor.y, settingsRepository.backgroundColor.z, 1);
         for (FrameBufferObject fbo : fboRepository.all) {
             fbo.clear();
-        }
-        if (targetFBO != null) {
-            targetFBO.clear();
         }
         for (var syncTask : syncTasks) {
             syncTask.sync();
@@ -117,13 +92,6 @@ public class Engine extends MetricCollector implements Loggable {
         end();
     }
 
-    public void setTargetFBO(@NotNull FrameBufferObject fbo) {
-        this.targetFBO = fbo;
-    }
-
-    public FrameBufferObject getTargetFBO() {
-        return targetFBO;
-    }
 
     public String getResourceTargetDirectory() {
         return targetDirectory + File.separator + "resources" + File.separator;
