@@ -38,6 +38,9 @@ public class VoxelRepository extends Inspectable {
     @MutableField(label = "Show grid")
     public boolean showGrid = true;
 
+    @MutableField(label = "X Scale")
+    public float xScale = 1;
+
     @Override
     public String getTitle() {
         return "Voxelized scene";

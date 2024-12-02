@@ -1,6 +1,7 @@
 package com.pine.impl;
 
 import com.pine.engine.injection.PBean;
+import com.pine.engine.repository.streaming.StreamableResourceType;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
@@ -41,7 +42,10 @@ public class NativeDialogService {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             List<String> selectedPath = new ArrayList<>();
 
+            List<String> fileTypes = List.of("wav");
+
             NFDFilterItem.Buffer filterList = NFDFilterItem.malloc(1, stack);
+            filterList.get(0).name(stack.UTF8("Audio")).spec(stack.UTF8(String.join(",", fileTypes)));
 
             PointerBuffer outPaths = stack.mallocPointer(2);
             int result = NFD_OpenDialogMultiple(outPaths, filterList, (CharSequence) null);

@@ -23,13 +23,13 @@ const vec3 NPP = vec3(-1, 1, 1);
 const vec3 PPP = vec3(1, 1, 1);
 const vec3 POS[8] = vec3[8](NNN, PNN, NPN, PPN, NNP, PNP, NPP, PPP);
 
-float rand(vec2 co) {
-    return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
+float rand(vec3 co) {
+    return fract(sin(dot(co, vec3(12.9898, 71.9898, 78.233))) * 43758.5453);
 }
 vec3 randomColor(float seed) {
-    float r = rand(vec2(seed));
-    float g = rand(vec2(seed + r));
-    return vec3(r, g, rand(vec2(seed + g)));
+    float r = rand(vec3(seed));
+    float g = rand(vec3(seed + r));
+    return vec3(r, g, rand(vec3(seed + g)));
 }
 
 vec3 createRay() {
@@ -157,7 +157,7 @@ bool showRayTestCount
             if (entryDist < minDistance) {
                 if (isLeafGroup) {
                     if (randomColors){
-                        finalColor.rgb = randomColor(rand(newCenter.xz));
+                        finalColor.rgb = randomColor(rand(newCenter.xyz));
                         finalColor.a = 1;
                     }else{
                         finalColor.rgb = vec3(newCenter.y);

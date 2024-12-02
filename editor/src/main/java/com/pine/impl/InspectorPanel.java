@@ -7,7 +7,12 @@ import com.pine.engine.service.request.UpdateFieldRequest;
 import com.pine.engine.service.svo.VoxelService;
 import imgui.ImGui;
 
-public class InspectorPanel extends AbstractView {
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import java.io.File;
+
+public class InspectorPanel extends AbstractView implements Loggable {
     @PInject
     public RequestProcessingService requestProcessingService;
     @PInject
@@ -24,14 +29,10 @@ public class InspectorPanel extends AbstractView {
 
     @Override
     public void render() {
-        if (ImGui.button(Icons.apps + "Computar voxels##vp")) {
+
+        if (ImGui.button("Importar audio")) {
             voxelService.buildFromScratch();
         }
-
-//        if (ImGui.button("Importar audio")) {
-//            var file = nativeDialogService.selectFile().stream().findFirst().orElse(null);
-
-//        }
         formPanel.setInspectable(voxelService.voxelRepository);
         super.render();
     }
