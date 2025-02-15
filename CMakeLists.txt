@@ -64,8 +64,6 @@ add_executable(
         src/service/pipeline/ShaderModule.h
         src/context/engine/render-pass/AbstractRenderPass.cpp
         src/context/engine/render-pass/AbstractRenderPass.h
-        src/context/engine/render-pass/impl/GBufferGenPass.cpp
-        src/context/engine/render-pass/impl/GBufferGenPass.h
         src/service/texture/TextureInstance.h
         src/repository/abstract/ResourceRepository.h
         src/service/abstract/AbstractResourceService.cpp
@@ -96,17 +94,10 @@ add_executable(
         src/service/buffer/BufferInstance.cpp
         src/service/buffer/BufferInstance.h
         src/service/pipeline/PipelineInstance.cpp
-        src/service/mesh/MeshService.cpp
-        src/service/mesh/MeshService.h
-        src/service/mesh/MeshData.h
-        src/service/mesh/MeshInstance.cpp
-        src/service/mesh/MeshInstance.h
         src/util/FilesUtil.h
         src/dto/file/FileEntry.h
         src/enum/EntryType.h
         src/util/FileDialogUtil.h
-        src/service/mesh/SceneImporterService.cpp
-        src/service/mesh/SceneImporterService.h
         src/service/abstract/AbstractImporter.h
         src/enum/LevelOfDetail.h
         src/enum/LevelOfDetail.cpp
@@ -116,10 +107,7 @@ add_executable(
         src/service/texture/TextureData.h
         src/service/texture/TextureService.cpp
         src/service/texture/TextureService.h
-        src/service/files/FilesService.cpp
-        src/service/files/FilesService.h
         src/dto/push-constant/MeshPushConstant.h
-        src/service/mesh/VertexData.h
         src/context/editor/dock-spaces/viewport/CameraPositionPanel.cpp
         src/context/editor/dock-spaces/viewport/CameraPositionPanel.h
         src/context/engine/render-pass/impl/tools/GridPass.cpp
@@ -127,8 +115,6 @@ add_executable(
         src/context/engine/passes/CommandBufferRecorder.cpp
         src/context/engine/passes/CommandBufferRecorder.h
         src/service/camera/Camera.cpp
-        src/repository/world/WorldRepository.cpp
-        src/repository/world/WorldRepository.h
         src/repository/world/impl/Entity.h
         src/enum/ComponentType.h
         src/repository/world/impl/AbstractComponent.h
@@ -136,8 +122,6 @@ add_executable(
         src/repository/world/components/TransformComponent.h
         src/enum/ShadingMode.h
         src/enum/EditorMode.h
-        src/service/selection/SelectionService.cpp
-        src/service/selection/SelectionService.h
         src/repository/world/impl/Entity.cpp
         src/repository/world/components/TransformComponent.cpp
         src/repository/world/components/MeshComponent.cpp
@@ -151,15 +135,9 @@ add_executable(
         src/context/editor/abstract/form/types/Vec2Field.h
         src/context/editor/abstract/form/types/StringField.cpp
         src/context/editor/abstract/form/types/StringField.h
-        src/repository/streaming/StreamingRepository.cpp
-        src/repository/streaming/StreamingRepository.h
         src/enum/ResourceType.h
         src/context/editor/abstract/form/types/QuatField.cpp
         src/context/editor/abstract/form/types/QuatField.h
-        src/service/transform/TransformService.cpp
-        src/service/transform/TransformService.h
-        src/repository/world/impl/WorldGridRepository.cpp
-        src/repository/world/impl/WorldGridRepository.h
         src/repository/world/impl/WorldTile.h
         src/repository/world/impl/BoundingBox.h
         src/service/voxel/impl/SparseVoxelOctreeBuilder.cpp
@@ -167,67 +145,34 @@ add_executable(
         src/service/voxel/impl/OctreeNode.cpp
         src/service/voxel/impl/OctreeNode.h
         src/service/voxel/impl/VoxelData.h
-        src/service/voxel/VoxelizationService.cpp
-        src/service/voxel/VoxelizationService.h
-        src/service/voxel/impl/VoxelizerService.cpp
-        src/service/voxel/impl/VoxelizerService.h
-        src/service/mesh/SceneData.h
-        src/service/mesh/EntityAssetData.h
-        src/service/material/MaterialData.h
-        src/context/engine/render-pass/impl/PostProcessingPass.cpp
-        src/context/engine/render-pass/impl/PostProcessingPass.h
-        src/context/engine/compute-pass/impl/PathTracerPass.cpp
-        src/context/engine/compute-pass/impl/PathTracerPass.h
         src/service/pipeline/PipelineBuilder.h
         src/service/framebuffer/FrameBufferAttachment.cpp
         src/repository/engine/EngineRepository.cpp
         src/repository/engine/EngineRepository.h
-        src/repository/texture/CoreTextures.cpp
-        src/repository/texture/CoreTextures.h
         src/util/serialization-definitions.h
-        src/service/notification/NotificationService.cpp
-        src/service/notification/NotificationService.h
         src/dto/Notification.h
         src/enum/NotificationSeverity.h
-        src/service/voxel/impl/Triangle.h
         src/service/voxel/impl/SparseVoxelOctreeData.h
         src/context/engine/render-pass/impl/tools/VoxelVisualizerPass.cpp
         src/context/engine/render-pass/impl/tools/VoxelVisualizerPass.h
-        src/service/voxel/SVOService.cpp
-        src/service/voxel/SVOService.h
         src/service/voxel/SVOInstance.cpp
         src/service/voxel/SVOInstance.h
         src/dto/push-constant/VoxelDebugSettingsPushConstant.h
-        src/service/world/WorldGridService.cpp
-        src/service/world/WorldGridService.h
         src/dto/ubo/TileInfoUBO.h
         src/dto/ubo/LightData.h
         src/repository/world/components/LightComponent.cpp
         src/repository/world/components/LightComponent.h
-        src/context/engine/render-pass/impl/tools/IconsPass.cpp
-        src/context/engine/render-pass/impl/tools/IconsPass.h
         src/repository/editor/EditorRepository.cpp
         src/dto/push-constant/GridPushConstant.h
-        src/context/engine/compute-pass/AbstractComputePass.cpp
-        src/context/engine/compute-pass/AbstractComputePass.h
         src/context/engine/passes/AbstractPass.cpp
         src/context/engine/passes/AbstractPass.h
         src/context/engine/passes/PassesService.cpp
         src/context/engine/passes/PassesService.h
         src/util/ImageUtils.h
-        src/service/material/MaterialInstance.cpp
-        src/service/material/MaterialInstance.h
-        src/service/material/MaterialService.cpp
-        src/service/material/MaterialService.h
-        src/service/material/MaterialData.cpp
         src/repository/inspection/FileInspectionRepository.cpp
         src/repository/inspection/FileInspectionRepository.h
         src/service/voxel/VoxelizationRequest.h
         src/enum/LightType.h
-        src/context/engine/compute-pass/impl/DenoiserPass.cpp
-        src/context/engine/compute-pass/impl/DenoiserPass.h
-        src/context/engine/compute-pass/impl/AccumulationPass.cpp
-        src/context/engine/compute-pass/impl/AccumulationPass.h
 )
 
 

@@ -6,8 +6,6 @@
 #include "../../util/VulkanUtils.h"
 #include "../framebuffer/FrameBufferInstance.h"
 #include "../pipeline/PipelineInstance.h"
-#include "../mesh/MeshData.h"
-#include "../mesh/VertexData.h"
 #include "../descriptor/DescriptorInstance.h"
 #include "../framebuffer/FrameBufferAttachment.h"
 
@@ -80,7 +78,6 @@ namespace Metal {
 
     PipelineInstance *PipelineService::createRenderingPipeline(PipelineBuilder &pipelineBuilder) {
         VkVertexInputBindingDescription *meshBindingDescription = nullptr;
-        auto meshDescriptions = VertexData::GetAttributeDescriptions();
 
         auto *pipeline = new PipelineInstance();
         pipeline->pushConstantsSize = pipelineBuilder.pushConstantsSize;
@@ -102,18 +99,6 @@ namespace Metal {
 
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-
-        if (pipelineBuilder.prepareForMesh) {
-            meshBindingDescription = new VkVertexInputBindingDescription;
-            meshBindingDescription->binding = 0;
-            meshBindingDescription->stride = sizeof(VertexData);
-            meshBindingDescription->inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-
-            vertexInputInfo.vertexBindingDescriptionCount = 1;
-            vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(meshDescriptions.size());
-            vertexInputInfo.pVertexAttributeDescriptions = meshDescriptions.data();
-            vertexInputInfo.pVertexBindingDescriptions = meshBindingDescription;
-        }
 
         VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
         inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;

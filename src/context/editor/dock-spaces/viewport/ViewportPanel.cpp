@@ -18,21 +18,22 @@ namespace Metal {
 
         auto *framebuffer = context->coreFrameBuffers.postProcessingFBO;
         context->descriptorService.setImageDescriptor(framebuffer, 0);
-        ImGui::Image(reinterpret_cast<ImTextureID>(framebuffer->attachments[0]->imageDescriptor->vkDescriptorSet), windowSize);
+        ImGui::Image(reinterpret_cast<ImTextureID>(framebuffer->attachments[0]->imageDescriptor->vkDescriptorSet),
+                     windowSize);
 
         cameraPanel->onSync();
     }
 
     void ViewportPanel::updateCamera() {
-        auto &worldRepository = context->worldRepository;
+        auto &engineContext = context->engineContext;
         const auto &cameraService = context->cameraService;
 
         if (ImGui::IsWindowHovered() && !ImGuizmo::IsUsing() && ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
             cameraService.handleInput(isFirstMovement);
             if (const auto &io = ImGui::GetIO(); io.MouseWheel != 0) {
-                worldRepository.camera.movementSensitivity += io.MouseWheel * 100 * context->engineContext.deltaTime;
-                worldRepository.camera.movementSensitivity =
-                        std::max(.1f, worldRepository.camera.movementSensitivity);
+                engineContext.camera.movementSensitivity += io.MouseWheel * 100 * context->engineContext.deltaTime;
+                engineContext.camera.movementSensitivity =
+                        std::max(.1f, engineContext.camera.movementSensitivity);
             }
             isFirstMovement = false;
         } else {

@@ -11,6 +11,7 @@
 #include "glslang/Include/glslang_c_interface.h"
 #include "glslang/Public/resource_limits_c.h"
 #define BASE_PATH "../resources/shaders/"
+#define TILE_SIZE 64
 
 namespace Metal {
     void ShaderUtil::CheckShaderCompilation(glslang_shader_t *shader) {
@@ -146,17 +147,10 @@ namespace Metal {
     VkShaderModule ShaderUtil::CreateShaderModule(const ApplicationContext &context, const std::string &pFilename) {
         const std::string basePath = context.getShadersDirectory();
         std::string source = ProcessShader(BASE_PATH + pFilename);
-        if (context.isDebugMode()) {
-            source = "#define DEBUG\n" + source;
-        }
-        for (auto &entry: LightTypes::getEntries()) {
-            source = "#define " + entry.first + " " + std::to_string(entry.second) + "\n" + source;
-        }
+        source = "#define DEBUG\n" + source;
         source = "#define TILE_SIZE " + std::to_string(TILE_SIZE) + std::string("\n") + source;
-        source = "#define MAX_LIGHTS " + std::to_string(MAX_LIGHTS) + std::string("\n") + source;
         source = "#define PI_2 6.28318530718\n" + source;
         source = "#define PI 3.14159265\n" + source;
-
 
         const glslang_stage_t shaderStage = ShaderStageFromFilename(pFilename.c_str());
 

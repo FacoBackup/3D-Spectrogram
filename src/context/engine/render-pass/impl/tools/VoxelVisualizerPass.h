@@ -15,8 +15,6 @@ namespace Metal {
 
         void onInitialize() override;
 
-        bool shouldRun() override;
-
         void onSync() override;
     };
 } // Metal

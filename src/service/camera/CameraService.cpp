@@ -5,7 +5,7 @@
 
 namespace Metal {
     void CameraService::onSync() {
-        camera = &context.worldRepository.camera;
+        camera = &context.engineContext.camera;
         if (camera != nullptr) {
             updateAspectRatio();
             if (camera->isNotFrozen()) {

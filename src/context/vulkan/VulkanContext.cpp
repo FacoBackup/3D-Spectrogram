@@ -216,15 +216,12 @@ namespace Metal {
         // ------- REPOSITORY INITIALIZATION
         context.coreBuffers.onInitialize();
         context.coreFrameBuffers.onInitialize();
-        context.coreTextures.onInitialize();
         context.coreDescriptorSets.onInitialize();
         // ------- REPOSITORY INITIALIZATION
     }
 
     void VulkanContext::dispose() const {
         context.pipelineService.disposeAll();
-        context.textureService.disposeAll();
-        context.meshService.disposeAll();
         context.framebufferService.disposeAll();
         vkDestroyDescriptorPool(context.vulkanContext.device.device, descriptorPool,
                                 nullptr);

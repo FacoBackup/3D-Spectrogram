@@ -12,17 +12,11 @@ namespace Metal {
                 )
                 .setPushConstantsSize(sizeof(VoxelDebugSettingsPushConstant))
                 .addDescriptorSet(context.coreDescriptorSets.globalDataDescriptor.get())
-                .addDescriptorSet(context.coreDescriptorSets.svoData.get())
-                .addDescriptorSet(context.coreDescriptorSets.surfaceCacheFragment.get());
+                .addDescriptorSet(context.coreDescriptorSets.svoData.get());
         pipelineInstance = context.pipelineService.createPipeline(voxelVisualizerPipelineBuilder);
     }
 
-    bool VoxelVisualizerPass::shouldRun() {
-        return context.editorRepository.showVoxels;
-    }
-
     void VoxelVisualizerPass::onSync() {
-        settings.voxelDebugFlag = context.editorRepository.shadingMode;
         settings.searchCountDivisor = context.editorRepository.voxelSearchCount;
         settings.showRaySearchCount = context.editorRepository.showRaySearchCountVoxels;
         settings.showRayTestCount = context.editorRepository.showRayTestCountVoxels;

@@ -41,9 +41,6 @@ namespace Metal {
     }
 
     void EngineRepository::onUpdate(InspectableMember *member, ApplicationContext &context) {
-        if (member != nullptr && member->name == LEVEL_OF_DETAIL) {
-            context.worldGridRepository.hasMainTileChanged = true;
-        }
         if (member != nullptr && (member->group == GLOBAL_ILLUMINATION || member->group == ATMOSPHERE || member->group
                                   == SUN)) {
             context.engineContext.setGISettingsUpdated(true);

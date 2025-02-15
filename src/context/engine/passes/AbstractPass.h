@@ -5,20 +5,14 @@
 #include "../../../common/AbstractRuntimeComponent.h"
 
 namespace Metal {
-    struct WorldRepository;
     struct MeshInstance;
-    class StreamingRepository;
     struct CoreFrameBuffers;
     struct PipelineInstance;
     struct CoreBuffers;
 
     class AbstractPass : public AbstractRuntimeComponent {
-        bool isComputePass;
-
     public:
         VkCommandBuffer vkCommandBuffer = VK_NULL_HANDLE;
-        WorldRepository &worldRepository;
-        StreamingRepository &streamingRepository;
         PipelineInstance *pipelineInstance = nullptr;
 
         explicit AbstractPass(ApplicationContext &context, bool isComputePass);

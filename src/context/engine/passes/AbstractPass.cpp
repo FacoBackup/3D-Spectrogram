@@ -3,17 +3,14 @@
 #include "../../../service/pipeline/PipelineInstance.h"
 
 namespace Metal {
-    AbstractPass::AbstractPass(ApplicationContext &context, bool isComputePass) : AbstractRuntimeComponent(context),
-        worldRepository(context.worldRepository),
-        streamingRepository(
-            context.streamingRepository), isComputePass(isComputePass) {
+    AbstractPass::AbstractPass(ApplicationContext &context, bool isComputePass) : AbstractRuntimeComponent(context){
     }
 
     void AbstractPass::recordPushConstant(const void *data) {
         vkCmdPushConstants(
             vkCommandBuffer,
             getPipeline()->vkPipelineLayout,
-            isComputePass ? VK_SHADER_STAGE_COMPUTE_BIT : VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+            VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
             0,
             getPipeline()->pushConstantsSize,
             data);
@@ -50,9 +47,6 @@ namespace Metal {
     }
 
     VkPipelineBindPoint AbstractPass::getBindingPoint() const {
-        if (isComputePass) {
-            return VK_PIPELINE_BIND_POINT_COMPUTE;
-        }
         return VK_PIPELINE_BIND_POINT_GRAPHICS;
     }
 }

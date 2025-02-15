@@ -2,18 +2,21 @@
 #define TCC_IESB_ENGINECONTEXT_H
 
 #include <chrono>
+#include <glm/ext/scalar_constants.hpp>
 
 #include "../../dto/ubo/GlobalDataUBO.h"
 #include "../../common/AbstractRuntimeComponent.h"
 #include "../../dto/ubo/LightData.h"
 #include "../../dto/ubo/TileInfoUBO.h"
-#include "../../enum/engine-definitions.h"
+#include "../../service/camera/Camera.h"
 
 using Clock = std::chrono::high_resolution_clock;
 using TimePoint = std::chrono::time_point<Clock>;
 
 namespace Metal {
-    class EngineContext final : public AbstractRuntimeComponent {
+    struct EngineContext final : AbstractRuntimeComponent {
+        Camera camera{-(glm::pi<float>() / 4), glm::pi<float>() / 4, {10, 10, 10}};
+
         GlobalDataUBO globalDataUBO{};
         TileInfoUBO tileInfoUBO{};
         std::vector<LightData> lights{};
@@ -24,8 +27,11 @@ namespace Metal {
         bool giSettingsUpdated = true;
         std::string voxelizationRequestId;
         unsigned int giAccumulationCount = 0;
+        long long currentTimeMs = 0;
+        TimePoint currentTime;
+        TimePoint previousTime = Clock::now();
+        float deltaTime = 0;
 
-    public:
         GlobalDataUBO &getGlobalDataUBO() { return globalDataUBO; }
 
         void setLightingDataUpdated(const bool val) {
@@ -71,27 +77,10 @@ namespace Metal {
         explicit EngineContext(ApplicationContext &context) : AbstractRuntimeComponent(context) {
         }
 
-        long long currentTimeMs = 0;
-        TimePoint currentTime;
-        TimePoint previousTime = Clock::now();
-        float deltaTime = 0;
 
         void updateGlobalData();
 
         void onSync() override;
-
-        void registerExplicitLightSources(int &index);
-
-        void registerEmissiveLightSources(int &index);
-
-        void registerSun(int &index);
-
-        void updateLights();
-
-        static glm::vec3 CalculateSunColor(float elevation, glm::vec3 &nightColor, glm::vec3 &dawnColor,
-                                           glm::vec3 &middayColor);
-
-        static glm::vec3 BlendColors(glm::vec3 &c1, glm::vec3 &c2, float t);
     };
 }
 #endif

@@ -6,7 +6,6 @@
 
 layout(location = 0) in vec2 texCoords;
 layout(location = 0) out vec4 finalColor;
-layout(set = 2, binding = 0) uniform sampler2D surfaceCache;
 
 layout(push_constant) uniform Push {
     int voxelDebugFlag;
@@ -30,26 +29,9 @@ void main() {
     if (hitData.anyHit){
         MaterialInfo matData;
         unpackVoxel(hitData, matData);
-        switch (settings.voxelDebugFlag){
-            case ALBEDO:
-            finalColor = vec4(matData.baseColor/2, 1);
-            break;
-            case NORMAL:
-            finalColor = vec4(hitData.normal, 1);
-            break;
-            case EMISSIVE:
-            finalColor = vec4(vec3(matData.isEmissive ? 1 : 0), 1);
-            break;
-            case RANDOM:
-            finalColor = vec4(randomColor(rand(hitData.voxelPosition.xyz)), 1);
-            break;
-            case POSITION:
-            finalColor = vec4(normalize(hitData.voxelPosition.xyz), 1);
-            break;
-            default :
-            finalColor = vec4(texture(surfaceCache, genHashSurfaceCache(hitData.point.xyz)).rgb * globalData.giStrength, 1);
-            break;
-        }
+        finalColor = vec4(randomColor(rand(hitData.voxelPosition.xyz)), 1);
+    }else{
+        discard;
     }
 
     if (length(finalColor.rgb) == 0){

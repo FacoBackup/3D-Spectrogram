@@ -8,28 +8,23 @@
 
 
 namespace Metal {
+    class GridPass;
+}
+
+namespace Metal {
+    class VoxelVisualizerPass;
     class CommandBufferRecorder;
 
     class PassesService final : public AbstractRuntimeComponent {
-        std::vector<AbstractPass *> computePasses;
-        std::vector<AbstractPass *> gBufferPasses;
-        std::vector<AbstractPass *> postProcessingPasses;
-        std::vector<AbstractPass *> allPasses;
-
-        CommandBufferRecorder *gBuffer = nullptr;
-        CommandBufferRecorder *compute = nullptr;
-        CommandBufferRecorder *postProcessing = nullptr;
-
+        CommandBufferRecorder *recorder = nullptr;
+        VoxelVisualizerPass *pass = nullptr;
+        GridPass *gridPass = nullptr;
     public:
         explicit PassesService(ApplicationContext &context);
 
         void onInitialize() override;
 
-        void addPass(std::vector<AbstractPass *> &p, AbstractPass *pointer);
-
         void onSync() override;
-
-        void dispose();
     };
 } // Metal
 
