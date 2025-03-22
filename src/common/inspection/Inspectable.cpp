@@ -8,7 +8,6 @@
 #include "InspectedField.h"
 #include "InspectedMethod.h"
 #include "../../util/Util.h"
-#include "../../enum/EntryType.h"
 
 #define  DECLARATION(T, V) \
         std::shared_ptr<InspectedField<T>> field = std::make_shared<InspectedField<T>>(&v);\
@@ -125,10 +124,5 @@ namespace Metal {
                                    std::string group, std::string name, bool disabled) {
         DECLARATION(bool, BOOLEAN)
         fields.push_back(std::move(field));
-    }
-
-    void Inspectable::registerResourceSelection(std::string &v, std::string group, std::string name,
-                                                EntryType::EntryType type,
-                                                bool disabled) {
     }
 }

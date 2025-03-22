@@ -40,7 +40,6 @@ add_executable(
         src/context/editor/abstract/form/FormPanel.h
         src/context/editor/abstract/form/AccordionPanel.cpp
         src/context/editor/abstract/form/AccordionPanel.h
-        src/enum/FieldType.h
         src/common/inspection/InspectableMember.h
         src/common/AbstractRuntimeComponent.h
         src/context/editor/abstract/form/types/BooleanField.cpp
@@ -64,7 +63,6 @@ add_executable(
         src/service/pipeline/ShaderModule.h
         src/context/engine/render-pass/AbstractRenderPass.cpp
         src/context/engine/render-pass/AbstractRenderPass.h
-        src/service/texture/TextureInstance.h
         src/repository/abstract/ResourceRepository.h
         src/service/abstract/AbstractResourceService.cpp
         src/service/abstract/AbstractResourceService.h
@@ -95,19 +93,8 @@ add_executable(
         src/service/buffer/BufferInstance.h
         src/service/pipeline/PipelineInstance.cpp
         src/util/FilesUtil.h
-        src/dto/file/FileEntry.h
-        src/enum/EntryType.h
         src/util/FileDialogUtil.h
         src/service/abstract/AbstractImporter.h
-        src/enum/LevelOfDetail.h
-        src/enum/LevelOfDetail.cpp
-        src/service/texture/TextureImporterService.cpp
-        src/service/texture/TextureImporterService.h
-        src/dto/file/FileMetadata.h
-        src/service/texture/TextureData.h
-        src/service/texture/TextureService.cpp
-        src/service/texture/TextureService.h
-        src/dto/push-constant/MeshPushConstant.h
         src/context/editor/dock-spaces/viewport/CameraPositionPanel.cpp
         src/context/editor/dock-spaces/viewport/CameraPositionPanel.h
         src/context/engine/render-pass/impl/tools/GridPass.cpp
@@ -115,16 +102,6 @@ add_executable(
         src/context/engine/passes/CommandBufferRecorder.cpp
         src/context/engine/passes/CommandBufferRecorder.h
         src/service/camera/Camera.cpp
-        src/repository/world/impl/Entity.h
-        src/enum/ComponentType.h
-        src/repository/world/impl/AbstractComponent.h
-        src/repository/world/components/MeshComponent.h
-        src/repository/world/components/TransformComponent.h
-        src/enum/ShadingMode.h
-        src/enum/EditorMode.h
-        src/repository/world/impl/Entity.cpp
-        src/repository/world/components/TransformComponent.cpp
-        src/repository/world/components/MeshComponent.cpp
         src/context/editor/abstract/form/types/ColorField.cpp
         src/context/editor/abstract/form/types/ColorField.h
         src/context/editor/abstract/form/types/Vec4Field.cpp
@@ -138,8 +115,6 @@ add_executable(
         src/enum/ResourceType.h
         src/context/editor/abstract/form/types/QuatField.cpp
         src/context/editor/abstract/form/types/QuatField.h
-        src/repository/world/impl/WorldTile.h
-        src/repository/world/impl/BoundingBox.h
         src/service/voxel/impl/SparseVoxelOctreeBuilder.cpp
         src/service/voxel/impl/SparseVoxelOctreeBuilder.h
         src/service/voxel/impl/OctreeNode.cpp
@@ -147,21 +122,13 @@ add_executable(
         src/service/voxel/impl/VoxelData.h
         src/service/pipeline/PipelineBuilder.h
         src/service/framebuffer/FrameBufferAttachment.cpp
-        src/repository/engine/EngineRepository.cpp
-        src/repository/engine/EngineRepository.h
         src/util/serialization-definitions.h
-        src/dto/Notification.h
-        src/enum/NotificationSeverity.h
         src/service/voxel/impl/SparseVoxelOctreeData.h
         src/context/engine/render-pass/impl/tools/VoxelVisualizerPass.cpp
         src/context/engine/render-pass/impl/tools/VoxelVisualizerPass.h
         src/service/voxel/SVOInstance.cpp
         src/service/voxel/SVOInstance.h
         src/dto/push-constant/VoxelDebugSettingsPushConstant.h
-        src/dto/ubo/TileInfoUBO.h
-        src/dto/ubo/LightData.h
-        src/repository/world/components/LightComponent.cpp
-        src/repository/world/components/LightComponent.h
         src/repository/editor/EditorRepository.cpp
         src/dto/push-constant/GridPushConstant.h
         src/context/engine/passes/AbstractPass.cpp
@@ -169,10 +136,7 @@ add_executable(
         src/context/engine/passes/PassesService.cpp
         src/context/engine/passes/PassesService.h
         src/util/ImageUtils.h
-        src/repository/inspection/FileInspectionRepository.cpp
-        src/repository/inspection/FileInspectionRepository.h
         src/service/voxel/VoxelizationRequest.h
-        src/enum/LightType.h
 )
 
 

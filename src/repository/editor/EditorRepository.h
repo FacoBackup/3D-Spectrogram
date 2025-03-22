@@ -6,10 +6,6 @@
 #include <unordered_map>
 #include <glm/vec3.hpp>
 
-#include "../../util/serialization-definitions.h"
-#include "../../enum/engine-definitions.h"
-#include "../../enum/EditorMode.h"
-#include "../../enum/ShadingMode.h"
 #include "../../common/inspection/Inspectable.h"
 
 namespace Metal {

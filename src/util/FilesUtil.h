@@ -1,7 +1,6 @@
 #ifndef FILESUTIL_H
 #define FILESUTIL_H
 #include <filesystem>
-#include "../dto/file/FileEntry.h"
 
 namespace fs = std::filesystem;
 

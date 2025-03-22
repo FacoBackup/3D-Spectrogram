@@ -1,5 +1,5 @@
 #include "SparseVoxelOctreeBuilder.h"
-#include "../../../repository/world/impl/WorldTile.h"
+#define TILE_SIZE 128
 
 namespace Metal {
     void SparseVoxelOctreeBuilder::insert(int maxDepth, glm::vec3 &point, VoxelData &data) {
@@ -7,11 +7,9 @@ namespace Metal {
             throw std::runtime_error("Depth is not set");
         }
 
-        if (tile->boundingBox.intersects(point)) {
-            WorldToChunkLocal(tile, point);
-            auto pos = glm::ivec3{0, 0, 0};
-            insertInternal(&root, point, data, pos, 0, maxDepth);
-        }
+        WorldToChunkLocal(point);
+        auto pos = glm::ivec3{0, 0, 0};
+        insertInternal(&root, point, data, pos, 0, maxDepth);
     }
 
     void SparseVoxelOctreeBuilder::dispose() const {
@@ -61,10 +59,10 @@ namespace Metal {
         }
     }
 
-    void SparseVoxelOctreeBuilder::WorldToChunkLocal(const WorldTile *tile, glm::vec3 &worldCoordinate) {
-        const float minX = tile->boundingBox.center.x - TILE_SIZE / 2.f;
-        const float minY = tile->boundingBox.center.y - TILE_SIZE / 2.f;
-        const float minZ = tile->boundingBox.center.z - TILE_SIZE / 2.f;
+    void SparseVoxelOctreeBuilder::WorldToChunkLocal(glm::vec3 &worldCoordinate) {
+        const float minX = -TILE_SIZE / 2.f;
+        const float minY = -TILE_SIZE / 2.f;
+        const float minZ = -TILE_SIZE / 2.f;
 
         worldCoordinate.x = worldCoordinate.x - minX;
         worldCoordinate.y = worldCoordinate.y - minY;

@@ -7,7 +7,6 @@
 #include "../../service/descriptor/DescriptorInstance.h"
 
 namespace Metal {
-    struct TextureInstance;
     struct FrameBufferAttachment;
     struct CoreDescriptorSets final : AbstractCoreRepository {
         explicit CoreDescriptorSets(ApplicationContext &context)

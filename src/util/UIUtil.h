@@ -3,7 +3,6 @@
 
 #include "imgui.h"
 #include <string>
-#include "../enum/EntryType.h"
 
 #include "../common/interface/Icons.h"
 
@@ -75,22 +74,6 @@ namespace Metal::UIUtil {
         AUX_VEC2.y = 0;
         ImGui::Dummy(AUX_VEC2);
         ImGui::SameLine();
-    }
-
-    static std::string GetFileIcon(const EntryType::EntryType type) {
-        switch (type) {
-            case EntryType::MESH:
-                return Icons::view_in_ar;
-            case EntryType::TEXTURE:
-                return Icons::texture;
-            case EntryType::DIRECTORY:
-                return Icons::folder;
-            case EntryType::SCENE:
-                return Icons::inventory_2;
-            case EntryType::MATERIAL:
-                return Icons::format_paint;
-            default: return "";
-        }
     }
 }
 #endif

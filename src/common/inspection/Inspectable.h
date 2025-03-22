@@ -8,7 +8,6 @@
 
 #include "InspectableMember.h"
 #include "../../util/Util.h"
-#include "../../enum/EntryType.h"
 
 namespace Metal {
     class ApplicationContext;
@@ -37,9 +36,6 @@ namespace Metal {
         void registerText(std::string &v, std::string group, std::string name, bool disabled = false);
 
         void registerBool(bool &v, std::string group, std::string name, bool disabled = false);
-
-        void registerResourceSelection(std::string &v, std::string group, std::string name, EntryType::EntryType type,
-                                       bool disabled = false);
 
         void registerMethod(const std::function<void()> &updateCallback, std::string name, std::string group);
 

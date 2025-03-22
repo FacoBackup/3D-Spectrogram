@@ -18,9 +18,7 @@
 #include "../service/camera/CameraService.h"
 #include "./engine/passes/PassesService.h"
 
-#include "../repository/inspection/FileInspectionRepository.h"
 #include "../repository/runtime/RuntimeRepository.h"
-#include "../repository/engine/EngineRepository.h"
 #include "../repository/editor/EditorRepository.h"
 #include "editor/EditorPanel.h"
 #include "gui/GuiContext.h"
@@ -54,9 +52,7 @@ namespace Metal {
         // ----------- Services
 
         // ----------- Repository
-        FileInspectionRepository fileInspection{};
         RuntimeRepository runtimeRepository{};
-        EngineRepository engineRepository{};
         EditorRepository editorRepository{};
         // ----------- Repository
 

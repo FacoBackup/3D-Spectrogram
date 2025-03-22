@@ -4,19 +4,10 @@
 #include "imgui_freetype.h"
 #include "../ApplicationContext.h"
 #include "../../util/VulkanUtils.h"
-#include "../../repository/descriptors/CoreDescriptorSets.h"
-#include "../../service/descriptor/DescriptorInstance.h"
-#include "../../service/framebuffer/FrameBufferAttachment.h"
-#include "../../service/texture/TextureInstance.h"
 
 namespace Metal {
     void GuiContext::endFrame() {
 
-    }
-
-    void GuiContext::renderImage(TextureInstance *texture, const float sizeX, const float sizeY) const {
-        context.descriptorService.setImageDescriptor(texture);
-        ImGui::Image(reinterpret_cast<ImTextureID>(texture->imageDescriptor->vkDescriptorSet), ImVec2{sizeX, sizeY});
     }
 
     void GuiContext::BeginFrame() {

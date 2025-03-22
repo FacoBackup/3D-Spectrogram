@@ -2,7 +2,6 @@
 
 #include "CameraPositionPanel.h"
 #include "ImGuizmo.h"
-#include "ViewportHeaderPanel.h"
 #include "../../../../context/ApplicationContext.h"
 #include "../../../../service/framebuffer/FrameBufferInstance.h"
 

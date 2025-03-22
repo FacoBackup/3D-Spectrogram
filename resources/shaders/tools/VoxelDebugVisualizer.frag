@@ -25,10 +25,8 @@ void main() {
     vec3 rayDirection = createRay(texCoords, globalData.invProj, globalData.invView);
     ivec2 colorData = ivec2(0);
     Ray ray = Ray(rayOrigin, rayDirection, 1./rayDirection);
-    SurfaceInteraction hitData = traceAllTiles(ray, settings.showRaySearchCount, settings.showRayTestCount, colorData);
+    SurfaceInteraction hitData = trace(ray, settings.showRaySearchCount, settings.showRayTestCount, colorData);
     if (hitData.anyHit){
-        MaterialInfo matData;
-        unpackVoxel(hitData, matData);
         finalColor = vec4(randomColor(rand(hitData.voxelPosition.xyz)), 1);
     }else{
         discard;

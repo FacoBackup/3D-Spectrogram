@@ -8,7 +8,6 @@
 
 namespace Metal {
     struct FrameBufferAttachment;
-    struct TextureInstance;
 
     class GuiContext final : public AbstractRuntimeComponent {
         static void applySpacing();
@@ -30,8 +29,6 @@ namespace Metal {
         void onInitialize() override;
 
         void endFrame();
-
-        void renderImage(TextureInstance *texture, float sizeX, float sizeY) const;
 
         static void BeginFrame();
 

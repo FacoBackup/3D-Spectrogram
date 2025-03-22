@@ -96,7 +96,7 @@ namespace Metal {
     }
 
     void VulkanContext::createPresentMode() {
-         VkPresentModeKHR presentModes = !context.engineRepository.vsync ? VK_PRESENT_MODE_IMMEDIATE_KHR : VK_PRESENT_MODE_FIFO_KHR;
+         VkPresentModeKHR presentModes = VK_PRESENT_MODE_FIFO_KHR;
         imguiVulkanWindow.PresentMode = ImGui_ImplVulkanH_SelectPresentMode(
             physDevice.physical_device, imguiVulkanWindow.Surface,
             &presentModes,
