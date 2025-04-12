@@ -1,5 +1,6 @@
 #include "InspectorPanel.h"
 
+#include "FilePickerUtil.h"
 #include "../../abstract/form/FormPanel.h"
 #include "../../../../util/UIUtil.h"
 #include "../../../../common/inspection/Inspectable.h"
@@ -23,13 +24,14 @@ namespace Metal {
             float divisor = 5000;
             for (float i = 0; i < 5000; i++) {
                 VoxelData data{{1, 0, 0}};
-                glm::vec3 point = {i/divisor, sin(i), 0};
+                glm::vec3 point = {i / divisor, sin(i), 0};
                 builder.insert(point, data);
             }
 
             auto voxels = builder.buildBuffer();
             context->coreBuffers.svoData->update(voxels.data());
         }
+
         ImGui::EndChild();
     }
 }

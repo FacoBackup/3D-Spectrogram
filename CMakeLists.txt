@@ -137,6 +137,9 @@ add_executable(
         src/context/engine/passes/PassesService.h
         src/util/ImageUtils.h
         src/service/voxel/VoxelizationRequest.h
+        src/context/editor/dock-spaces/inspector/FilePickerUtil.h
+        src/context/editor/dock-spaces/inspector/AudioData.h
+        src/context/editor/dock-spaces/inspector/AudioProcessor.h
 )
 
 
@@ -154,8 +157,10 @@ find_package(nfd CONFIG REQUIRED)
 find_package(assimp CONFIG REQUIRED)
 find_package(meshoptimizer CONFIG REQUIRED)
 find_package(cereal CONFIG REQUIRED)
+find_package(SndFile CONFIG REQUIRED)
 
 set(COMMON_LIBRARIES
+        SndFile::sndfile
         glfw
         nfd::nfd
         cereal::cereal

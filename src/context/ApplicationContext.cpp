@@ -2,7 +2,6 @@
 
 #include <imgui_impl_glfw.h>
 #include <nfd.h>
-#include <cereal/archives/binary.hpp>
 
 #include "../util/FilesUtil.h"
 #include "../util/VulkanUtils.h"
