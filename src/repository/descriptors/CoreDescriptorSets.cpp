@@ -7,11 +7,10 @@
 
 namespace Metal {
     void CoreDescriptorSets::onInitialize() {
-        constexpr auto COMPUTE_FRAGMENT_STAGES = static_cast<VkShaderStageFlagBits>(
-            VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_COMPUTE_BIT);
         svoData = std::make_unique<DescriptorInstance>();
-        svoData->addLayoutBinding(COMPUTE_FRAGMENT_STAGES, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 0);
+        svoData->addLayoutBinding(VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 0);
         svoData->create(vulkanContext);
+        svoData->addBufferDescriptor(0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, context.coreBuffers.svoData);
         svoData->write(vulkanContext);
 
 

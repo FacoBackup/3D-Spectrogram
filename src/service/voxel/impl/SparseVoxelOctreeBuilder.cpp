@@ -1,36 +1,31 @@
 #include "SparseVoxelOctreeBuilder.h"
+
 #define TILE_SIZE 128
 
 namespace Metal {
-    void SparseVoxelOctreeBuilder::insert(int maxDepth, glm::vec3 &point, VoxelData &data) {
-        if (maxDepth < 1) {
-            throw std::runtime_error("Depth is not set");
-        }
-
-        WorldToChunkLocal(point);
-        auto pos = glm::ivec3{0, 0, 0};
-        insertInternal(&root, point, data, pos, 0, maxDepth);
+    SparseVoxelOctreeBuilder::SparseVoxelOctreeBuilder(unsigned int size, int maxDepth)
+        : size(size), maxDepth(maxDepth) {
+        voxelSize = static_cast<float>(size) / std::pow(2.0f, maxDepth);
     }
 
-    void SparseVoxelOctreeBuilder::dispose() const {
-        root.dispose();
+    void SparseVoxelOctreeBuilder::insert(glm::vec3 &point, VoxelData &data) {
+        worldToChunkLocal(point);
+        glm::ivec3 pos(0);
+        insertInternal(&root, point, data, pos, 0);
     }
 
-    void SparseVoxelOctreeBuilder::insertInternal(OctreeNode *node, glm::vec3 &point,
-                                                  VoxelData &data, glm::ivec3 &position,
-                                                  const int depth,
-                                                  const int maxDepth) {
-        node->data[0] = data.data[0];
-        node->data[1] = data.data[1];
-
-
+    void SparseVoxelOctreeBuilder::insertInternal(OctreeNode *node, glm::vec3 &point, VoxelData &data,
+                                                  glm::ivec3 &position, int depth) {
+        node->data = data.data;
         node->depth = depth;
+
         if (depth == maxDepth) {
             node->isLeaf = true;
+            ++leafVoxelQuantity;
             return;
         }
 
-        const auto size = static_cast<float>(TILE_SIZE / std::pow(2, depth));
+        const auto size = static_cast<float>(this->size / std::pow(2, depth));
         const auto childPos = glm::ivec3{
             point.x >= ((size * position.x) + (size / 2)) ? 1 : 0,
             point.y >= ((size * position.y) + (size / 2)) ? 1 : 0,
@@ -43,29 +38,64 @@ namespace Metal {
         position.z = (position.z << 1) | childPos.z;
 
         if (node->children[childIndex] != nullptr) {
-            insertInternal(node->children[childIndex], point, data, position, depth + 1, maxDepth);
+            insertInternal(node->children[childIndex], point, data, position, depth + 1);
         } else {
             auto *child = new OctreeNode;
             node->addChild(child, childIndex);
-            insertInternal(child, point, data, position, depth + 1, maxDepth);
+            insertInternal(child, point, data, position, depth + 1);
 
             if (child->depth == maxDepth - 1) {
                 leafVoxelQuantity++;
             }
-            // Leaf nodes don't need to be included on the tree
             if (!child->isLeaf) {
                 nodeQuantity++;
             }
         }
     }
 
-    void SparseVoxelOctreeBuilder::WorldToChunkLocal(glm::vec3 &worldCoordinate) {
-        const float minX = -TILE_SIZE / 2.f;
-        const float minY = -TILE_SIZE / 2.f;
-        const float minZ = -TILE_SIZE / 2.f;
+    void SparseVoxelOctreeBuilder::worldToChunkLocal(glm::vec3 &worldCoordinate) const {
+        const glm::vec3 min = -glm::vec3(size) * 0.5f;
+        worldCoordinate -= min;
+    }
 
-        worldCoordinate.x = worldCoordinate.x - minX;
-        worldCoordinate.y = worldCoordinate.y - minY;
-        worldCoordinate.z = worldCoordinate.z - minZ;
+    const std::vector<uint32_t> &SparseVoxelOctreeBuilder::buildBuffer() {
+        bufferIndex = 0;
+        voxels.resize(nodeQuantity);
+        putData(&root);
+        fillStorage(&root);
+        return voxels;
+    }
+
+    void SparseVoxelOctreeBuilder::putData(OctreeNode *node) {
+        node->dataIndex = bufferIndex++;
+    }
+
+    void SparseVoxelOctreeBuilder::fillStorage(OctreeNode *node) {
+        if (node->isLeaf) return;
+
+        voxels[node->dataIndex] = node->packVoxelData(bufferIndex);
+        bool isParentOfLeaf = true;
+
+        for (OctreeNode *child: node->children) {
+            if (child && !child->isLeaf) {
+                putData(child);
+                isParentOfLeaf = false;
+            }
+        }
+
+        for (OctreeNode *child: node->children) {
+            if (child) {
+                fillStorage(child);
+            }
+        }
+
+        if (isParentOfLeaf && node->data != 0) {
+            voxels[node->dataIndex] = node->packVoxelData(node->data);
+        }
+    }
+
+    void SparseVoxelOctreeBuilder::dispose() {
+        root.dispose();
+        voxels.clear();
     }
 } // Metal

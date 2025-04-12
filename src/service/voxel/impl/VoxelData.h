@@ -7,19 +7,14 @@
 
 namespace Metal {
     struct VoxelData {
-        std::array<unsigned int, 2> data{};
+        unsigned int data{};
 
-        explicit VoxelData(const glm::vec3 &albedo, const glm::vec3 &normal, bool isEmissive) {
-            glm::ivec3 albedoLocal = glm::ivec3(albedo);
-            unsigned int r = static_cast<unsigned int>(albedoLocal.r & 0xFF);
-            unsigned int g = static_cast<unsigned int>(albedoLocal.g & 0xFF);
-            unsigned int b = static_cast<unsigned int>(albedoLocal.b & 0xFF);
-            unsigned int f = static_cast<unsigned int>(isEmissive ? 1 : 0);
+        explicit VoxelData(const glm::ivec3 &albedo) {
+            unsigned int red = (albedo.r / 2u) & 0x7Fu;
+            unsigned int green = albedo.g & 0xFFu;
+            unsigned int blue = (albedo.b / 2u) & 0x7Fu;
 
-            data = std::array{
-                (r << 16) | (g << 8) | (b) | (f << 24),
-                CompressNormal(normal)
-            };
+            data = (red << 16) | (green << 8) | blue;
         }
 
     private:

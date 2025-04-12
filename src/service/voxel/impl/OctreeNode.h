@@ -7,7 +7,7 @@
 namespace Metal {
     struct OctreeNode final {
         std::array<OctreeNode *, 8> children;
-        std::array<unsigned int, 2> data{};
+        unsigned int data;
         bool isLeaf = false;
         unsigned int depth;
         bool isStructureStart = false;
@@ -42,9 +42,6 @@ namespace Metal {
 
         void dispose() const;
 
-        std::string getId();
-
-        void repeatedStructures(std::unordered_map<std::string, OctreeNode*> &repeated, int targetDepth);
     };
 } // Metal
 

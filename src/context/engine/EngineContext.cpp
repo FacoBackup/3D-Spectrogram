@@ -9,9 +9,6 @@ namespace Metal {
         context.passesService.onInitialize();
     }
 
-    void EngineContext::updateVoxelData() {
-    }
-
     void EngineContext::updateCurrentTime() {
         currentTime = Clock::now();
         std::chrono::duration<float> delta = currentTime - previousTime;
@@ -32,7 +29,6 @@ namespace Metal {
         context.cameraService.onSync();
 
         updateGlobalData();
-        updateVoxelData();
 
         context.passesService.onSync();
 
