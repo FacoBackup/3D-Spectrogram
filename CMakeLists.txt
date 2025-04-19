@@ -99,7 +99,6 @@ add_executable(
         src/context/editor/dock-spaces/viewport/CameraPositionPanel.h
         src/context/engine/passes/CommandBufferRecorder.cpp
         src/context/engine/passes/CommandBufferRecorder.h
-        src/service/camera/Camera.cpp
         src/context/editor/abstract/form/types/ColorField.cpp
         src/context/editor/abstract/form/types/ColorField.h
         src/context/editor/abstract/form/types/Vec4Field.cpp

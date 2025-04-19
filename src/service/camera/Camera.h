@@ -10,31 +10,10 @@
 #include "../../util/serialization-definitions.h"
 
 namespace Metal {
-    struct Camera final : Inspectable {
+    struct Camera final {
         float rotationSensitivity = 1;
         float movementSensitivity = 1.0f;
         float zoomSensitivity = 1.0f;
-        bool motionBlurEnabled = false;
-        float motionBlurVelocityScale = 1.f;
-        int motionBlurMaxSamples = 50;
-        bool cameraMotionBlur = false;
-        bool bloomEnabled = false;
-        bool filmGrain = false;
-        bool vignetteEnabled = false;
-        bool chromaticAberrationEnabled = false;
-        bool distortionEnabled = false;
-        bool DOF = false;
-        int focusDistanceDOF = 10;
-        float apertureDOF = 1.2f;
-        int focalLengthDOF = 5;
-        int samplesDOF = 100;
-        float filmGrainStrength = 1.f;
-        float vignetteStrength = .25f;
-        float bloomThreshold = .75f;
-        int bloomQuality = 8;
-        int bloomOffset = 0;
-        float chromaticAberrationIntensity = 1;
-        float distortionIntensity = 1;
 
         glm::mat4x4 viewMatrix{};
         glm::mat4x4 projectionMatrix{};
@@ -44,75 +23,28 @@ namespace Metal {
 
         glm::vec3 position{};
 
-        bool isOrthographic = false;
         float zFar = 10000;
         float zNear = .1f;
         float fov = 90;
         float aspectRatio = 1;
-        float orthographicProjectionSize = 50;
 
-        float pitch = 0.f;
+        float pitch = -10.f;
         float yaw = 0.f;
 
         float lastMouseX = 0;
         float lastMouseY = 0;
         float deltaX = 0;
         float deltaY = 0;
+        bool changed = false;
 
-        const char *getTitle() override;
+        glm::vec3 target = glm::vec3(0.0f); // Center to orbit around
+        float orbitDistance = 25.0f;         // Radius of the orbit
 
-        const char *getIcon() override;
-
-        void extractFrustumPlanes(glm::mat4x4 m);
-
-        void registerFields() override;
-
-        explicit Camera(float pitch, float yaw, glm::vec3 position);
-
-        SERIALIZE_TEMPLATE(
-            rotationSensitivity,
-            movementSensitivity,
-            zoomSensitivity,
-            motionBlurEnabled,
-            motionBlurVelocityScale,
-            motionBlurMaxSamples,
-            cameraMotionBlur,
-            bloomEnabled,
-            filmGrain,
-            vignetteEnabled,
-            chromaticAberrationEnabled,
-            distortionEnabled,
-            DOF,
-            focusDistanceDOF,
-            apertureDOF,
-            focalLengthDOF,
-            samplesDOF,
-            filmGrainStrength,
-            vignetteStrength,
-            bloomThreshold,
-            bloomQuality,
-            bloomOffset,
-            chromaticAberrationIntensity,
-            distortionIntensity,
-            position.x, position.y, position.z,
-            isOrthographic,
-            zFar,
-            zNear,
-            fov,
-            aspectRatio,
-            orthographicProjectionSize,
-            pitch,
-            yaw,
-            lastMouseX,
-            lastMouseY,
-            deltaX,
-            deltaY
-        )
-
-    private:
-        static void extractPlane(const glm::mat4 &matrix, int index, glm::vec4 &plane);
-
-        glm::vec4 planes[6] = {glm::vec4{}, glm::vec4{}, glm::vec4{}, glm::vec4{}, glm::vec4{}, glm::vec4{}};
+        explicit Camera(const float pitch, const float yaw, const glm::vec3 position) {
+            this->pitch = pitch;
+            this->yaw = yaw;
+            this->position = position;
+        }
     };
 }
 

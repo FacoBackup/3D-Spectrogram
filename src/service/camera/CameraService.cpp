@@ -8,10 +8,10 @@ namespace Metal {
         camera = &context.engineContext.camera;
         if (camera != nullptr) {
             updateAspectRatio();
-            if (camera->isNotFrozen()) {
+            if (camera->changed) {
                 updateMatrices();
                 context.engineContext.setCameraUpdated(true);
-                camera->freezeVersion();
+                camera->changed = false;
             }
         }
     }
@@ -22,7 +22,7 @@ namespace Metal {
         const float prevAspect = camera->aspectRatio;
         camera->aspectRatio = runtimeRepository.viewportW / runtimeRepository.viewportH;
         if (prevAspect != camera->aspectRatio) {
-            camera->registerChange();
+            camera->changed = true;
         }
     }
 
@@ -30,7 +30,6 @@ namespace Metal {
         updateProjection();
         updateView();
         camera->projViewMatrix = camera->projectionMatrix * camera->viewMatrix;
-        camera->extractFrustumPlanes(camera->projViewMatrix);
     }
 
     void CameraService::updateView() {
@@ -39,17 +38,9 @@ namespace Metal {
     }
 
     void CameraService::updateProjection() const {
-        if (camera->isOrthographic) {
-            camera->projectionMatrix = glm::ortho(-camera->orthographicProjectionSize,
-                                                  camera->orthographicProjectionSize,
-                                                  -camera->orthographicProjectionSize / camera->aspectRatio,
-                                                  camera->orthographicProjectionSize / camera->aspectRatio,
-                                                  -camera->zFar, camera->zFar);
-        } else {
-            camera->projectionMatrix = glm::perspective(camera->fov * Util::TO_RADIANS, camera->aspectRatio,
-                                                        camera->zNear,
-                                                        camera->zFar);
-        }
+        camera->projectionMatrix = glm::perspective(camera->fov * Util::TO_RADIANS, camera->aspectRatio,
+                                                    camera->zNear,
+                                                    camera->zFar);
         camera->projectionMatrix[1][1] *= -1;
         camera->invProjectionMatrix = glm::inverse(camera->projectionMatrix);
     }
@@ -77,27 +68,19 @@ namespace Metal {
                                  context.engineContext.deltaTime;
         if (runtimeRepository.leftPressed) {
             camera->position += right * multiplier;
-            camera->registerChange();
+            camera->changed = true;
         }
         if (runtimeRepository.rightPressed) {
             camera->position -= right * multiplier;
-            camera->registerChange();
+            camera->changed = true;
         }
         if (runtimeRepository.backwardPressed) {
-            if (camera->isOrthographic) {
-                camera->orthographicProjectionSize += multiplier;
-            } else {
-                camera->position -= forward * multiplier;
-            }
-            camera->registerChange();
+            camera->position -= forward * multiplier;
+            camera->changed = true;
         }
         if (runtimeRepository.forwardPressed) {
-            if (camera->isOrthographic) {
-                camera->orthographicProjectionSize -= multiplier;
-            } else {
-                camera->position += forward * multiplier;
-            }
-            camera->registerChange();
+            camera->position += forward * multiplier;
+            camera->changed = true;
         }
     }
 
@@ -105,15 +88,12 @@ namespace Metal {
         updateDelta(isFirstMovement);
 
         camera->yaw -= glm::radians(camera->deltaX);
-        if (std::abs(camera->yaw) >= PI_2) {
-            float mapped = std::abs(camera->yaw) - PI_2;
-            camera->yaw = (camera->yaw < 0.0f ? -mapped : mapped);
-        }
-        camera->pitch += glm::radians(camera->deltaY);
+        camera->pitch -= glm::radians(camera->deltaY);
         camera->pitch = glm::clamp(camera->pitch, -MIN_MAX_PITCH, MIN_MAX_PITCH);
 
-        camera->registerChange();
+        camera->changed = true;
     }
+
 
     void CameraService::updateDelta(const bool isFirstMovement) const {
         const auto &runtimeRepository = context.runtimeRepository;
@@ -139,22 +119,19 @@ namespace Metal {
         handleMouse(isFirstMovement);
     }
 
+    void CameraService::handleScroll(float scrollDelta) const {
+        camera->orbitDistance -= scrollDelta * camera->movementSensitivity;
+        camera->orbitDistance = glm::clamp(camera->orbitDistance, 0.5f, 100.0f);
+        camera->changed = true;
+    }
+
     void CameraService::createViewMatrix() {
-        const float cosPitch = std::cos(camera->pitch);
-        const float sinPitch = std::sin(camera->pitch);
-        const float cosYaw = std::cos(camera->yaw);
-        const float sinYaw = std::sin(camera->yaw);
+        // Convert yaw and pitch to spherical coordinates
+        float x = camera->orbitDistance * std::cos(camera->pitch) * std::sin(camera->yaw);
+        float y = camera->orbitDistance * std::sin(camera->pitch);
+        float z = camera->orbitDistance * std::cos(camera->pitch) * std::cos(camera->yaw);
 
-        xAxis = glm::vec3(cosYaw, 0.0f, -sinYaw);
-        yAxis = glm::vec3(sinYaw * sinPitch, cosPitch, cosYaw * sinPitch);
-        zAxis = glm::vec3(sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw);
-
-        camera->viewMatrix = glm::mat4x4(
-            xAxis.x, yAxis.x, zAxis.x, 0.0f,
-            xAxis.y, yAxis.y, zAxis.y, 0.0f,
-            xAxis.z, yAxis.z, zAxis.z, 0.0f,
-            -dot(xAxis, camera->position),
-            -dot(yAxis, camera->position),
-            -dot(zAxis, camera->position), 1.0f);
+        camera->position = camera->target + glm::vec3(x, y, z);
+        camera->viewMatrix = glm::lookAt(camera->position, camera->target, glm::vec3(0, 1, 0));
     }
 }
