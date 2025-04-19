@@ -9,16 +9,6 @@ namespace Metal {
         }
     }
 
-    bool Camera::isSphereInsideFrustum(const glm::vec3 center, const float radius) const {
-        for (const auto plane: planes) {
-            if (const float distance = plane.x * center.x + plane.y * center.y + plane.z * center.z + plane.w;
-                distance < -radius) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     void Camera::extractPlane(const glm::mat4 &matrix, const int index, glm::vec4 &plane) {
         switch (index) {
             case 0: // Left

@@ -1,11 +1,6 @@
 struct SurfaceInteraction {
     vec3 incomingRayDir;
     vec3 point;
-    vec3 normal;
-    vec3 tangent;
-    vec3 binormal;
-    bool anyHit;
-
     vec3 voxelPosition;
     float voxelSize;
     uint voxel;
@@ -99,7 +94,6 @@ inout ivec2 debugColor
 #endif
 ) {
     SurfaceInteraction hitData;
-    hitData.anyHit = false;
 
     vec3 center = vec3(0);
     float scale = TILE_SIZE / 2;
@@ -157,9 +151,8 @@ inout ivec2 debugColor
             }
             if (entryDist < minDistance) {
                 if (isLeafGroup) {
-                    hitData.anyHit = true;
-                    hitData.voxelPosition = newCenter;
                     hitData.voxel = voxel_node;
+                    hitData.voxelPosition = newCenter;
                     hitData.voxelSize = scale;
                     hitIndex = childGroupIndex;
 
@@ -170,11 +163,6 @@ inout ivec2 debugColor
                 }
             }
         }
-    }
-
-    if (hitData.anyHit){
-        vec3 vSize = vec3(hitData.voxelSize);
-        hitData.point = intersectRayAABB(ray, hitData.voxelPosition - vSize, hitData.voxelPosition + vSize).rgb;
     }
 
     return hitData;

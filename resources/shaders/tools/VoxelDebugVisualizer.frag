@@ -26,10 +26,15 @@ void main() {
     ivec2 colorData = ivec2(0);
     Ray ray = Ray(rayOrigin, rayDirection, 1./rayDirection);
     SurfaceInteraction hitData = trace(ray, settings.showRaySearchCount, settings.showRayTestCount, colorData);
-    finalColor = vec4(randomColor(rand(hitData.voxelPosition.xyz)), 1);
-
-    if (length(finalColor.rgb) == 0){
-        finalColor.rg = colorData/float(settings.searchCountDivisor);
-        finalColor.a = 1;
+    vec4 color = vec4(0);
+    color = vec4(randomColor(rand(hitData.voxelPosition.xyz)), 1);
+    if (length(color.rgb) == 0){
+        color.rg = colorData/float(settings.searchCountDivisor);
+        color.a = 1;
     }
+    finalColor = color;
+    if (length(color.rgb) == 0){
+        discard;
+    }
+
 }

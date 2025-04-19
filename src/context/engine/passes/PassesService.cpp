@@ -1,6 +1,7 @@
 #include "PassesService.h"
 #include "../../../context/ApplicationContext.h"
 #include "./CommandBufferRecorder.h"
+#include "../render-pass/impl/tools/BackgroundPass.h"
 #include "../render-pass/impl/tools/GridPass.h"
 #include "../render-pass/impl/tools/VoxelVisualizerPass.h"
 
@@ -12,12 +13,14 @@ namespace Metal {
         recorder = new CommandBufferRecorder(context.coreFrameBuffers.postProcessingFBO, context);
         pass = new VoxelVisualizerPass(context);
         gridPass = new GridPass(context);
+        backgroundPass = new BackgroundPass(context);
 
         pass->onInitialize();
         gridPass->onInitialize();
+        backgroundPass->onInitialize();
     }
 
     void PassesService::onSync() {
-        recorder->recordCommands({gridPass, pass});
+        recorder->recordCommands({backgroundPass, gridPass, pass});
     }
 } // Metal

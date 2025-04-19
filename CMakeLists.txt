@@ -130,7 +130,6 @@ add_executable(
         src/service/voxel/SVOInstance.h
         src/dto/push-constant/VoxelDebugSettingsPushConstant.h
         src/repository/editor/EditorRepository.cpp
-        src/dto/push-constant/GridPushConstant.h
         src/context/engine/passes/AbstractPass.cpp
         src/context/engine/passes/AbstractPass.h
         src/context/engine/passes/PassesService.cpp
@@ -140,6 +139,8 @@ add_executable(
         src/context/editor/dock-spaces/inspector/FilePickerUtil.h
         src/context/editor/dock-spaces/inspector/AudioData.h
         src/context/editor/dock-spaces/inspector/AudioProcessor.h
+        src/context/engine/render-pass/impl/tools/BackgroundPass.cpp
+        src/context/engine/render-pass/impl/tools/BackgroundPass.h
 )
 
 

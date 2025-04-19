@@ -7,18 +7,16 @@
 #include "../../../common/AbstractRuntimeComponent.h"
 
 
-namespace Metal {
-    class GridPass;
-}
 
 namespace Metal {
-    class VoxelVisualizerPass;
     class CommandBufferRecorder;
 
     class PassesService final : public AbstractRuntimeComponent {
         CommandBufferRecorder *recorder = nullptr;
-        VoxelVisualizerPass *pass = nullptr;
-        GridPass *gridPass = nullptr;
+        AbstractPass *pass = nullptr;
+        AbstractPass *gridPass = nullptr;
+        AbstractPass *backgroundPass = nullptr;
+
     public:
         explicit PassesService(ApplicationContext &context);
 

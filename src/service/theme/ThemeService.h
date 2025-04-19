@@ -18,15 +18,10 @@ namespace Metal {
         ImVec4 palette6{};
         ImVec4 textDisabled{};
         static glm::vec3 BACKGROUND_COLOR;
-        bool previousTheme = false;
-        float prevLength = 0.0f;
+        float prevLength = -1.f;
 
         explicit ThemeService(ApplicationContext &context) : AbstractRuntimeComponent(context) {
         }
-
-        void setDarkMode();
-
-        void setLightMode();
 
         void onSync() override;
     };

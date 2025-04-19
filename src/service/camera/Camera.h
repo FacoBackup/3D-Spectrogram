@@ -65,8 +65,6 @@ namespace Metal {
 
         void extractFrustumPlanes(glm::mat4x4 m);
 
-        bool isSphereInsideFrustum(glm::vec3 center, float radius) const;
-
         void registerFields() override;
 
         explicit Camera(float pitch, float yaw, glm::vec3 position);

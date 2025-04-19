@@ -9,21 +9,17 @@
 #include "../../common/inspection/Inspectable.h"
 
 namespace Metal {
-
     struct EditorRepository final : Inspectable {
-        bool showRaySearchCountVoxels = true;
-        bool showRayTestCountVoxels = true;
+        bool showRaySearchCountVoxels = false;
+        bool showRayTestCountVoxels = false;
         int voxelSearchCount = 32;
 
         ImVec4 accent{};
         ImU32 accentU32 = 0;
 
         glm::vec3 accentColor{0.26f, 0.59f, 0.98f};
+        glm::vec3 backgroundColor{.8};
         bool isDarkMode = true;
-        bool showGrid = true;
-        float gridScale = 1.f;
-        int gridThreshold = 100;
-        float gridThickness = .1;
 
 
         void registerFields() override;

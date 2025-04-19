@@ -11,13 +11,10 @@ namespace Metal {
     }
 
     void EditorRepository::registerFields() {
-        registerInt(voxelSearchCount, "Voxels", "Debug count divisor");
-        registerBool(showRaySearchCountVoxels, "Voxels", "Show ray search count");
-        registerBool(showRayTestCountVoxels, "Voxels", "Show ray test count");
+        // registerColor(backgroundColor, "", "backgroundColor");
 
-        registerBool(showGrid, "Grid", "Enabled?");
-        registerFloat(gridScale, "Grid", "Scale");
-        registerInt(gridThreshold, "Grid", "Threshold");
-        registerFloat(gridThickness, "Grid", "Thickness");
+        registerInt(voxelSearchCount, "", "Debug count divisor");
+        registerBool(showRaySearchCountVoxels, "", "Show ray search count");
+        registerBool(showRayTestCountVoxels, "", "Show ray test count");
     }
 }

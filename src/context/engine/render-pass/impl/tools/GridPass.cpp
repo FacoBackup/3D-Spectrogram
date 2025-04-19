@@ -11,20 +11,11 @@ namespace Metal {
                     "tools/Grid.frag"
                 )
                 .setBlendEnabled()
-                .setPushConstantsSize(sizeof(GridPushConstant))
                 .addDescriptorSet(context.coreDescriptorSets.globalDataDescriptor.get());
         pipelineInstance = context.pipelineService.createPipeline(gridPipelineBuilder);
     }
 
-    bool GridPass::shouldRun() {
-        return context.editorRepository.showGrid;
-    }
-
     void GridPass::onSync() {
-        pushConstant.scale = context.editorRepository.gridScale;
-        pushConstant.threshold = context.editorRepository.gridThreshold;
-        pushConstant.thickness = context.editorRepository.gridThickness;
-        recordPushConstant(&pushConstant);
         recordDrawSimpleInstanced(3, 1);
     }
 } // Metal
