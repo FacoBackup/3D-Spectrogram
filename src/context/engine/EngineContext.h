@@ -13,7 +13,7 @@ using TimePoint = std::chrono::time_point<Clock>;
 
 namespace Metal {
     struct EngineContext final : AbstractRuntimeComponent {
-        Camera camera{-(glm::pi<float>() / 4), glm::pi<float>() / 4, {10, 10, 10}};
+        Camera camera{};
 
         GlobalDataUBO globalDataUBO{};
         unsigned int lightsCount = 0;

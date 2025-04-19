@@ -28,8 +28,8 @@ namespace Metal {
         float fov = 90;
         float aspectRatio = 1;
 
-        float pitch = -10.f;
-        float yaw = 0.f;
+        float pitch = 0.523599;
+        float yaw = 0.785398;
 
         float lastMouseX = 0;
         float lastMouseY = 0;
@@ -37,14 +37,8 @@ namespace Metal {
         float deltaY = 0;
         bool changed = false;
 
-        glm::vec3 target = glm::vec3(0.0f); // Center to orbit around
-        float orbitDistance = 25.0f;         // Radius of the orbit
-
-        explicit Camera(const float pitch, const float yaw, const glm::vec3 position) {
-            this->pitch = pitch;
-            this->yaw = yaw;
-            this->position = position;
-        }
+        glm::vec3 target = glm::vec3(0.0f);
+        float orbitDistance = 25.0f;
     };
 }
 
