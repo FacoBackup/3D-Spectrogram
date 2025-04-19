@@ -1,5 +1,6 @@
 #include "../GlobalDataBuffer.glsl"
 #include "../CreateRay.glsl"
+#include "../util/RayTracer.glsl"
 #include "../Dithering.glsl"
 
 #define SCALE 1.f
@@ -9,6 +10,19 @@
 
 layout(location = 0) in vec2 texCoords;
 layout(location = 0) out vec4 finalColor;
+
+layout(push_constant) uniform Push {
+    bool showRaySearchCount;
+    bool showRayTestCount;
+    uint searchCountDivisor;
+} settings;
+
+vec3 randomColor(float seed) {
+    float r = rand(vec3(seed));
+    float g = rand(vec3(seed + r));
+    return vec3(r, g, rand(vec3(seed + g)));
+}
+
 
 bool rayMarch(vec3 ro, vec3 rd, out vec3 hitPos) {
     float t = 0.0;
@@ -49,7 +63,7 @@ float getGridLine3D(vec3 pos, float gridScale){
     return 1.0 - onAnyLine;
 }
 
-void main() {
+vec4 getGridColor(vec2 texCoords) {
     bool hasData = false;
     vec3 hitPoint;
     vec3 rayDir = createRay(texCoords, globalData.invProj, globalData.invView);
@@ -57,9 +71,9 @@ void main() {
 
     if (hasData){
         float distanceFromCamera = length(globalData.cameraWorldPosition.xyz - hitPoint);
-        float alpha = 1;
+        float alpha = 1.0;
         if (distanceFromCamera >= THRESHOLD){
-            alpha = 0;
+            alpha = 0.0;
         } else {
             float fadeRange = THRESHOLD * 0.1;
             alpha = smoothstep(THRESHOLD, THRESHOLD - fadeRange, distanceFromCamera);
@@ -68,8 +82,8 @@ void main() {
         float inBounds = step(abs(hitPoint.x), N) * step(abs(hitPoint.y), N) * step(abs(hitPoint.z), N);
         alpha *= inBounds;
 
-        if (alpha > 0){
-            vec3 baseColor = vec3(.9);
+        if (alpha > 0.0){
+            vec3 baseColor = vec3(0.9);
             vec3 xAxisColor = vec3(1.0, 0.0, 0.0);
             vec3 yAxisColor = vec3(0.0, 1.0, 0.0);
             vec3 zAxisColor = vec3(0.0, 0.0, 1.0);
@@ -90,22 +104,39 @@ void main() {
             vec4 gridColor = mix(vec4(baseColor, 1.0), vec4(0), getGridLine3D(hitPoint, 1));
             gridColor = mix(vec4(baseColor * .75, 1.0), gridColor, getGridLine3D(hitPoint, 5));
 
-            finalColor = mix(gridColor, centerLineColor, onAnyAxis);
+            vec4 final = mix(gridColor, centerLineColor, onAnyAxis);
+            final.a = min(alpha, final.a);
 
+            if (final.a == 0.0 || isDitherDiscard(final.a)) {
+                return vec4(0);
+            }
+
+            return final;
         } else {
-            finalColor = vec4(0.0);
+            return vec4(0);
         }
-
-        finalColor.a = min(alpha, finalColor.a);
-
-        if (finalColor.a == 0){
-            discard;
-        }
-        if (isDitherDiscard(finalColor.a)) {
-            discard;
-        }
-
     } else {
-        discard;
+        return vec4(0);
+    }
+}
+
+void main() {
+    finalColor = getGridColor(texCoords);
+    if(finalColor.a == 0) {
+        finalColor = vec4(.8, .8, .8, 1);
+    }
+
+    vec3 rayOrigin = globalData.cameraWorldPosition.xyz;
+    vec3 rayDirection = createRay(texCoords, globalData.invProj, globalData.invView);
+    ivec2 colorData = ivec2(0);
+    Ray ray = Ray(rayOrigin, rayDirection, 1./rayDirection);
+    SurfaceInteraction hitData = trace(ray, settings.showRaySearchCount, settings.showRayTestCount, colorData);
+    if (hitData.voxel == 0){
+        if (settings.showRaySearchCount || settings.showRayTestCount){
+            finalColor.rg = colorData/float(settings.searchCountDivisor);
+            finalColor.a = 1;
+        }
+    }else{
+        finalColor = vec4(randomColor(rand(hitData.voxelPosition.xyz)), 1);
     }
 }

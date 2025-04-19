@@ -86,12 +86,10 @@ uint getLevelOfDetail(float distanceFromRayOrigin){
 #define CHILD_GROUP_INDEX(V) (V >> 9) & 0x7FFFFFu
 
 SurfaceInteraction trace(
-in Ray ray,
-#ifdef DEBUG_VOXELS
- bool showRaySearchCount,
-bool showRayTestCount,
-inout ivec2 debugColor
-#endif
+    in Ray ray,
+    bool showRaySearchCount,
+    bool showRayTestCount,
+    inout ivec2 debugColor
 ) {
     SurfaceInteraction hitData;
 
@@ -111,11 +109,9 @@ inout ivec2 debugColor
     uint hitIndex;
     uint currentDepth = 1;
     while (stackPos-- > 0) {
-        #ifdef DEBUG_VOXELS
         if (showRaySearchCount){
             debugColor.r++;
         }
-        #endif
         center = stack[stackPos].center;
         index = stack[stackPos].index;
         scale = stack[stackPos].scale;
@@ -139,11 +135,9 @@ inout ivec2 debugColor
             vec3 minBox = newCenter - scale;
             vec3 maxBox = newCenter + scale;
 
-            #ifdef DEBUG_VOXELS
             if (showRayTestCount){
                 debugColor.g++;
             }
-            #endif
 
             float entryDist;
             if (!intersectWithDistance(minBox, maxBox, ray, entryDist)) {

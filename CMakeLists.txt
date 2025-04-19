@@ -97,8 +97,6 @@ add_executable(
         src/service/abstract/AbstractImporter.h
         src/context/editor/dock-spaces/viewport/CameraPositionPanel.cpp
         src/context/editor/dock-spaces/viewport/CameraPositionPanel.h
-        src/context/engine/render-pass/impl/tools/GridPass.cpp
-        src/context/engine/render-pass/impl/tools/GridPass.h
         src/context/engine/passes/CommandBufferRecorder.cpp
         src/context/engine/passes/CommandBufferRecorder.h
         src/service/camera/Camera.cpp
@@ -124,8 +122,8 @@ add_executable(
         src/service/framebuffer/FrameBufferAttachment.cpp
         src/util/serialization-definitions.h
         src/service/voxel/impl/SparseVoxelOctreeData.h
-        src/context/engine/render-pass/impl/tools/VoxelVisualizerPass.cpp
-        src/context/engine/render-pass/impl/tools/VoxelVisualizerPass.h
+        src/context/engine/render-pass/impl/tools/VisualizerPass.cpp
+        src/context/engine/render-pass/impl/tools/VisualizerPass.h
         src/service/voxel/SVOInstance.cpp
         src/service/voxel/SVOInstance.h
         src/dto/push-constant/VoxelDebugSettingsPushConstant.h
@@ -139,8 +137,6 @@ add_executable(
         src/context/editor/dock-spaces/inspector/FilePickerUtil.h
         src/context/editor/dock-spaces/inspector/AudioData.h
         src/context/editor/dock-spaces/inspector/AudioProcessor.h
-        src/context/engine/render-pass/impl/tools/BackgroundPass.cpp
-        src/context/engine/render-pass/impl/tools/BackgroundPass.h
 )
 
 

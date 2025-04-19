@@ -5,11 +5,11 @@
 #include "../../../../../dto/push-constant/VoxelDebugSettingsPushConstant.h"
 
 namespace Metal {
-    class VoxelVisualizerPass final : public AbstractRenderPass {
+    class VisualizerPass final : public AbstractRenderPass {
         VoxelDebugSettingsPushConstant settings{};
 
     public:
-        explicit VoxelVisualizerPass(ApplicationContext &context)
+        explicit VisualizerPass(ApplicationContext &context)
             : AbstractRenderPass(context) {
         }
 

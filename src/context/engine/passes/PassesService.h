@@ -1,12 +1,8 @@
 #ifndef PASSESSERVICE_H
 #define PASSESSERVICE_H
-#include <memory>
-#include <vector>
 
 #include "AbstractPass.h"
 #include "../../../common/AbstractRuntimeComponent.h"
-
-
 
 namespace Metal {
     class CommandBufferRecorder;
@@ -14,8 +10,6 @@ namespace Metal {
     class PassesService final : public AbstractRuntimeComponent {
         CommandBufferRecorder *recorder = nullptr;
         AbstractPass *voxelPass = nullptr;
-        AbstractPass *gridPass = nullptr;
-        AbstractPass *backgroundPass = nullptr;
 
     public:
         explicit PassesService(ApplicationContext &context);
