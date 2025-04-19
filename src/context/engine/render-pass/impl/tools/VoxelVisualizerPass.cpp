@@ -6,7 +6,7 @@
 namespace Metal {
     void VoxelVisualizerPass::onInitialize() {
         PipelineBuilder voxelVisualizerPipelineBuilder = PipelineBuilder::Of(
-                    context.coreFrameBuffers.postProcessingFBO,
+                    context.coreFrameBuffers.imageFBO,
                     "QUAD.vert",
                     "tools/VoxelDebugVisualizer.frag"
                 )

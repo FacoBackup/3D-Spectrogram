@@ -6,11 +6,10 @@
 namespace Metal {
     void BackgroundPass::onInitialize() {
         PipelineBuilder pipelineBuilder = PipelineBuilder::Of(
-                    context.coreFrameBuffers.postProcessingFBO,
+                    context.coreFrameBuffers.imageFBO,
                     "QUAD.vert",
                     "tools/Background.frag"
                 )
-                .setBlendEnabled()
                 .setPushConstantsSize(sizeof(BackgroundPushConstant));
         pipelineInstance = context.pipelineService.createPipeline(pipelineBuilder);
     }

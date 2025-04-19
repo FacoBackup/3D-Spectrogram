@@ -8,7 +8,6 @@ layout(location = 0) in vec2 texCoords;
 layout(location = 0) out vec4 finalColor;
 
 layout(push_constant) uniform Push {
-    int voxelDebugFlag;
     bool showRaySearchCount;
     bool showRayTestCount;
     uint searchCountDivisor;
@@ -26,15 +25,13 @@ void main() {
     ivec2 colorData = ivec2(0);
     Ray ray = Ray(rayOrigin, rayDirection, 1./rayDirection);
     SurfaceInteraction hitData = trace(ray, settings.showRaySearchCount, settings.showRayTestCount, colorData);
-    vec4 color = vec4(0);
-    color = vec4(randomColor(rand(hitData.voxelPosition.xyz)), 1);
-    if (length(color.rgb) == 0){
-        color.rg = colorData/float(settings.searchCountDivisor);
-        color.a = 1;
+    finalColor = vec4(randomColor(rand(hitData.voxelPosition.xyz)), 1);
+    if (length(finalColor.rgb) == 0){
+        if(settings.showRaySearchCount || settings.showRayTestCount){
+            finalColor.rg = colorData/float(settings.searchCountDivisor);
+            finalColor.a = 1;
+        }else{
+            discard;
+        }
     }
-    finalColor = color;
-    if (length(color.rgb) == 0){
-        discard;
-    }
-
 }

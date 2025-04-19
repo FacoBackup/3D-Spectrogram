@@ -10,17 +10,17 @@ namespace Metal {
     }
 
     void PassesService::onInitialize() {
-        recorder = new CommandBufferRecorder(context.coreFrameBuffers.postProcessingFBO, context);
-        pass = new VoxelVisualizerPass(context);
+        recorder = new CommandBufferRecorder(context.coreFrameBuffers.imageFBO, context);
+        voxelPass = new VoxelVisualizerPass(context);
         gridPass = new GridPass(context);
         backgroundPass = new BackgroundPass(context);
 
-        pass->onInitialize();
+        voxelPass->onInitialize();
         gridPass->onInitialize();
         backgroundPass->onInitialize();
     }
 
     void PassesService::onSync() {
-        recorder->recordCommands({backgroundPass, gridPass, pass});
+        recorder->recordCommands({backgroundPass, gridPass, voxelPass});
     }
 } // Metal

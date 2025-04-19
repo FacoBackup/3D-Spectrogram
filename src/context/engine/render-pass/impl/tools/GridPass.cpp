@@ -6,11 +6,10 @@
 namespace Metal {
     void GridPass::onInitialize() {
         PipelineBuilder gridPipelineBuilder = PipelineBuilder::Of(
-                    context.coreFrameBuffers.postProcessingFBO,
+                    context.coreFrameBuffers.imageFBO,
                     "QUAD.vert",
                     "tools/Grid.frag"
                 )
-                .setBlendEnabled()
                 .addDescriptorSet(context.coreDescriptorSets.globalDataDescriptor.get());
         pipelineInstance = context.pipelineService.createPipeline(gridPipelineBuilder);
     }

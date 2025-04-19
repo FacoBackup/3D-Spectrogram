@@ -15,7 +15,7 @@ namespace Metal {
         updateInputs();
         const ImVec2 windowSize = ImGui::GetWindowSize();
 
-        auto *framebuffer = context->coreFrameBuffers.postProcessingFBO;
+        auto *framebuffer = context->coreFrameBuffers.imageFBO;
         context->descriptorService.setImageDescriptor(framebuffer, 0);
         ImGui::Image(reinterpret_cast<ImTextureID>(framebuffer->attachments[0]->imageDescriptor->vkDescriptorSet),
                      windowSize);

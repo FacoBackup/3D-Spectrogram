@@ -13,7 +13,7 @@ namespace Metal {
 
     class PassesService final : public AbstractRuntimeComponent {
         CommandBufferRecorder *recorder = nullptr;
-        AbstractPass *pass = nullptr;
+        AbstractPass *voxelPass = nullptr;
         AbstractPass *gridPass = nullptr;
         AbstractPass *backgroundPass = nullptr;
 
