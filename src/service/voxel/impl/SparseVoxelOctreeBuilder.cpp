@@ -1,7 +1,5 @@
 #include "SparseVoxelOctreeBuilder.h"
 
-#define TILE_SIZE 128
-
 namespace Metal {
     SparseVoxelOctreeBuilder::SparseVoxelOctreeBuilder(unsigned int size, int maxDepth)
         : size(size), maxDepth(maxDepth) {

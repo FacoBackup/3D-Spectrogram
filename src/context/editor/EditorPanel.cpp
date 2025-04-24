@@ -3,6 +3,7 @@
 #include "../../context/ApplicationContext.h"
 #include "dock-spaces/inspector/InspectorPanel.h"
 #include "dock-spaces/viewport/ViewportPanel.h"
+#define MARGIN  8.0f
 
 namespace Metal {
     void EditorPanel::onSync() {
@@ -20,27 +21,29 @@ namespace Metal {
 
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-        if (ImGui::Begin("Janela##TCC", &UIUtil::OPEN,
-                         ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar |
-                         ImGuiWindowFlags_AlwaysAutoResize)) {
-            ImGui::Columns(2);
-            if (isFirst) {
-                ImGui::SetColumnWidth(0, viewport->Size.x * .75f);
-                isFirst = false;
-            }
-            if (ImGui::BeginChild("viewport")) {
-                pViewport->onSync();
-            }
-            ImGui::EndChild();
-            ImGui::NextColumn();
+        ImGui::SetNextWindowPos(ImVec2(0, 0));
+        ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
+        ImGui::Begin("MainViewport##TCC", nullptr,
+                     ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar |
+                     ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus);
 
-            if (ImGui::BeginChild("inspector")) {
-                pInspector->onSync();
-            }
-            ImGui::EndChild();
+        pViewport->onSync();
+        ImGui::End();
+        ImGui::PopStyleVar();
+
+        ImVec2 screenSize = ImGui::GetIO().DisplaySize;
+        float inspectorWidth = 300.0f;
+        float inspectorHeight = screenSize.y * 0.7f;
+        float inspectorX = screenSize.x - inspectorWidth - MARGIN;
+
+        ImGui::SetNextWindowPos(ImVec2(inspectorX, MARGIN), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(inspectorWidth, inspectorHeight), ImGuiCond_Always);
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.f);
+        if (ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_NoResize)) {
+            pInspector->onSync();
         }
         ImGui::End();
-        ImGui::Columns(1);
         ImGui::PopStyleVar();
     }
 

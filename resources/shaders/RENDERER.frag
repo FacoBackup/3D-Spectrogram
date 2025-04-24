@@ -6,7 +6,6 @@
 #define SCALE 1.f
 #define THRESHOLD 100
 #define THICKNESS .05f
-#define N 20.f
 
 layout(location = 0) in vec2 texCoords;
 layout(location = 0) out vec4 finalColor;
@@ -79,7 +78,7 @@ vec4 getGridColor(vec2 texCoords) {
             alpha = smoothstep(THRESHOLD, THRESHOLD - fadeRange, distanceFromCamera);
         }
 
-        float inBounds = step(abs(hitPoint.x), N) * step(abs(hitPoint.y), N) * step(abs(hitPoint.z), N);
+        float inBounds = step(abs(hitPoint.x), WORLD_SIZE) * step(abs(hitPoint.y), WORLD_SIZE) * step(abs(hitPoint.z), WORLD_SIZE);
         alpha *= inBounds;
 
         if (alpha > 0.0){
@@ -152,7 +151,7 @@ void main() {
     vec3 rayDirection = createRay(texCoords, globalData.invProj, globalData.invView);
     ivec2 colorData = ivec2(0);
     Ray ray = Ray(rayOrigin, rayDirection, 1./rayDirection);
-    SurfaceInteraction hitData = trace(ray, settings.showRaySearchCount, settings.showRayTestCount, colorData);
+    SurfaceInteraction hitData = trace(ray, settings.showRaySearchCount, settings.showRayTestCount, colorData, WORLD_SIZE * 10.f);
     if (hitData.voxel == 0){
         if (settings.showRaySearchCount || settings.showRayTestCount){
             finalColor.rg = colorData/float(settings.searchCountDivisor);

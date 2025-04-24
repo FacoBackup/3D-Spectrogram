@@ -48,54 +48,7 @@ namespace Metal {
     CameraService::CameraService(ApplicationContext &context) : AbstractRuntimeComponent(context) {
     }
 
-    void CameraService::handleInputInternal() const {
-        const auto &runtimeRepository = context.runtimeRepository;
-
-        glm::vec3 forward(
-            -std::sin(camera->yaw) * std::cos(camera->pitch),
-            std::sin(camera->pitch),
-            -std::cos(camera->yaw) * std::cos(camera->pitch)
-        );
-        glm::vec3 right(
-            std::sin(camera->yaw - PI_OVER_2),
-            0.0f,
-            std::cos(camera->yaw - PI_OVER_2)
-        );
-        forward = glm::normalize(forward);
-        right = glm::normalize(right);
-
-        const float multiplier = 10 * camera->movementSensitivity *
-                                 context.engineContext.deltaTime;
-        if (runtimeRepository.leftPressed) {
-            camera->position += right * multiplier;
-            camera->changed = true;
-        }
-        if (runtimeRepository.rightPressed) {
-            camera->position -= right * multiplier;
-            camera->changed = true;
-        }
-        if (runtimeRepository.backwardPressed) {
-            camera->position -= forward * multiplier;
-            camera->changed = true;
-        }
-        if (runtimeRepository.forwardPressed) {
-            camera->position += forward * multiplier;
-            camera->changed = true;
-        }
-    }
-
-    void CameraService::handleMouse(const bool isFirstMovement) const {
-        updateDelta(isFirstMovement);
-
-        camera->yaw -= glm::radians(camera->deltaX);
-        camera->pitch -= glm::radians(camera->deltaY);
-        camera->pitch = glm::clamp(camera->pitch, -MIN_MAX_PITCH, MIN_MAX_PITCH);
-
-        camera->changed = true;
-    }
-
-
-    void CameraService::updateDelta(const bool isFirstMovement) const {
+    void CameraService::handleInput(const bool isFirstMovement) const {
         const auto &runtimeRepository = context.runtimeRepository;
         const float mouseX = runtimeRepository.mouseX;
         const float mouseY = runtimeRepository.mouseY;
@@ -104,19 +57,18 @@ namespace Metal {
             camera->lastMouseX = mouseX;
             camera->lastMouseY = mouseY;
         }
-
         camera->deltaX = (mouseX - camera->lastMouseX) * camera->rotationSensitivity *
                          0.25f;
         camera->deltaY = (camera->lastMouseY - mouseY) * camera->rotationSensitivity *
                          0.25f;
-
         camera->lastMouseX = mouseX;
         camera->lastMouseY = mouseY;
-    }
 
-    void CameraService::handleInput(const bool isFirstMovement) const {
-        handleInputInternal();
-        handleMouse(isFirstMovement);
+        camera->yaw -= glm::radians(camera->deltaX);
+        camera->pitch -= glm::radians(camera->deltaY);
+        camera->pitch = glm::clamp(camera->pitch, -MIN_MAX_PITCH, MIN_MAX_PITCH);
+
+        camera->changed = true;
     }
 
     void CameraService::handleScroll(float scrollDelta) const {

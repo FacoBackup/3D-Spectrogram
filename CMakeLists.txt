@@ -95,8 +95,6 @@ add_executable(
         src/util/FilesUtil.h
         src/util/FileDialogUtil.h
         src/service/abstract/AbstractImporter.h
-        src/context/editor/dock-spaces/viewport/CameraPositionPanel.cpp
-        src/context/editor/dock-spaces/viewport/CameraPositionPanel.h
         src/context/engine/passes/CommandBufferRecorder.cpp
         src/context/engine/passes/CommandBufferRecorder.h
         src/context/editor/abstract/form/types/ColorField.cpp
@@ -136,6 +134,8 @@ add_executable(
         src/context/editor/dock-spaces/inspector/FilePickerUtil.h
         src/context/editor/dock-spaces/inspector/AudioData.h
         src/context/editor/dock-spaces/inspector/AudioProcessor.h
+        src/context/editor/dock-spaces/inspector/components/TimestampPickerPanel.cpp
+        src/context/editor/dock-spaces/inspector/components/TimestampPickerPanel.h
 )
 
 

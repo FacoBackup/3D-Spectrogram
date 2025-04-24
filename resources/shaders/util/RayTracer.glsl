@@ -89,18 +89,19 @@ SurfaceInteraction trace(
     in Ray ray,
     bool showRaySearchCount,
     bool showRayTestCount,
-    inout ivec2 debugColor
+    inout ivec2 debugColor,
+    float containerSize
 ) {
     SurfaceInteraction hitData;
 
     vec3 center = vec3(0);
-    float scale = TILE_SIZE / 2;
+    float scale = containerSize / 2;
     vec3 minBox = center - scale;
     vec3 maxBox = center + scale;
     float minDistance = 1e10;// Large initial value
 
     if (!intersect(minBox, maxBox, ray)) return hitData;
-    Stack stack[10];
+    Stack stack[12];
     scale *= 0.5f;
     stack[0] = Stack(0u, center, scale, 1);
 

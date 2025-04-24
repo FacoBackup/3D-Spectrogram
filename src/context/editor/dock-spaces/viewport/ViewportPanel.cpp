@@ -1,26 +1,50 @@
 #include "ViewportPanel.h"
 
-#include "CameraPositionPanel.h"
-#include "ImGuizmo.h"
 #include "../../../../context/ApplicationContext.h"
 #include "../../../../service/framebuffer/FrameBufferInstance.h"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/matrix_decompose.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Metal {
-    void ViewportPanel::onInitialize() {
-        appendChild(cameraPanel = new CameraPositionPanel());
-    }
-
     void ViewportPanel::onSync() {
-        updateCamera();
         updateInputs();
+        updateCamera();
         const ImVec2 windowSize = ImGui::GetWindowSize();
-
         auto *framebuffer = context->coreFrameBuffers.imageFBO;
         context->descriptorService.setImageDescriptor(framebuffer, 0);
         ImGui::Image(reinterpret_cast<ImTextureID>(framebuffer->attachments[0]->imageDescriptor->vkDescriptorSet),
                      windowSize);
+        renderCameraGizmo();
+    }
 
-        cameraPanel->onSync();
+    void ViewportPanel::renderCameraGizmo() {
+        auto &camera = context->engineContext.camera;
+
+        ImGuizmo::SetDrawlist();
+
+        ImVec2 viewportPos = ImGui::GetWindowPos();
+        ImVec2 viewportSize = ImGui::GetWindowSize();
+        ImGuizmo::SetRect(viewportPos.x, viewportPos.y, viewportSize.x, viewportSize.y);
+
+        float gizmoSize = 100.0f;
+        ImVec2 gizmoPos = ImVec2(viewportPos.x, viewportPos.y);
+
+        float *v = glm::value_ptr(camera.viewMatrix);
+        glm::mat4 originalView = camera.viewMatrix;
+
+        ImGuizmo::ViewManipulate(v, 4.0f, gizmoPos, ImVec2(gizmoSize, gizmoSize), IM_COL32(40, 40, 40, 0));
+
+        if (camera.viewMatrix != originalView) {
+            camera.invViewMatrix = glm::inverse(camera.viewMatrix);
+            camera.projViewMatrix = camera.projectionMatrix * camera.viewMatrix;
+            camera.invProjectionMatrix = glm::inverse(camera.projectionMatrix);
+            camera.position = glm::vec3(camera.invViewMatrix[3]);
+
+            glm::vec3 forward = glm::normalize(glm::vec3(-camera.viewMatrix[2]));
+            camera.yaw = atan2(forward.x, forward.z);
+            camera.pitch = asin(forward.y);
+        }
     }
 
     void ViewportPanel::updateCamera() {
@@ -40,6 +64,8 @@ namespace Metal {
             if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
                 cameraService.handleInput(isFirstMovement);
                 isFirstMovement = false;
+            } else {
+                isFirstMovement = true;
             }
         } else {
             isFirstMovement = true;

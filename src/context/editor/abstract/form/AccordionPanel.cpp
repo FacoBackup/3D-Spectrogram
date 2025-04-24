@@ -23,7 +23,6 @@ namespace Metal {
 
             if (i < children.size() - 1) {
                 ImGui::Dummy(ImVec2(0, 4));
-                ImGui::Separator();
             }
         }
     }

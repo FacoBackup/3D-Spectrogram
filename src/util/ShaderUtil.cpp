@@ -10,7 +10,6 @@
 #include "glslang/Include/glslang_c_interface.h"
 #include "glslang/Public/resource_limits_c.h"
 #define BASE_PATH "../resources/shaders/"
-#define TILE_SIZE 64
 
 namespace Metal {
     void ShaderUtil::CheckShaderCompilation(glslang_shader_t *shader) {
@@ -147,7 +146,7 @@ namespace Metal {
         const std::string basePath = context.getShadersDirectory();
         std::string source = ProcessShader(BASE_PATH + pFilename);
         source = "#define DEBUG\n" + source;
-        source = "#define TILE_SIZE " + std::to_string(TILE_SIZE) + std::string("\n") + source;
+        source = "#define WORLD_SIZE " + std::to_string(WORLD_SIZE) + std::string("\n") + source;
         source = "#define PI_2 6.28318530718\n" + source;
         source = "#define PI 3.14159265\n" + source;
 

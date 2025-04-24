@@ -9,6 +9,7 @@
 namespace Metal::UIUtil {
     static constexpr ImVec4 DIRECTORY_COLOR{188 / 255.f, 128 / 255.f, 78 / 255.f, 1};
     static constexpr ImVec2 MEDIUM_SPACING(5, 0);
+    static constexpr ImVec2 MEDIUM_SPACING_VERTICAL(0, 5);
     static constexpr ImVec2 LARGE_SPACING(40, 0);
     static constexpr ImVec2 VEC2_ZERO(0.0f, 0.0f);
     static ImVec2 AUX_VEC2(0, 0);
@@ -62,9 +63,13 @@ namespace Metal::UIUtil {
         ImGui::SameLine();
     }
 
-    static void Spacing() {
+    static void Spacing(bool vertical = false) {
         ImGui::SameLine();
-        ImGui::Dummy(MEDIUM_SPACING);
+        if (vertical) {
+            ImGui::Dummy(MEDIUM_SPACING_VERTICAL);
+        } else {
+            ImGui::Dummy(MEDIUM_SPACING);
+        }
         ImGui::SameLine();
     }
 

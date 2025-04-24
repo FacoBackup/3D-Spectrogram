@@ -9,6 +9,9 @@
 #include "../../common/inspection/Inspectable.h"
 
 namespace Metal {
+    struct AudioMetaData {
+    };
+
     struct EditorRepository final : Inspectable {
         bool showRaySearchCountVoxels = false;
         bool showRayTestCountVoxels = false;
@@ -20,7 +23,10 @@ namespace Metal {
         glm::vec3 accentColor{0.26f, 0.59f, 0.98f};
         glm::vec3 backgroundColor{.8};
         bool isDarkMode = true;
-
+        std::string pathToAudio;
+        float selectedAudioSize = 0.f;
+        float rangeStart = 1.0f;
+        float rangeEnd = 3.5f;
 
         void registerFields() override;
 

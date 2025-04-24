@@ -6,12 +6,11 @@
 namespace Metal {
     class ViewportPanel final : public AbstractPanel {
         bool isFirstMovement = false;
-        AbstractPanel *cameraPanel = nullptr;
 
     public:
-        void onInitialize() override;
-
         void onSync() override;
+
+        void renderCameraGizmo();
 
         void updateCamera();
 

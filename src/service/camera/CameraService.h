@@ -27,12 +27,6 @@ namespace Metal {
 
         void updateAspectRatio() const;
 
-        void handleInputInternal() const;
-
-        void handleMouse(bool isFirstMovement) const;
-
-        void updateDelta(bool isFirstMovement) const;
-
         void createViewMatrix();
 
     public:

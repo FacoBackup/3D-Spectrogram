@@ -76,8 +76,18 @@ namespace Metal {
             std::cout << "Successfully read " << totalFramesRead << " frames." << std::endl;
             return audioData;
         }
+
+        static double getDuration(const std::string& path) {
+            SF_INFO info = {};
+            SNDFILE* snd = sf_open(path.c_str(), SFM_READ, &info);
+            if (!snd)
+                throw std::runtime_error(sf_strerror(nullptr));
+            double duration = static_cast<double>(info.frames) / info.samplerate;
+            sf_close(snd);
+            return duration;
+        }
+
     };
 };
 
-}
 #endif //AUDIOPROCESSOR_H

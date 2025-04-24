@@ -47,11 +47,10 @@ namespace Metal {
         ImGui::CreateContext();
         ImGuiIO &io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Docking
 
         io.ConfigViewportsNoTaskBarIcon = true;
-        io.ConfigDockingAlwaysTabBar = true;
-        io.ConfigWindowsResizeFromEdges = true;
+        io.ConfigDockingAlwaysTabBar = false;
+        io.ConfigWindowsResizeFromEdges = false;
 
         // Setup Platform/Renderer backends
         ImGui_ImplGlfw_InitForVulkan(context.glfwContext.getWindow(), true);

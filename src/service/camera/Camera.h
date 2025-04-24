@@ -9,6 +9,8 @@
 #include "../../common/inspection/Inspectable.h"
 #include "../../util/serialization-definitions.h"
 
+#define WORLD_SIZE 20.f
+
 namespace Metal {
     struct Camera final {
         float rotationSensitivity = 1;
@@ -37,7 +39,7 @@ namespace Metal {
         float deltaY = 0;
         bool changed = false;
 
-        glm::vec3 target = glm::vec3(0.0f);
+        glm::vec3 target = glm::vec3(WORLD_SIZE/2.f);
         float orbitDistance = 25.0f;
     };
 }
