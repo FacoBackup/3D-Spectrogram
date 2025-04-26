@@ -1,4 +1,6 @@
 #include "EditorPanel.h"
+
+#include "NotificationPanel.h"
 #include "../../util/UIUtil.h"
 #include "../../context/ApplicationContext.h"
 #include "dock-spaces/inspector/InspectorPanel.h"
@@ -45,12 +47,16 @@ namespace Metal {
         }
         ImGui::End();
         ImGui::PopStyleVar();
+
+        pNotifications->onSync();
     }
 
     void EditorPanel::onInitialize() {
         pViewport = new ViewportPanel();
         pInspector = new InspectorPanel();
+        pNotifications = new NotificationPanel;
         appendChild(pViewport);
         appendChild(pInspector);
+        appendChild(pNotifications);
     }
 }

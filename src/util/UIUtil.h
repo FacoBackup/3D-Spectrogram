@@ -64,13 +64,13 @@ namespace Metal::UIUtil {
     }
 
     static void Spacing(bool vertical = false) {
-        ImGui::SameLine();
         if (vertical) {
             ImGui::Dummy(MEDIUM_SPACING_VERTICAL);
         } else {
+            ImGui::SameLine();
             ImGui::Dummy(MEDIUM_SPACING);
+            ImGui::SameLine();
         }
-        ImGui::SameLine();
     }
 
     static void DynamicSpacing(float size) {

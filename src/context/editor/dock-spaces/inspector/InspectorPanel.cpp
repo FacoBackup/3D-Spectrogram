@@ -1,13 +1,10 @@
 #include "InspectorPanel.h"
 
-#include "AudioProcessor.h"
 #include "FilePickerUtil.h"
 #include "../../abstract/form/FormPanel.h"
 #include "../../../../util/UIUtil.h"
 #include "../../../../common/inspection/Inspectable.h"
 #include "../../../../context/ApplicationContext.h"
-#include "../../../../service/buffer/BufferInstance.h"
-#include "../../../../service/voxel/impl/SparseVoxelOctreeBuilder.h"
 #include "components/TimeStampPickerPanel.h"
 
 namespace Metal {
@@ -21,16 +18,14 @@ namespace Metal {
     void InspectorPanel::renderFileSelection() {
         if (ImGui::Button(("Selecionar arquivo" + id + "selectAudio").c_str())) {
             context->editorRepository.pathToAudio = FilePickerUtil::selectAudioFile().c_str();
-            if (!context->editorRepository.pathToAudio.empty()) {
-                context->editorRepository.selectedAudioSize = AudioProcessor::getDuration(
-                    context->editorRepository.pathToAudio);
-            }
+            context->audioProcessorService.extractAudioData();
         }
         if (!context->editorRepository.pathToAudio.empty()) {
             ImGui::Text("Nome: %s", context->editorRepository.pathToAudio.substr(
                             context->editorRepository.pathToAudio.find_last_of('/'),
                             context->editorRepository.pathToAudio.size()).c_str());
-            ImGui::Text("Tamanho: %s segundos", std::to_string(static_cast<int>(context->editorRepository.selectedAudioSize)).c_str());
+            ImGui::Text("Tamanho: %s segundos",
+                        std::to_string(static_cast<int>(context->editorRepository.selectedAudioSize)).c_str());
         } else {
             ImGui::Text("Nenhum arquivo selecionado");
         }
@@ -49,37 +44,24 @@ namespace Metal {
         ImGui::PopStyleColor();
     }
 
+    void InspectorPanel::renderAudioInfo() {
+        ImGui::Text("Informações do arquivo");
+        ImGui::Separator();
+
+        UIUtil::Spacing(true);
+
+        ImGui::Text("Tamanho: %.2f", context->editorRepository.selectedAudioSize);
+        ImGui::Text("Sample rate: %d", context->editorRepository.sampleRate);
+        ImGui::Text("Channels: %d", context->editorRepository.channels);
+        ImGui::Text("Frames: %d", context->editorRepository.frames);
+    }
+
     void InspectorPanel::onSync() {
+        beginBox("formBase", 150);
+
         formPanel->setInspection(&context->editorRepository);
         formPanel->onSync();
-
-        if (ImGui::Button(("Build svo" + id + "start").c_str())) {
-            auto builder = SparseVoxelOctreeBuilder(5, 10);
-            float gridSize = 100.0f; // Size of the X and Z grid
-            float gridSize2 = gridSize * 2; // Size of the X and Z grid
-            float step = 1.0f; // Spacing between points
-            float frequency = 0.1f; // Frequency for the sine wave
-            float amplitude = 5.0f; // Amplitude for the sine wave
-
-            for (float x = 0; x <= gridSize; x += step) {
-                for (float z = 0; z <= gridSize; z += step) {
-                    float lX = x / gridSize2;
-                    float lZ = z / gridSize2;
-                    float y = sinf(x * frequency) * cosf(z * frequency) * amplitude;
-                    float lY = y / gridSize2;
-
-                    glm::vec3 point = {lX, lY, lZ};
-                    VoxelData data{{1, 0, 0}}; // red color
-                    builder.insert(point, data);
-                }
-            }
-            auto voxels = builder.buildBuffer();
-            context->coreBuffers.svoData->update(voxels.data());
-        }
-
-        ImGui::NewLine();
-        UIUtil::Spacing(true);
-        ImGui::NewLine();
+        endBox();
 
         beginBox("audioSelection", 80);
         renderFileSelection();
@@ -89,9 +71,17 @@ namespace Metal {
             beginBox("timestampPicker", 85);
             timeStampPickerPanel->onSync();
             endBox();
+
+            beginBox("audioInfo", 125);
+            renderAudioInfo();
+            endBox();
         }
 
-        ImGui::NewLine();
         UIUtil::Spacing(true);
+
+        if (!context->editorRepository.pathToAudio.empty() && ImGui::Button(
+                ("Construir representação" + id + "start").c_str())) {
+            context->audioProcessorService.buildRepresentationBuffer();
+        }
     }
 }

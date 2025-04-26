@@ -8,6 +8,7 @@ namespace Metal {
     class EditorPanel final : public AbstractPanel {
         AbstractPanel *pViewport = nullptr;
         AbstractPanel *pInspector = nullptr;
+        AbstractPanel *pNotifications = nullptr;
 
         bool isFirst = true;
     public:

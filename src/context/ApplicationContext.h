@@ -20,7 +20,9 @@
 
 #include "../repository/runtime/RuntimeRepository.h"
 #include "../repository/editor/EditorRepository.h"
+#include "../repository/notification/NotificationRepository.h"
 #include "editor/EditorPanel.h"
+#include "../service/audio/AudioProcessorService.h"
 #include "gui/GuiContext.h"
 
 namespace Metal {
@@ -49,11 +51,13 @@ namespace Metal {
         DescriptorService descriptorService{*this};
         ThemeService themeService{*this};
         CameraService cameraService{*this};
+        AudioProcessorService audioProcessorService{*this};
         // ----------- Services
 
         // ----------- Repository
         RuntimeRepository runtimeRepository{};
         EditorRepository editorRepository{};
+        NotificationRepository notificationRepository{};
         // ----------- Repository
 
         [[nodiscard]] bool isDebugMode() const { return debugMode; }

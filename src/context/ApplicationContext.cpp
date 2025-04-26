@@ -30,7 +30,11 @@ namespace Metal {
         while (!glfwWindowShouldClose(window)) {
             if (glfwContext.beginFrame()) {
                 GuiContext::BeginFrame();
-                editorPanel.onSync();
+                try {
+                    editorPanel.onSync();
+                } catch (std::exception &e) {
+
+                }
                 ImGui::Render();
                 auto *drawData = ImGui::GetDrawData();
                 const bool main_is_minimized = (drawData->DisplaySize.x <= 0.0f || drawData->DisplaySize.y <= 0.0f);

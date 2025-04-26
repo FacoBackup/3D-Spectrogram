@@ -94,7 +94,6 @@ add_executable(
         src/service/pipeline/PipelineInstance.cpp
         src/util/FilesUtil.h
         src/util/FileDialogUtil.h
-        src/service/abstract/AbstractImporter.h
         src/context/engine/passes/CommandBufferRecorder.cpp
         src/context/engine/passes/CommandBufferRecorder.h
         src/context/editor/abstract/form/types/ColorField.cpp
@@ -121,8 +120,6 @@ add_executable(
         src/service/voxel/impl/SparseVoxelOctreeData.h
         src/context/engine/render-pass/impl/tools/VisualizerPass.cpp
         src/context/engine/render-pass/impl/tools/VisualizerPass.h
-        src/service/voxel/SVOInstance.cpp
-        src/service/voxel/SVOInstance.h
         src/dto/push-constant/VoxelDebugSettingsPushConstant.h
         src/repository/editor/EditorRepository.cpp
         src/context/engine/passes/AbstractPass.cpp
@@ -130,12 +127,17 @@ add_executable(
         src/context/engine/passes/PassesService.cpp
         src/context/engine/passes/PassesService.h
         src/util/ImageUtils.h
-        src/service/voxel/VoxelizationRequest.h
         src/context/editor/dock-spaces/inspector/FilePickerUtil.h
-        src/context/editor/dock-spaces/inspector/AudioData.h
-        src/context/editor/dock-spaces/inspector/AudioProcessor.h
+        src/service/audio/AudioData.h
+        src/service/audio/AudioProcessorService.h
         src/context/editor/dock-spaces/inspector/components/TimestampPickerPanel.cpp
         src/context/editor/dock-spaces/inspector/components/TimestampPickerPanel.h
+        src/service/audio/AudioProcessorService.cpp
+        src/context/editor/NotificationPanel.cpp
+        src/context/editor/NotificationPanel.h
+        src/repository/notification/NotificationRepository.h
+        src/repository/notification/Notification.h
+        src/repository/notification/NotificationRepository.cpp
 )
 
 

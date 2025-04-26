@@ -16,9 +16,11 @@ namespace Metal {
 
         void renderFileSelection();
 
-        void beginBox(std::string name, float height = 60);
+        void beginBox(std::string name, float height);
 
         void endBox();
+
+        void renderAudioInfo();
 
         void onSync() override;
     };

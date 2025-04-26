@@ -11,8 +11,6 @@ namespace Metal {
     }
 
     void EditorRepository::registerFields() {
-        // registerColor(backgroundColor, "", "backgroundColor");
-
         registerInt(voxelSearchCount, "", "Debug count divisor");
         registerBool(showRaySearchCountVoxels, "", "Show ray search count");
         registerBool(showRayTestCountVoxels, "", "Show ray test count");
