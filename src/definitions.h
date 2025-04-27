@@ -2,5 +2,6 @@
 #define DEFINITIONS_H
 
 #define DEFAULT_WORLD_SIZE 20.f
+#define WORLD_VOXEL_SCALE 10
 
 #endif

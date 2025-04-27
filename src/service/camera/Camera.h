@@ -38,7 +38,7 @@ namespace Metal {
         float deltaY = 0;
         bool changed = false;
 
-        glm::vec3 target = glm::vec3(DEFAULT_WORLD_SIZE/2.f);
+        glm::vec3 target = glm::vec3(DEFAULT_WORLD_SIZE / 2.f, 0, DEFAULT_WORLD_SIZE / 2.f);
         float orbitDistance = 25.0f;
     };
 }

@@ -95,12 +95,14 @@ namespace Metal {
     }
 
     void AudioProcessorService::buildRepresentationBuffer() {
-        auto builder = SparseVoxelOctreeBuilder(context.editorRepository.worldSize * 10, 10);
+        int scale = 10;
+        auto builder = SparseVoxelOctreeBuilder(context.editorRepository.worldSize * WORLD_VOXEL_SCALE, 10);
 
         auto audioData = readAudioData();
-        for (int x = 0; x <= context.editorRepository.worldSize; x++) {
-            for (int z = 0; z <= context.editorRepository.worldSize; z++) {
-                builder.insert({x, 0, z}, VoxelData{{1, 1, 1}});
+        for (int x = 0; x <= context.editorRepository.worldSize * scale; x++) {
+            for (int z = 0; z <= context.editorRepository.worldSize * scale; z++) {
+                float fScale = scale;
+                builder.insert({x / fScale, (sin(x + z) + 1.) / fScale, z / fScale}, VoxelData{{1, 1, 1}});
             }
         }
         auto voxels = builder.buildBuffer();

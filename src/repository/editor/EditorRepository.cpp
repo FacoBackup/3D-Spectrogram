@@ -21,7 +21,7 @@ namespace Metal {
             rangeEnd = static_cast<float>(sampleSize);
             rangeStart = 0;
             worldSize = sampleSize * 2;
-            context.engineContext.camera.target = glm::vec3(static_cast<float>(sampleSize));
+            context.engineContext.camera.target = glm::vec3(static_cast<float>(sampleSize), 0, static_cast<float>(sampleSize));
             context.engineContext.camera.changed = true;
             context.engineContext.setCameraUpdated(true);
         }

@@ -2,7 +2,7 @@
 
 #include "../ApplicationContext.h"
 
-#define NOTIFICATION_WIDTH  250.0f
+#define NOTIFICATION_WIDTH  300.0f
 #define NOTIFICATION_HEIGHT  35.0f
 #define PADDING  10.0f
 

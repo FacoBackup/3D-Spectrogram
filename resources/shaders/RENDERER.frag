@@ -16,13 +16,6 @@ layout(push_constant) uniform Push {
     uint searchCountDivisor;
 } settings;
 
-vec3 randomColor(float seed) {
-    float r = rand(vec3(seed));
-    float g = rand(vec3(seed + r));
-    return vec3(r, g, rand(vec3(seed + g)));
-}
-
-
 bool rayMarch(vec3 ro, vec3 rd, out vec3 hitPos) {
     float t = 0.0;
     hitPos = ro;
@@ -125,7 +118,7 @@ vec3 hsv2rgb(vec3 c) {
     return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 }
 
-vec3 colorFromPosition(vec3 position) {
+vec3 colorFromPosition(vec3 position, bool sat0) {
     float time = position.x;
     float magnitude = position.y;
     float amplitude = position.z;
@@ -138,12 +131,12 @@ vec3 colorFromPosition(vec3 position) {
     float saturation = 0.3 + 0.7 * normalizedAmp;
     float value = 0.2 + 0.8 * normalizedMag;
 
-    return hsv2rgb(vec3(hue, saturation, value));
+    return hsv2rgb(vec3(hue, sat0 ? 0. : saturation, value));
 }
 
 void main() {
     finalColor = getGridColor(texCoords);
-    if(finalColor.a == 0) {
+    if (finalColor.a == 0) {
         finalColor = vec4(.8, .8, .8, 1);
     }
 
@@ -157,7 +150,7 @@ void main() {
             finalColor.rg = colorData/float(settings.searchCountDivisor);
             finalColor.a = 1;
         }
-    }else{
-        finalColor = vec4(colorFromPosition(hitData.voxelPosition.xyz), 1);
+    } else {
+        finalColor = vec4(colorFromPosition(hitData.voxelPosition.xyz, hitData.voxelPosition.y - hitData.voxelSize == 0), 1);
     }
 }
