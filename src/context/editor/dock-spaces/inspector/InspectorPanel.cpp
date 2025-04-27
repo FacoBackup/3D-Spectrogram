@@ -15,19 +15,10 @@ namespace Metal {
         appendChild(timeStampPickerPanel);
     }
 
-    void InspectorPanel::renderFileSelection() {
+    void InspectorPanel::renderFileSelection() const {
         if (ImGui::Button(("Selecionar arquivo" + id + "selectAudio").c_str())) {
-            context->editorRepository.pathToAudio = FilePickerUtil::selectAudioFile().c_str();
+            context->editorRepository.pathToAudio = FilePickerUtil::selectAudioFile();
             context->audioProcessorService.extractAudioData();
-        }
-        if (!context->editorRepository.pathToAudio.empty()) {
-            ImGui::Text("Nome: %s", context->editorRepository.pathToAudio.substr(
-                            context->editorRepository.pathToAudio.find_last_of('/'),
-                            context->editorRepository.pathToAudio.size()).c_str());
-            ImGui::Text("Tamanho: %s segundos",
-                        std::to_string(static_cast<int>(context->editorRepository.selectedAudioSize)).c_str());
-        } else {
-            ImGui::Text("Nenhum arquivo selecionado");
         }
     }
 
@@ -50,6 +41,9 @@ namespace Metal {
 
         UIUtil::Spacing(true);
 
+        ImGui::Text("Nome: %s", context->editorRepository.pathToAudio.substr(
+                            context->editorRepository.pathToAudio.find_last_of('/'),
+                            context->editorRepository.pathToAudio.size()).c_str());
         ImGui::Text("Tamanho: %.2f", context->editorRepository.selectedAudioSize);
         ImGui::Text("Sample rate: %d", context->editorRepository.sampleRate);
         ImGui::Text("Channels: %d", context->editorRepository.channels);
@@ -57,30 +51,31 @@ namespace Metal {
     }
 
     void InspectorPanel::onSync() {
-        beginBox("formBase", 150);
+        beginBox("formBase", 200);
 
         formPanel->setInspection(&context->editorRepository);
         formPanel->onSync();
         endBox();
 
-        beginBox("audioSelection", 80);
+        beginBox("audioSelection",40);
         renderFileSelection();
         endBox();
 
         if (!context->editorRepository.pathToAudio.empty()) {
-            beginBox("timestampPicker", 85);
+            beginBox("timestampPicker", 95);
             timeStampPickerPanel->onSync();
             endBox();
 
-            beginBox("audioInfo", 125);
+            beginBox("audioInfo", 145);
             renderAudioInfo();
             endBox();
         }
 
         UIUtil::Spacing(true);
 
-        if (!context->editorRepository.pathToAudio.empty() && ImGui::Button(
-                ("Construir representação" + id + "start").c_str())) {
+        if (
+            // !context->editorRepository.pathToAudio.empty() &&
+            ImGui::Button(("Construir representação" + id + "start").c_str())) {
             context->audioProcessorService.buildRepresentationBuffer();
         }
     }

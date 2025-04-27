@@ -138,6 +138,7 @@ add_executable(
         src/repository/notification/NotificationRepository.h
         src/repository/notification/Notification.h
         src/repository/notification/NotificationRepository.cpp
+        src/definitions.h
 )
 
 

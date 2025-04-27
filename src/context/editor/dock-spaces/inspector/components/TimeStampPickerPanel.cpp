@@ -15,39 +15,22 @@ namespace Metal {
         drawList->AddLine(ImVec2(canvasPos.x, midY), ImVec2(canvasEnd.x, midY), IM_COL32(200, 200, 200, 255), 2.0f);
     }
 
-    void TimeStampPickerPanel::renderStartHandle(float timelineWidth,
-                                                 ImDrawList *drawList, ImVec2 canvasPos, ImVec2 canvasSize, ImVec2,
-                                                 float xStart) {
-        float midY = canvasPos.y + canvasSize.y * 0.5f;
+    void TimeStampPickerPanel::handleDrag(float timelineWidth) const {
+        float delta = ImGui::GetIO().MouseDelta.x;
+        float deltaTime = (delta / timelineWidth) * context->editorRepository.selectedAudioSize;
 
-        ImGui::SetCursorScreenPos(ImVec2(xStart - PICKER_RADIUS, midY - PICKER_RADIUS));
-        ImGui::InvisibleButton("##StartHandle", ImVec2(PICKER_RADIUS * 2, PICKER_RADIUS * 2));
-        if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
-            float delta = ImGui::GetIO().MouseDelta.x;
-            context->editorRepository.rangeStart += (delta / timelineWidth) * context->editorRepository.selectedAudioSize;
-            context->editorRepository.rangeStart = std::ranges::clamp(context->editorRepository.rangeStart, 0.0f,
-                                                                      context->editorRepository.rangeEnd);
+        context->editorRepository.rangeStart += deltaTime;
+        context->editorRepository.rangeEnd += deltaTime;
+
+        float rangeLength = context->editorRepository.rangeEnd - context->editorRepository.rangeStart;
+        if (context->editorRepository.rangeStart < 0.0f) {
+            context->editorRepository.rangeStart = 0.0f;
+            context->editorRepository.rangeEnd = rangeLength;
         }
-
-        drawList->AddCircleFilled(ImVec2(xStart, midY), PICKER_RADIUS, IM_COL32(255, 255, 0, 255));
-    }
-
-    void TimeStampPickerPanel::renderEndHandle(float timelineWidth,
-                                               ImDrawList *drawList, ImVec2 canvasPos, ImVec2 canvasSize, ImVec2,
-                                               float xEnd) {
-        float midY = canvasPos.y + canvasSize.y * 0.5f;
-
-        ImGui::SetCursorScreenPos(ImVec2(xEnd - PICKER_RADIUS, midY - PICKER_RADIUS));
-        ImGui::InvisibleButton("##EndHandle", ImVec2(PICKER_RADIUS * 2, PICKER_RADIUS * 2));
-        if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
-            float delta = ImGui::GetIO().MouseDelta.x;
-            context->editorRepository.rangeEnd += (delta / timelineWidth) * context->editorRepository.selectedAudioSize;
-            context->editorRepository.rangeEnd = std::ranges::clamp(context->editorRepository.rangeEnd,
-                                                                    context->editorRepository.rangeStart,
-                                                                    context->editorRepository.selectedAudioSize);
+        if (context->editorRepository.rangeEnd > context->editorRepository.selectedAudioSize) {
+            context->editorRepository.rangeEnd = context->editorRepository.selectedAudioSize;
+            context->editorRepository.rangeStart = context->editorRepository.rangeEnd - rangeLength;
         }
-
-        drawList->AddCircleFilled(ImVec2(xEnd, midY), PICKER_RADIUS, IM_COL32(255, 100, 0, 255));
     }
 
     void TimeStampPickerPanel::onSync() {
@@ -67,11 +50,18 @@ namespace Metal {
         float xStart = timeToScreenX(context->editorRepository.rangeStart);
         float xEnd = timeToScreenX(context->editorRepository.rangeEnd);
 
-        float midY = canvasPos.y + canvasSize.y * 0.5f;
-        drawList->AddLine(ImVec2(xStart, midY), ImVec2(xEnd, midY), IM_COL32(0, 200, 0, 255), 2.0f);
+        ImVec2 pMin = ImVec2(xStart, canvasPos.y);
+        ImVec2 pMax = ImVec2(xEnd, canvasEnd.y);
+        drawList->AddRectFilled(pMin, pMax, IM_COL32(0, 200, 0, 100));
+        drawList->AddRect(pMin, pMax, IM_COL32(0, 200, 0, 255), 0.0f, 0, 2.0f);
 
-        renderStartHandle(timelineWidth, drawList, canvasPos, canvasSize, canvasEnd, xStart);
-        renderEndHandle(timelineWidth, drawList, canvasPos, canvasSize, canvasEnd, xEnd);
+        ImGui::SetCursorScreenPos(ImVec2(xStart, canvasPos.y));
+        ImVec2 rangeSize(xEnd - xStart, canvasSize.y);
+        ImGui::InvisibleButton(("##RangeDrag" + id).c_str(), rangeSize);
+
+        if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
+            handleDrag(timelineWidth);
+        }
 
         ImGui::Text("%.2fs até %.2fs", context->editorRepository.rangeStart,
                     context->editorRepository.rangeEnd);

@@ -78,7 +78,7 @@ vec4 getGridColor(vec2 texCoords) {
             alpha = smoothstep(THRESHOLD, THRESHOLD - fadeRange, distanceFromCamera);
         }
 
-        float inBounds = step(abs(hitPoint.x), WORLD_SIZE) * step(abs(hitPoint.y), WORLD_SIZE) * step(abs(hitPoint.z), WORLD_SIZE);
+        float inBounds = step(abs(hitPoint.x), float(globalData.worldSize)) * step(abs(hitPoint.y), float(globalData.worldSize)) * step(abs(hitPoint.z), float(globalData.worldSize));
         alpha *= inBounds;
 
         if (alpha > 0.0){
@@ -151,7 +151,7 @@ void main() {
     vec3 rayDirection = createRay(texCoords, globalData.invProj, globalData.invView);
     ivec2 colorData = ivec2(0);
     Ray ray = Ray(rayOrigin, rayDirection, 1./rayDirection);
-    SurfaceInteraction hitData = trace(ray, settings.showRaySearchCount, settings.showRayTestCount, colorData, WORLD_SIZE * 10.f);
+    SurfaceInteraction hitData = trace(ray, settings.showRaySearchCount, settings.showRayTestCount, colorData, float(globalData.worldSize) * 10.f);
     if (hitData.voxel == 0){
         if (settings.showRaySearchCount || settings.showRayTestCount){
             finalColor.rg = colorData/float(settings.searchCountDivisor);

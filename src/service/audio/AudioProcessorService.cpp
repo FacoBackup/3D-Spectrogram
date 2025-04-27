@@ -1,6 +1,8 @@
 #include "AudioProcessorService.h"
 
 #include "../../context/ApplicationContext.h"
+#include "../../service/voxel/impl/SparseVoxelOctreeBuilder.h"
+#include "../buffer/BufferInstance.h"
 
 namespace Metal {
     AudioDataVector AudioProcessorService::readAudioData() const {
@@ -45,7 +47,7 @@ namespace Metal {
 
         while ((framesRead = sf_readf_double(infile, buffer.data(), BUFFER_FRAMES)) > 0) {
             for (sf_count_t i = 0; i < framesRead; ++i) {
-                AudioDataPoint point;
+                AudioDataPoint point{};
                 point.timestamp = static_cast<double>(totalFramesRead + i) / sfinfo.samplerate;
                 point.amplitude = buffer[i * sfinfo.channels];
                 audioData.push_back(point);
@@ -73,6 +75,7 @@ namespace Metal {
             SF_INFO info = {};
             SNDFILE *snd = sf_open(context.editorRepository.pathToAudio.c_str(), SFM_READ, &info);
             if (!snd) {
+                context.editorRepository.pathToAudio = "";
                 context.notificationRepository.addNotification("Não foi possível obter informações do arquivo");
             }
 
@@ -80,13 +83,27 @@ namespace Metal {
             context.editorRepository.channels = info.channels;
             context.editorRepository.frames = info.frames;
             context.editorRepository.selectedAudioSize = static_cast<double>(info.frames) / info.samplerate;
+
+            if (static_cast<int>(context.editorRepository.selectedAudioSize) < context.editorRepository.sampleSize) {
+                context.editorRepository.pathToAudio = "";
+                context.notificationRepository.addNotification(
+                    "O tamanho audio é menor que " + std::to_string(context.editorRepository.sampleSize) + " segundos");
+            }
+
             sf_close(snd);
         }
     }
 
     void AudioProcessorService::buildRepresentationBuffer() {
-        auto data = readAudioData();
-        // auto voxels = builder.buildBuffer();
-        // context.coreBuffers.svoData->update(voxels.data());
+        auto builder = SparseVoxelOctreeBuilder(context.editorRepository.worldSize * 10, 10);
+
+        auto audioData = readAudioData();
+        for (int x = 0; x <= context.editorRepository.worldSize; x++) {
+            for (int z = 0; z <= context.editorRepository.worldSize; z++) {
+                builder.insert({x, 0, z}, VoxelData{{1, 1, 1}});
+            }
+        }
+        auto voxels = builder.buildBuffer();
+        context.coreBuffers.svoData->update(voxels.data());
     }
 }

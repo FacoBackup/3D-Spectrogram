@@ -14,7 +14,7 @@ namespace Metal {
     public:
         void onInitialize() override;
 
-        void renderFileSelection();
+        void renderFileSelection() const;
 
         void beginBox(std::string name, float height);
 

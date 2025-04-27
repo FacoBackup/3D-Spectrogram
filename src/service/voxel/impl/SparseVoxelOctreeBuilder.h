@@ -51,7 +51,7 @@ namespace Metal {
             return root;
         }
 
-        void insert(glm::vec3 &point, VoxelData &data);
+        void insert(glm::vec3 point, VoxelData data);
 
         void dispose();
     };

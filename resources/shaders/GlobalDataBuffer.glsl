@@ -6,6 +6,7 @@ layout(set = 0, binding = 0) uniform GlobalDataBlock {
     mat4 invProj;
     vec3 cameraWorldPosition;
     uint debugFlag;
+    uint worldSize;
 } globalData;
 
 float rand(vec3 co) {

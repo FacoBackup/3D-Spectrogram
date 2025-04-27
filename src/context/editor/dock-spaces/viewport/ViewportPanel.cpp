@@ -5,6 +5,11 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <imgui.h>
+#include <ImGuizmo.h>
+#include <sndfile.h>
+#include <vector>
+#include <glm/vec3.hpp>
 
 namespace Metal {
     void ViewportPanel::onSync() {

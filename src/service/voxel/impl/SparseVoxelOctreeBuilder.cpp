@@ -6,7 +6,7 @@ namespace Metal {
         voxelSize = static_cast<float>(size) / std::pow(2.0f, maxDepth);
     }
 
-    void SparseVoxelOctreeBuilder::insert(glm::vec3 &point, VoxelData &data) {
+    void SparseVoxelOctreeBuilder::insert(glm::vec3 point, VoxelData data) {
         worldToChunkLocal(point);
         glm::ivec3 pos(0);
         insertInternal(&root, point, data, pos, 0);

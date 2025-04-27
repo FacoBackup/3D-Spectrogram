@@ -11,6 +11,7 @@ namespace Metal {
         alignas(16) glm::mat4x4 invProj{};
         alignas(16) glm::vec3 cameraWorldPosition{};
         alignas(4) unsigned int debugFlag;
+        alignas(4) unsigned int worldSize;
     };
 }
 
