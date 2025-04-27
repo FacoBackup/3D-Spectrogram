@@ -12,7 +12,7 @@
 #include <glm/vec3.hpp>
 
 namespace Metal {
-    void ViewportPanel::onSync() {
+    void ViewportPanel::renderContent() {
         updateInputs();
         updateCamera();
         const ImVec2 windowSize = ImGui::GetWindowSize();
@@ -21,6 +21,20 @@ namespace Metal {
         ImGui::Image(reinterpret_cast<ImTextureID>(framebuffer->attachments[0]->imageDescriptor->vkDescriptorSet),
                      windowSize);
         renderCameraGizmo();
+    }
+
+    void ViewportPanel::onSync() {
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+        ImGui::SetNextWindowPos(ImVec2(0, 0));
+        ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
+        ImGui::Begin("MainViewport##TCC", nullptr,
+                     ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar |
+                     ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus);
+
+        renderContent();
+
+        ImGui::End();
+        ImGui::PopStyleVar();
     }
 
     void ViewportPanel::renderCameraGizmo() {

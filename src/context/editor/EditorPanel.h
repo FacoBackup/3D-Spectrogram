@@ -9,10 +9,17 @@ namespace Metal {
         AbstractPanel *pViewport = nullptr;
         AbstractPanel *pInspector = nullptr;
         AbstractPanel *pNotifications = nullptr;
+        AbstractPanel *pInformation = nullptr;
 
         bool isFirst = true;
+        bool isInfoCollapsed = false;
+
     public:
         void onInitialize() override;
+
+        void renderInspector() const;
+
+        void renderInformation();
 
         void onSync() override;
     };

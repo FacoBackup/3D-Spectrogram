@@ -139,6 +139,8 @@ add_executable(
         src/repository/notification/Notification.h
         src/repository/notification/NotificationRepository.cpp
         src/definitions.h
+        src/context/editor/dock-spaces/InformationPanel.cpp
+        src/context/editor/dock-spaces/InformationPanel.h
 )
 
 

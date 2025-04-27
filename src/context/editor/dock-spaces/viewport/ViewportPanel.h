@@ -8,6 +8,8 @@ namespace Metal {
         bool isFirstMovement = false;
 
     public:
+        void renderContent();
+
         void onSync() override;
 
         void renderCameraGizmo();
