@@ -51,7 +51,7 @@ namespace Metal {
     }
 
     void InspectorPanel::onSync() {
-        beginBox("formBase", 200);
+        beginBox("formBase", 145);
 
         formPanel->setInspection(&context->editorRepository);
         formPanel->onSync();

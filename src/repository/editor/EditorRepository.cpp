@@ -20,7 +20,7 @@ namespace Metal {
             }
             rangeEnd = static_cast<float>(sampleSize);
             rangeStart = 0;
-            worldSize = sampleSize * 2;
+            worldSize = sampleSize * WORLD_SIZE_SCALE;
             context.engineContext.camera.target = glm::vec3(static_cast<float>(sampleSize), 0, static_cast<float>(sampleSize));
             context.engineContext.camera.changed = true;
             context.engineContext.setCameraUpdated(true);
@@ -29,8 +29,11 @@ namespace Metal {
 
     void EditorRepository::registerFields() {
         registerInt(sampleSize, "", SAMPLE_SIZE);
-        registerInt(voxelSearchCount, "", "Debug count divisor");
-        registerBool(showRaySearchCountVoxels, "", "Show ray search count");
-        registerBool(showRayTestCountVoxels, "", "Show ray test count");
+        registerInt(windowSize, "", "Tamanho da janela de análise");
+        registerInt(hopSize, "", "Tamanho do pulo");
+
+        registerInt(voxelSearchCount, "Debug", "Debug count divisor");
+        registerBool(showRaySearchCountVoxels, "Debug", "Show ray search count");
+        registerBool(showRayTestCountVoxels, "Debug", "Show ray test count");
     }
 }

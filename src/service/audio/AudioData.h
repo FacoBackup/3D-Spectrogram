@@ -7,6 +7,7 @@ namespace Metal {
     struct AudioDataPoint {
         double timestamp;
         double amplitude;
+        std::vector<double> frequencies;
     };
 
     using AudioDataVector = std::vector<AudioDataPoint>;

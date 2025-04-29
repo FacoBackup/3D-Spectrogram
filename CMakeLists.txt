@@ -141,6 +141,8 @@ add_executable(
         src/definitions.h
         src/context/editor/dock-spaces/InformationPanel.cpp
         src/context/editor/dock-spaces/InformationPanel.h
+        src/service/audio/STFTUtil.cpp
+        src/service/audio/STFTUtil.h
 )
 
 

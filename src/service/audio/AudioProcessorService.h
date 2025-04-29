@@ -10,6 +10,8 @@
 #include "../abstract/AbstractResourceService.h"
 
 namespace Metal {
+    class SparseVoxelOctreeBuilder;
+
     struct AudioProcessorService final : AbstractResourceService {
         explicit AudioProcessorService(ApplicationContext &context)
             : AbstractResourceService(context) {

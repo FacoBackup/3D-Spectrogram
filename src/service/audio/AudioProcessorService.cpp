@@ -1,5 +1,6 @@
 #include "AudioProcessorService.h"
 
+#include "STFTUtil.h"
 #include "../../context/ApplicationContext.h"
 #include "../../service/voxel/impl/SparseVoxelOctreeBuilder.h"
 #include "../buffer/BufferInstance.h"
@@ -45,10 +46,19 @@ namespace Metal {
 
         audioData.reserve(static_cast<size_t>(sfinfo.frames));
 
-        while ((framesRead = sf_readf_double(infile, buffer.data(), BUFFER_FRAMES)) > 0) {
+        bool breakWhile = false;
+        while ((framesRead = sf_readf_double(infile, buffer.data(), BUFFER_FRAMES)) > 0 && !breakWhile) {
             for (sf_count_t i = 0; i < framesRead; ++i) {
+                auto timestamp = static_cast<double>(totalFramesRead + i) / sfinfo.samplerate;
+                if (timestamp < context.editorRepository.rangeStart) {
+                    continue;
+                }
+                if (timestamp > context.editorRepository.rangeEnd) {
+                    breakWhile = true;
+                    break;
+                }
                 AudioDataPoint point{};
-                point.timestamp = static_cast<double>(totalFramesRead + i) / sfinfo.samplerate;
+                point.timestamp = timestamp;
                 point.amplitude = buffer[i * sfinfo.channels];
                 audioData.push_back(point);
             }
@@ -95,16 +105,30 @@ namespace Metal {
     }
 
     void AudioProcessorService::buildRepresentationBuffer() {
-        int scale = 10;
+        const float fScale = 10;
         auto builder = SparseVoxelOctreeBuilder(context.editorRepository.worldSize * WORLD_VOXEL_SCALE, 10);
 
         auto audioData = readAudioData();
-        for (int x = 0; x <= context.editorRepository.worldSize * scale; x++) {
-            for (int z = 0; z <= context.editorRepository.worldSize * scale; z++) {
-                float fScale = scale;
-                builder.insert({x / fScale, (sin(x + z) + 1.) / fScale, z / fScale}, VoxelData{{1, 1, 1}});
+        STFTUtil::ComputeSTFT(audioData, context.editorRepository.windowSize, context.editorRepository.hopSize);
+
+        for (const auto &point: audioData) {
+            if (!point.frequencies.empty()) {
+                for (size_t bin = 0; bin < point.frequencies.size(); ++bin) {
+                    const double frequency = bin / fScale * WORLD_SIZE_SCALE;
+                    if (frequency > context.editorRepository.worldSize) {
+                        continue;
+                    }
+                    double magnitude = point.frequencies[bin] / fScale;
+                    auto timestamp = (point.timestamp - context.editorRepository.rangeStart) * WORLD_SIZE_SCALE;
+                    builder.insert({
+                                       timestamp,
+                                       magnitude,
+                                       frequency
+                                   }, VoxelData{{1, 1, 1}});
+                }
             }
         }
+
         auto voxels = builder.buildBuffer();
         context.coreBuffers.svoData->update(voxels.data());
     }

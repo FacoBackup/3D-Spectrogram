@@ -9,8 +9,11 @@ namespace Metal {
         bool showRaySearchCountVoxels = false;
         bool showRayTestCountVoxels = false;
         int voxelSearchCount = 32;
-        int sampleSize = DEFAULT_WORLD_SIZE / 2;
+        int sampleSize = DEFAULT_WORLD_SIZE / WORLD_SIZE_SCALE;
         int worldSize = DEFAULT_WORLD_SIZE;
+        int windowSize = DEFAULT_WINDOW_SIZE;
+        int hopSize = DEFAULT_HOP_SIZE;
+
 
         std::string pathToAudio;
         float selectedAudioSize = 0.f;
