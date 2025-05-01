@@ -20,17 +20,20 @@ namespace Metal {
             }
             rangeEnd = static_cast<float>(sampleSize);
             rangeStart = 0;
-            worldSize = sampleSize * WORLD_SIZE_SCALE;
             context.engineContext.camera.target = glm::vec3(static_cast<float>(sampleSize), 0, static_cast<float>(sampleSize));
             context.engineContext.camera.changed = true;
             context.engineContext.setCameraUpdated(true);
         }
+
+        actualWindowSize = static_cast<int>(1u << (context.editorRepository.windowSize + 9));
     }
 
     void EditorRepository::registerFields() {
         registerInt(sampleSize, "", SAMPLE_SIZE);
-        registerInt(windowSize, "", "Tamanho da janela de análise");
-        registerInt(hopSize, "", "Tamanho do pulo");
+        registerInt(windowSize, "", "Tamanho da janela de análise", 1, 5);
+        registerInt(actualWindowSize, "", "Total de amostras da janela", 1, 5, true);
+        registerBool(showOriginalWave, "", "Mostrar onda original");
+        registerFloat(minMagnitude, "", "Magnitude minima", 0);
 
         registerInt(voxelSearchCount, "Debug", "Debug count divisor");
         registerBool(showRaySearchCountVoxels, "Debug", "Show ray search count");

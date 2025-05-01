@@ -42,7 +42,9 @@ namespace Metal {
         globalDataUBO.invProj = camera.invProjectionMatrix;
         globalDataUBO.invView = camera.invViewMatrix;
         globalDataUBO.cameraWorldPosition = camera.position;
-        globalDataUBO.worldSize = context.editorRepository.worldSize;
+        globalDataUBO.xAxisLength = context.editorRepository.sampleSize;
+        globalDataUBO.zAxisLength = context.editorRepository.maxFrequency;
+        globalDataUBO.yAxisLength = context.editorRepository.maxMagnitude;
         context.coreBuffers.globalData->update(&globalDataUBO);
     }
 }

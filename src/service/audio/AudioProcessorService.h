@@ -20,8 +20,6 @@ namespace Metal {
         AudioDataVector readAudioData() const;
 
         void extractAudioData() const;
-
-        void buildRepresentationBuffer();
     };
 };
 

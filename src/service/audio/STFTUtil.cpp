@@ -10,8 +10,8 @@ namespace Metal {
         // Divide
         ComplexVector even(N / 2), odd(N / 2);
         for (size_t i = 0; i < N / 2; ++i) {
-            even[i] = a[i*2];
-            odd[i] = a[i*2 + 1];
+            even[i] = a[i * 2];
+            odd[i] = a[i * 2 + 1];
         }
 
         // Conquer
@@ -34,27 +34,38 @@ namespace Metal {
         return window;
     }
 
-    void STFTUtil::ComputeSTFT(AudioDataVector &data, unsigned int windowSize, unsigned int hopSize) {
-        if (data.size() < windowSize) return;
+    void STFTUtil::ComputeSTFT(AudioDataVector &data, unsigned int windowSize, unsigned int hopSize, float minMagnitude) {
+        if (data.data.size() < windowSize) return;
 
         std::vector<double> window = HammingWindow(windowSize);
 
-        for (size_t i = 0; i + windowSize <= data.size(); i += hopSize) {
+        unsigned int maxFrequency = 0;
+        double maxMagnitude = 0;
+        for (size_t i = 0; i + windowSize <= data.data.size(); i += hopSize) {
             ComplexVector input(windowSize);
             for (size_t j = 0; j < windowSize; ++j)
-                input[j] = data[i + j].amplitude * window[j];
+                input[j] = data.data[i + j].amplitude * window[j];
 
             FastFourierTransform(input);
 
             // Calculate magnitudes for first half (real-valued signal)
-            std::vector<double> magnitudes(windowSize / 2);
-            for (size_t k = 0; k < windowSize / 2; ++k)
-                magnitudes[k] = std::abs(input[k]);
+            std::vector<Frequency> magnitudes;
+            for (unsigned int k = 0; k < windowSize / 2; ++k) {
+                double magnitude = std::abs(input[k]);
+                if (magnitude > minMagnitude) {
+                    magnitudes.emplace_back(k + 1, magnitude);
+                    maxFrequency = std::max(maxFrequency, k + 1);
+                    maxMagnitude = std::max(maxMagnitude, magnitude);
+                }
+            }
 
             // Store magnitudes in center sample of the window
             size_t center = i + windowSize / 2;
-            if (center < data.size())
-                data[center].frequencies = std::move(magnitudes);
+            if (center < data.data.size())
+                data.data[center].frequencies = std::move(magnitudes);
         }
+
+        data.maxFrequency = maxFrequency;
+        data.maxMagnitude = maxMagnitude;
     }
 } // Metal

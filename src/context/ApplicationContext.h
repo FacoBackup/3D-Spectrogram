@@ -23,6 +23,7 @@
 #include "../repository/notification/NotificationRepository.h"
 #include "editor/EditorPanel.h"
 #include "../service/audio/AudioProcessorService.h"
+#include "../service/voxel/VoxelProcessorService.h"
 #include "gui/GuiContext.h"
 
 namespace Metal {
@@ -52,6 +53,7 @@ namespace Metal {
         ThemeService themeService{*this};
         CameraService cameraService{*this};
         AudioProcessorService audioProcessorService{*this};
+        VoxelProcessorService voxelProcessorService{*this};
         // ----------- Services
 
         // ----------- Repository

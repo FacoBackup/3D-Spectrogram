@@ -15,6 +15,7 @@ namespace Metal {
     void ViewportPanel::renderContent() {
         updateInputs();
         updateCamera();
+
         const ImVec2 windowSize = ImGui::GetWindowSize();
         auto *framebuffer = context->coreFrameBuffers.imageFBO;
         context->descriptorService.setImageDescriptor(framebuffer, 0);
@@ -49,20 +50,21 @@ namespace Metal {
         float gizmoSize = 100.0f;
         ImVec2 gizmoPos = ImVec2(viewportPos.x, viewportPos.y);
 
-        float *v = glm::value_ptr(camera.viewMatrix);
-        glm::mat4 originalView = camera.viewMatrix;
+        if (tempView != camera.viewMatrix && !isManipulating) {
+            tempView = camera.viewMatrix;
+        }
+        ImGuizmo::ViewManipulate(glm::value_ptr(tempView), 4.0f, gizmoPos, ImVec2(gizmoSize, gizmoSize),
+                                 IM_COL32(40, 40, 40, 0));
 
-        ImGuizmo::ViewManipulate(v, 4.0f, gizmoPos, ImVec2(gizmoSize, gizmoSize), IM_COL32(40, 40, 40, 0));
+        isManipulating = camera.viewMatrix != tempView && ImGui::IsItemHovered();
+        if (isManipulating) {
+            glm::vec3 forward = glm::normalize(glm::vec3(-tempView[2]));
 
-        if (camera.viewMatrix != originalView) {
-            camera.invViewMatrix = glm::inverse(camera.viewMatrix);
-            camera.projViewMatrix = camera.projectionMatrix * camera.viewMatrix;
-            camera.invProjectionMatrix = glm::inverse(camera.projectionMatrix);
-            camera.position = glm::vec3(camera.invViewMatrix[3]);
-
-            glm::vec3 forward = glm::normalize(glm::vec3(-camera.viewMatrix[2]));
-            camera.yaw = atan2(forward.x, forward.z);
+            camera.yaw = -atan2(forward.x, forward.z);
             camera.pitch = asin(forward.y);
+            // camera.pitch = glm::clamp(camera.pitch, -MIN_MAX_xPITCH, MIN_MAX_PITCH);
+
+            camera.changed = true;
         }
     }
 

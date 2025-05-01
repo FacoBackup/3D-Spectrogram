@@ -38,9 +38,17 @@ namespace Metal {
     }
 
     void CameraService::updateProjection() const {
-        camera->projectionMatrix = glm::perspective(camera->fov * Util::TO_RADIANS, camera->aspectRatio,
-                                                    camera->zNear,
-                                                    camera->zFar);
+        if (camera->isOrthographic) {
+            camera->projectionMatrix = glm::ortho(-camera->orthographicProjectionSize,
+                                                  camera->orthographicProjectionSize,
+                                                  -camera->orthographicProjectionSize / camera->aspectRatio,
+                                                  camera->orthographicProjectionSize / camera->aspectRatio,
+                                                  -camera->zFar, camera->zFar);
+        } else {
+            camera->projectionMatrix = glm::perspective(camera->fov * Util::TO_RADIANS, camera->aspectRatio,
+                                                        camera->zNear,
+                                                        camera->zFar);
+        }
         camera->projectionMatrix[1][1] *= -1;
         camera->invProjectionMatrix = glm::inverse(camera->projectionMatrix);
     }

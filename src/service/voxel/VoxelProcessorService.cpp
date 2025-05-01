@@ -1,0 +1,54 @@
+#include "VoxelProcessorService.h"
+#include "../audio/STFTUtil.h"
+#include "../../context/ApplicationContext.h"
+#include "../../service/voxel/impl/SparseVoxelOctreeBuilder.h"
+#include "../buffer/BufferInstance.h"
+
+namespace Metal {
+    void VoxelProcessorService::process() {
+        const float fScale = 10;
+        unsigned int maxWorldSize = context.editorRepository.sampleSize * WORLD_VOXEL_SCALE;
+        auto builder = SparseVoxelOctreeBuilder(maxWorldSize, fScale);
+
+        auto audioData = context.audioProcessorService.readAudioData();
+        STFTUtil::ComputeSTFT(audioData,
+                              context.editorRepository.actualWindowSize,
+                              context.editorRepository.hopSize,
+                              context.editorRepository.minMagnitude);
+
+        for (const auto &point: audioData.data) {
+            auto timestamp = (point.timestamp - context.editorRepository.rangeStart);
+
+            if (context.editorRepository.showOriginalWave) {
+                builder.insert({
+                                   timestamp,
+                                   point.amplitude * fScale,
+                                   context.editorRepository.sampleSize / 2.f
+                               }, VoxelData{{1, 1, 1}});
+            } else if (!point.frequencies.empty()) {
+                for (const auto &fq: point.frequencies) {
+                    const double frequency = fq.frequency / fScale;
+                    double magnitude = fq.magnitude / fScale;
+                    builder.insert({
+                                       timestamp,
+                                       magnitude,
+                                       frequency
+                                   }, VoxelData{{1, 1, 1}});
+                }
+            }
+        }
+        context.editorRepository.maxFrequency = std::min(static_cast<unsigned int>(audioData.maxFrequency / fScale),
+                                                         maxWorldSize / 2);
+        context.editorRepository.maxMagnitude = std::min(
+            static_cast<unsigned int>(std::ceil(audioData.maxMagnitude / fScale)),
+            maxWorldSize / 2);
+
+        context.engineContext.camera.target = glm::vec3(static_cast<float>(context.editorRepository.sampleSize / 2), 0,
+                                                        static_cast<float>(context.editorRepository.maxFrequency / 2));
+        context.engineContext.camera.changed = true;
+        context.engineContext.setCameraUpdated(true);
+
+        auto voxels = builder.buildBuffer();
+        context.coreBuffers.svoData->update(voxels.data());
+    }
+} // Metal

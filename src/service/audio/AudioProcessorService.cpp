@@ -44,7 +44,7 @@ namespace Metal {
         sf_count_t framesRead = 0;
         sf_count_t totalFramesRead = 0;
 
-        audioData.reserve(static_cast<size_t>(sfinfo.frames));
+        audioData.data.reserve(sfinfo.frames);
 
         bool breakWhile = false;
         while ((framesRead = sf_readf_double(infile, buffer.data(), BUFFER_FRAMES)) > 0 && !breakWhile) {
@@ -60,7 +60,7 @@ namespace Metal {
                 AudioDataPoint point{};
                 point.timestamp = timestamp;
                 point.amplitude = buffer[i * sfinfo.channels];
-                audioData.push_back(point);
+                audioData.data.push_back(point);
             }
             totalFramesRead += framesRead;
         }
@@ -102,34 +102,5 @@ namespace Metal {
 
             sf_close(snd);
         }
-    }
-
-    void AudioProcessorService::buildRepresentationBuffer() {
-        const float fScale = 10;
-        auto builder = SparseVoxelOctreeBuilder(context.editorRepository.worldSize * WORLD_VOXEL_SCALE, 10);
-
-        auto audioData = readAudioData();
-        STFTUtil::ComputeSTFT(audioData, context.editorRepository.windowSize, context.editorRepository.hopSize);
-
-        for (const auto &point: audioData) {
-            if (!point.frequencies.empty()) {
-                for (size_t bin = 0; bin < point.frequencies.size(); ++bin) {
-                    const double frequency = bin / fScale * WORLD_SIZE_SCALE;
-                    if (frequency > context.editorRepository.worldSize) {
-                        continue;
-                    }
-                    double magnitude = point.frequencies[bin] / fScale;
-                    auto timestamp = (point.timestamp - context.editorRepository.rangeStart) * WORLD_SIZE_SCALE;
-                    builder.insert({
-                                       timestamp,
-                                       magnitude,
-                                       frequency
-                                   }, VoxelData{{1, 1, 1}});
-                }
-            }
-        }
-
-        auto voxels = builder.buildBuffer();
-        context.coreBuffers.svoData->update(voxels.data());
     }
 }

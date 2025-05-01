@@ -5,10 +5,12 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
-#include "../../common/inspection/Inspectable.h"
 #include "../../definitions.h"
 
+constexpr float MIN_MAX_PITCH = glm::radians(89.0f);
 
 namespace Metal {
     struct Camera final {
@@ -37,6 +39,9 @@ namespace Metal {
         float deltaX = 0;
         float deltaY = 0;
         bool changed = false;
+
+        bool isOrthographic = false;
+        float orthographicProjectionSize = 50;
 
         glm::vec3 target = glm::vec3(DEFAULT_WORLD_SIZE / 2.f, 0, DEFAULT_WORLD_SIZE / 2.f);
         float orbitDistance = 25.0f;

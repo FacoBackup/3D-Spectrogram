@@ -51,8 +51,7 @@ namespace Metal {
     }
 
     void InspectorPanel::onSync() {
-        beginBox("formBase", 145);
-
+        beginBox("formBase", 290);
         formPanel->setInspection(&context->editorRepository);
         formPanel->onSync();
         endBox();
@@ -76,7 +75,7 @@ namespace Metal {
         if (
             // !context->editorRepository.pathToAudio.empty() &&
             ImGui::Button(("Construir representação" + id + "start").c_str())) {
-            context->audioProcessorService.buildRepresentationBuffer();
+            context->voxelProcessorService.process();
         }
     }
 }

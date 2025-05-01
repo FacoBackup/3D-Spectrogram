@@ -143,6 +143,8 @@ add_executable(
         src/context/editor/dock-spaces/InformationPanel.h
         src/service/audio/STFTUtil.cpp
         src/service/audio/STFTUtil.h
+        src/service/voxel/VoxelProcessorService.cpp
+        src/service/voxel/VoxelProcessorService.h
 )
 
 

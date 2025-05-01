@@ -4,13 +4,22 @@
 #include <vector>
 
 namespace Metal {
+    struct Frequency {
+        unsigned int frequency;
+        double magnitude;
+    };
+
     struct AudioDataPoint {
         double timestamp;
         double amplitude;
-        std::vector<double> frequencies;
+        std::vector<Frequency> frequencies;
     };
 
-    using AudioDataVector = std::vector<AudioDataPoint>;
+    struct AudioDataVector {
+        std::vector<AudioDataPoint> data;
+        unsigned int maxFrequency;
+        double maxMagnitude;
+    };
 }
 
 #endif
