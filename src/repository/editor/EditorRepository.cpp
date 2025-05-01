@@ -20,12 +20,14 @@ namespace Metal {
             }
             rangeEnd = static_cast<float>(sampleSize);
             rangeStart = 0;
-            context.engineContext.camera.target = glm::vec3(static_cast<float>(sampleSize), 0, static_cast<float>(sampleSize));
-            context.engineContext.camera.changed = true;
-            context.engineContext.setCameraUpdated(true);
+            context.cameraService.updateCameraTarget();
         }
 
         actualWindowSize = static_cast<int>(1u << (context.editorRepository.windowSize + 9));
+        if (context.engineContext.camera.isOrthographic != isOrthographic) {
+            context.engineContext.camera.isOrthographic = isOrthographic;
+            context.cameraService.updateCameraTarget();
+        }
     }
 
     void EditorRepository::registerFields() {
@@ -34,6 +36,7 @@ namespace Metal {
         registerInt(actualWindowSize, "", "Total de amostras da janela", 1, 5, true);
         registerBool(showOriginalWave, "", "Mostrar onda original");
         registerFloat(minMagnitude, "", "Magnitude minima", 0);
+        registerBool(isOrthographic, "", "Projeção ortográfica?");
 
         registerInt(voxelSearchCount, "Debug", "Debug count divisor");
         registerBool(showRaySearchCountVoxels, "Debug", "Show ray search count");

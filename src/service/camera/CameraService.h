@@ -33,6 +33,8 @@ namespace Metal {
 
         void handleScroll(float scrollDelta) const;
 
+        void updateCameraTarget();
+
         explicit CameraService(ApplicationContext &context);
 
         void onSync() override;

@@ -14,6 +14,7 @@ namespace Metal {
         alignas(4) unsigned int xAxisLength;
         alignas(4) unsigned int zAxisLength;
         alignas(4) unsigned int yAxisLength;
+        alignas(4) bool isOrtho;
 
     };
 }

@@ -9,6 +9,7 @@ layout(set = 0, binding = 0) uniform GlobalDataBlock {
     uint xAxisLength;
     uint zAxisLength;
     uint yAxisLength;
+    bool isOrtho;
 } globalData;
 
 float rand(vec3 co) {

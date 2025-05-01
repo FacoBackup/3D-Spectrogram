@@ -45,6 +45,7 @@ namespace Metal {
         globalDataUBO.xAxisLength = context.editorRepository.sampleSize;
         globalDataUBO.zAxisLength = context.editorRepository.maxFrequency;
         globalDataUBO.yAxisLength = context.editorRepository.maxMagnitude;
+        globalDataUBO.isOrtho = context.engineContext.camera.isOrthographic;
         context.coreBuffers.globalData->update(&globalDataUBO);
     }
 }

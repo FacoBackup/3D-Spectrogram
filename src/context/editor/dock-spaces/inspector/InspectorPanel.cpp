@@ -51,25 +51,28 @@ namespace Metal {
     }
 
     void InspectorPanel::onSync() {
-        beginBox("formBase", 290);
         formPanel->setInspection(&context->editorRepository);
         formPanel->onSync();
-        endBox();
 
-        beginBox("audioSelection",40);
+        ImGui::Separator();
+
         renderFileSelection();
-        endBox();
+
+
+
 
         if (!context->editorRepository.pathToAudio.empty()) {
-            beginBox("timestampPicker", 95);
+            ImGui::Separator();
+
             timeStampPickerPanel->onSync();
-            endBox();
 
-            beginBox("audioInfo", 145);
+            ImGui::Separator();
+
             renderAudioInfo();
-            endBox();
-        }
 
+            ImGui::Separator();
+
+        }
         UIUtil::Spacing(true);
 
         if (

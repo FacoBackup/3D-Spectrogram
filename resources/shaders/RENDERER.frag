@@ -16,8 +16,6 @@ layout(push_constant) uniform Push {
     uint searchCountDivisor;
 } settings;
 
-
-
 float sdBoxFrame(vec3 p, vec3 boxWidth, float thickness) {
     p = abs(p)-boxWidth;
     vec3 q = abs(p+thickness)-thickness;
@@ -29,7 +27,7 @@ float sdBoxFrame(vec3 p, vec3 boxWidth, float thickness) {
 
 bool rayMarchCombined(vec3 ro, vec3 rd, out vec3 hitPos, out uint hitType) {
     float t = 0.0;
-    hitType = 0; // 0 = no hit, 1 = box frame, 2 = ground
+    hitType = 0;// 0 = no hit, 1 = box frame, 2 = ground
 
     vec3 boxSize = vec3(globalData.xAxisLength / 2.0,
     globalData.yAxisLength / 2.0,
@@ -48,7 +46,7 @@ bool rayMarchCombined(vec3 ro, vec3 rd, out vec3 hitPos, out uint hitType) {
         if (d < 0.001) {
             // Determine what was hit
             if (dBox < dGround) hitType = 1;
-            else                hitType = 2;
+            else hitType = 2;
             return true;
         }
 
@@ -75,12 +73,27 @@ float getGridLine3D(vec3 pos, float gridScale){
 
 vec4 getGridColor(vec2 texCoords, inout vec3 hitPoint) {
     bool hasData = false;
-    vec3 rayDir = createRay(texCoords, globalData.invProj, globalData.invView);
+    vec3 rayDir;
+    vec3 rayOrigin;
+    createRay(texCoords, globalData.invProj, globalData.invView, globalData.isOrtho, rayOrigin, rayDir);
     uint hitType;
-    hasData = rayMarchCombined(globalData.cameraWorldPosition.xyz, rayDir, hitPoint, hitType);
+    hasData = rayMarchCombined(rayOrigin, rayDir, hitPoint, hitType);
 
-    if (hitType == 1){ //  BOX FRAME
-        return vec4(1);
+    vec3 xAxisColor = vec3(1.0, 0.0, 0.0);
+    vec3 yAxisColor = vec3(0.0, 1.0, 0.0);
+    vec3 zAxisColor = vec3(0.0, 0.0, 1.0);
+
+    if (hitType == 1) {
+
+        float isXAxis = step(max(abs(hitPoint.y ), abs(hitPoint.z)), .25);
+        float isYAxis = step(max(abs(hitPoint.x ), abs(hitPoint.z)), .25);
+        float isZAxis = step(max(abs(hitPoint.x ), abs(hitPoint.y)), .25);
+
+        vec3 axisColorSum = xAxisColor * isXAxis + yAxisColor * isYAxis + zAxisColor * isZAxis;
+        axisColorSum = clamp(axisColorSum, 0.0, 1.0);
+
+        if(length(axisColorSum.rgb) == 0) return vec4(1);
+        return vec4(axisColorSum.rgb, 1);
     }
 
 
@@ -99,9 +112,6 @@ vec4 getGridColor(vec2 texCoords, inout vec3 hitPoint) {
 
         if (alpha > 0.0){
             vec3 baseColor = vec3(0.9);
-            vec3 xAxisColor = vec3(1.0, 0.0, 0.0);
-            vec3 yAxisColor = vec3(0.0, 1.0, 0.0);
-            vec3 zAxisColor = vec3(0.0, 0.0, 1.0);
 
             float scaleEffect = SCALE;
             float thicknessCheck = THICKNESS / max(scaleEffect, 0.01);
@@ -122,7 +132,7 @@ vec4 getGridColor(vec2 texCoords, inout vec3 hitPoint) {
             vec4 final = mix(gridColor, centerLineColor, onAnyAxis);
             final.a = min(alpha, final.a);
 
-            if (final.a == 0.0 || isDitherDiscard(final.a)) {
+            if (final.a == 0.0 || isDitherDiscard(final.a) && !globalData.isOrtho) {
                 return vec4(0);
             }
 
@@ -166,8 +176,10 @@ void main() {
         finalColor = vec4(vec3(.8), 1);
     }
 
-    vec3 rayOrigin = globalData.cameraWorldPosition.xyz;
-    vec3 rayDirection = createRay(texCoords, globalData.invProj, globalData.invView);
+    vec3 rayDirection;
+    vec3 rayOrigin;
+    createRay(texCoords, globalData.invProj, globalData.invView, globalData.isOrtho, rayOrigin, rayDirection);
+
     ivec2 colorData = ivec2(0);
     Ray ray = Ray(rayOrigin, rayDirection, 1./rayDirection);
     SurfaceInteraction hitData = trace(ray, settings.showRaySearchCount, settings.showRayTestCount, colorData, float(globalData.xAxisLength) * 10.f);

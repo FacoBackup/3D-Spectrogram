@@ -43,10 +43,7 @@ namespace Metal {
             static_cast<unsigned int>(std::ceil(audioData.maxMagnitude / fScale)),
             maxWorldSize / 2);
 
-        context.engineContext.camera.target = glm::vec3(static_cast<float>(context.editorRepository.sampleSize / 2), 0,
-                                                        static_cast<float>(context.editorRepository.maxFrequency / 2));
-        context.engineContext.camera.changed = true;
-        context.engineContext.setCameraUpdated(true);
+        context.cameraService.updateCameraTarget();
 
         auto voxels = builder.buildBuffer();
         context.coreBuffers.svoData->update(voxels.data());

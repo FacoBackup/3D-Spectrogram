@@ -39,10 +39,11 @@ namespace Metal {
 
     void CameraService::updateProjection() const {
         if (camera->isOrthographic) {
-            camera->projectionMatrix = glm::ortho(-camera->orthographicProjectionSize,
-                                                  camera->orthographicProjectionSize,
-                                                  -camera->orthographicProjectionSize / camera->aspectRatio,
-                                                  camera->orthographicProjectionSize / camera->aspectRatio,
+            float size = camera->orthographicProjectionSize * context.editorRepository.minMagnitude;
+            camera->projectionMatrix = glm::ortho(-size,
+                                                  size,
+                                                  -size / camera->aspectRatio,
+                                                  size / camera->aspectRatio,
                                                   -camera->zFar, camera->zFar);
         } else {
             camera->projectionMatrix = glm::perspective(camera->fov * Util::TO_RADIANS, camera->aspectRatio,
@@ -80,9 +81,23 @@ namespace Metal {
     }
 
     void CameraService::handleScroll(float scrollDelta) const {
-        camera->orbitDistance -= scrollDelta * camera->movementSensitivity;
-        camera->orbitDistance = glm::clamp(camera->orbitDistance, 0.5f, 100.0f);
+        if (camera->isOrthographic) {
+            camera->orthographicProjectionSize -= scrollDelta * camera->movementSensitivity * 10.f;
+            camera->orthographicProjectionSize = glm::max(camera->orthographicProjectionSize, 1.f);
+        }else {
+            camera->orbitDistance -= scrollDelta * camera->movementSensitivity;
+            camera->orbitDistance = glm::clamp(camera->orbitDistance, 0.5f, 100.0f);
+        }
         camera->changed = true;
+
+    }
+
+    void CameraService::updateCameraTarget() {
+        context.engineContext.camera.target = glm::vec3(static_cast<float>(context.editorRepository.sampleSize / 2),
+                                                        static_cast<float>(context.editorRepository.maxMagnitude / 2),
+                                                        static_cast<float>(context.editorRepository.maxFrequency / 2));
+        context.engineContext.camera.changed = true;
+        context.engineContext.setCameraUpdated(true);
     }
 
     void CameraService::createViewMatrix() {

@@ -17,6 +17,7 @@ namespace Metal {
         int maxFrequency = 10;
         int maxMagnitude = 10;
         bool showOriginalWave = false;
+        bool isOrthographic = false;
 
         std::string pathToAudio;
         float selectedAudioSize = 0.f;
