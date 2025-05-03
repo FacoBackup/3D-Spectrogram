@@ -18,16 +18,19 @@ namespace Metal {
 
         for (const auto &point: audioData.data) {
             auto timestamp = (point.timestamp - context.editorRepository.rangeStart);
-
             if (!point.frequencies.empty()) {
                 for (const auto &fq: point.frequencies) {
                     const double frequency = fq.frequency / fScale;
-                    double magnitude = fq.magnitude / fScale;
-                    builder.insert({
-                                       timestamp,
-                                       magnitude,
-                                       frequency
-                                   }, VoxelData{{1, 1, 1}});
+                    int magnitudeSteps = context.editorRepository.interpolation;
+                    for (int step = 1; step <= magnitudeSteps; ++step) {
+                        double interpolatedMagnitude =
+                                (fq.magnitude / fScale) * (static_cast<double>(step) / magnitudeSteps);
+                        builder.insert({
+                                           timestamp,
+                                           interpolatedMagnitude,
+                                           frequency
+                                       }, VoxelData{{1, 1, 1}});
+                    }
                 }
             }
         }

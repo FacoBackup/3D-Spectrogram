@@ -24,12 +24,13 @@ namespace Metal {
             context.cameraService.updateCameraTarget();
         }
 
-        actualWindowSize = static_cast<int>(1u << (windowSizeScale + 9));
+        actualWindowSize = ACTUAL_WINDOW_SIZE;
         actualHopSize = actualWindowSize / hopSizeScale;
     }
 
     void EditorRepository::registerFields() {
         registerInt(sampleSize, "", SAMPLE_SIZE);
+        registerInt(interpolation, "", "Interpolação das amostras", 1);
         registerInt(windowSizeScale, STFT_PARAMS, "Escala da janela", 1, 5);
         registerInt(actualWindowSize, STFT_PARAMS, "Tamanho da janela", 1, 5, true);
         registerInt(hopSizeScale, STFT_PARAMS, "Escala do salto", 1, 10);

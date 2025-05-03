@@ -4,16 +4,18 @@
 #include "../../definitions.h"
 #include "../../common/inspection/Inspectable.h"
 
+#define ACTUAL_WINDOW_SIZE static_cast<int>(1u << (windowSizeScale + 9))
 namespace Metal {
     struct EditorRepository final : Inspectable {
         bool showRaySearchCountVoxels = false;
         bool showRayTestCountVoxels = false;
         int voxelSearchCount = 32;
         int sampleSize = DEFAULT_WORLD_SIZE ;
-        int windowSizeScale = 1; // power of 2
-        int actualWindowSize = 1024; // power of 2
+        int windowSizeScale = 4; // power of 2
+        int actualWindowSize = ACTUAL_WINDOW_SIZE; // power of 2
+        int interpolation = 64;
         int hopSizeScale = 2;
-        float minMagnitude = 0.01;
+        float minMagnitude = 0.6;
         int maxFrequency = 10;
         int maxMagnitude = 10;
         bool isOrthographic = false;
