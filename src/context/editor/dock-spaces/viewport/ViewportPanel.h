@@ -12,16 +12,15 @@ namespace Metal {
         bool hasCopiedView = false;
         glm::mat4 tempView{};
 
-    public:
-        void renderContent();
+        void Draw3DLabel(const glm::vec3 &worldPos, const char *text, const glm::mat4 &view, const glm::mat4 &proj,
+                         int screenWidth, int screenHeight);
 
-        void onSync() override;
+        void renderContent();
 
         void renderCameraGizmo();
 
-        void updateCamera();
-
-        void updateInputs() const;
+    public:
+        void onSync() override;
     };
 }
 

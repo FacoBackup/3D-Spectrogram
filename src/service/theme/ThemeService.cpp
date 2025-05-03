@@ -6,12 +6,8 @@ namespace Metal {
     glm::vec3 ThemeService::BACKGROUND_COLOR = glm::vec3(0.f);
 
     void ThemeService::onSync() {
-        glm::vec3 accentColor{0.26f, 0.59f, 0.98f};
-        EditorRepository &editorRepository = context.editorRepository;
-        if (glm::length(accentColor) == prevLength) {
-            return;
-        }
-        prevLength = glm::length(accentColor);
+        if (isDone) return;
+        isDone = true;
 
         ImGuiStyle &style = ImGui::GetStyle();
         auto &colors = style.Colors;
@@ -29,7 +25,7 @@ namespace Metal {
         textDisabled = ImVec4(palette6.x / 2.f, palette6.y / 2.f, palette6.z / 2.f, 1);
         colors[ImGuiCol_Text] = palette0;
         colors[ImGuiCol_TextDisabled] = textDisabled;
-        colors[ImGuiCol_WindowBg] =palette1;
+        colors[ImGuiCol_WindowBg] = palette1;
         colors[ImGuiCol_ChildBg] = palette1;
         colors[ImGuiCol_PopupBg] = palette1;
         colors[ImGuiCol_Border] = palette1;

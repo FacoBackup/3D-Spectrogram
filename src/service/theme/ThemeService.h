@@ -17,6 +17,8 @@ namespace Metal {
         ImVec4 palette5{};
         ImVec4 palette6{};
         ImVec4 textDisabled{};
+        ImVec4 accentColor{0.26f, 0.59f, 0.98f, 1};
+        bool isDone = false;
         static glm::vec3 BACKGROUND_COLOR;
         float prevLength = -1.f;
 

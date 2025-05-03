@@ -10,13 +10,12 @@ namespace Metal {
         bool showRayTestCountVoxels = false;
         int voxelSearchCount = 32;
         int sampleSize = DEFAULT_WORLD_SIZE ;
-        int windowSize = 1; // power of 2
+        int windowSizeScale = 1; // power of 2
         int actualWindowSize = 1024; // power of 2
-        int hopSize = DEFAULT_HOP_SIZE;
+        int hopSizeScale = 2;
         float minMagnitude = 0.01;
         int maxFrequency = 10;
         int maxMagnitude = 10;
-        bool showOriginalWave = false;
         bool isOrthographic = false;
 
         std::string pathToAudio;
@@ -26,6 +25,7 @@ namespace Metal {
         int sampleRate;
         int channels;
         int64_t frames;
+        int actualHopSize = actualWindowSize / hopSizeScale;
 
         void registerFields() override;
 

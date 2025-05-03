@@ -145,6 +145,8 @@ add_executable(
         src/service/audio/STFTUtil.h
         src/service/voxel/VoxelProcessorService.cpp
         src/service/voxel/VoxelProcessorService.h
+        src/service/controls/ControlService.cpp
+        src/service/controls/ControlService.h
 )
 
 

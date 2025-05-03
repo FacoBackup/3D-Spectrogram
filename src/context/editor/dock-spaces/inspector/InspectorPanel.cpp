@@ -42,8 +42,8 @@ namespace Metal {
         UIUtil::Spacing(true);
 
         ImGui::Text("Nome: %s", context->editorRepository.pathToAudio.substr(
-                            context->editorRepository.pathToAudio.find_last_of('/'),
-                            context->editorRepository.pathToAudio.size()).c_str());
+                        context->editorRepository.pathToAudio.find_last_of('/'),
+                        context->editorRepository.pathToAudio.size()).c_str());
         ImGui::Text("Tamanho: %.2f", context->editorRepository.selectedAudioSize);
         ImGui::Text("Sample rate: %d", context->editorRepository.sampleRate);
         ImGui::Text("Channels: %d", context->editorRepository.channels);
@@ -51,15 +51,24 @@ namespace Metal {
     }
 
     void InspectorPanel::onSync() {
+        ImGui::TextColored(ImVec4(0, 1, 0, 1), Icons::info.c_str());
+        ImGui::SameLine();
+        ImGui::TextWrapped("Tamanho da janela:");
+        ImGui::TextWrapped("Determina a compensação entre resolução temporal e resolução de frequência.");
+        ImGui::Separator();
+        ImGui::TextColored(ImVec4(0, 1, 0, 1), Icons::info.c_str());
+        ImGui::SameLine();
+        ImGui::TextWrapped("Tamanho do salto:");
+        ImGui::TextWrapped("Controla a distância que você move a janela entre FFTs sucessivas.");
+        ImGui::Separator();
+        UIUtil::Spacing(true);
+
         formPanel->setInspection(&context->editorRepository);
         formPanel->onSync();
 
         ImGui::Separator();
 
         renderFileSelection();
-
-
-
 
         if (!context->editorRepository.pathToAudio.empty()) {
             ImGui::Separator();
@@ -71,14 +80,8 @@ namespace Metal {
             renderAudioInfo();
 
             ImGui::Separator();
-
         }
         UIUtil::Spacing(true);
 
-        if (
-            // !context->editorRepository.pathToAudio.empty() &&
-            ImGui::Button(("Construir representação" + id + "start").c_str())) {
-            context->voxelProcessorService.process();
-        }
     }
 }

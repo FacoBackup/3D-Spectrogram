@@ -2,7 +2,6 @@
 #define DEFINITIONS_H
 
 #define DEFAULT_WORLD_SIZE 10
-#define DEFAULT_HOP_SIZE 512
 #define WORLD_VOXEL_SCALE 10
 
 #endif

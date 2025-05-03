@@ -3,6 +3,8 @@
 
 #include "imgui.h"
 #include <string>
+#include <glm/mat4x4.hpp>
+#include <glm/vec3.hpp>
 
 #include "../common/interface/Icons.h"
 
@@ -79,6 +81,20 @@ namespace Metal::UIUtil {
         AUX_VEC2.y = 0;
         ImGui::Dummy(AUX_VEC2);
         ImGui::SameLine();
+    }
+
+    static void Draw3DLabel(const glm::vec3 &worldPos, const char *text, const glm::mat4 &projView) {
+        glm::vec4 clip = projView * glm::vec4(worldPos, 1.0f);
+        if (clip.w <= 0.0f) return; // Behind camera
+
+        glm::vec3 ndc = glm::vec3(clip) / clip.w;
+        if (ndc.x < -1 || ndc.x > 1 || ndc.y < -1 || ndc.y > 1 || ndc.z < 0 || ndc.z > 1)
+            return; // Outside of view
+
+        float x = (ndc.x * 0.5f + 0.5f) * ImGui::GetWindowWidth();
+        float y = (1.0f - (ndc.y * 0.5f + 0.5f)) * ImGui::GetWindowHeight();
+
+        ImGui::GetBackgroundDrawList()->AddText(ImVec2(x, y), IM_COL32_BLACK, text);
     }
 }
 #endif

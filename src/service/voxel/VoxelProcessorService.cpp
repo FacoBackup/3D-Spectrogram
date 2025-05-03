@@ -13,19 +13,13 @@ namespace Metal {
         auto audioData = context.audioProcessorService.readAudioData();
         STFTUtil::ComputeSTFT(audioData,
                               context.editorRepository.actualWindowSize,
-                              context.editorRepository.hopSize,
+                              context.editorRepository.actualHopSize,
                               context.editorRepository.minMagnitude);
 
         for (const auto &point: audioData.data) {
             auto timestamp = (point.timestamp - context.editorRepository.rangeStart);
 
-            if (context.editorRepository.showOriginalWave) {
-                builder.insert({
-                                   timestamp,
-                                   point.amplitude * fScale,
-                                   context.editorRepository.sampleSize / 2.f
-                               }, VoxelData{{1, 1, 1}});
-            } else if (!point.frequencies.empty()) {
+            if (!point.frequencies.empty()) {
                 for (const auto &fq: point.frequencies) {
                     const double frequency = fq.frequency / fScale;
                     double magnitude = fq.magnitude / fScale;

@@ -18,7 +18,7 @@ namespace Metal {
     public:
         static void ComputeSTFT(AudioDataVector &data,
                                 unsigned int windowSize,
-                                unsigned int hopSize,
+                                unsigned int hopSizeScale,
                                 float minMagnitude);
     };
 } // Metal

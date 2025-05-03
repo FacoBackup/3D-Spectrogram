@@ -16,6 +16,7 @@
 #include "../service/descriptor/DescriptorService.h"
 #include "../service/theme/ThemeService.h"
 #include "../service/camera/CameraService.h"
+#include "../service/controls/ControlService.h"
 #include "./engine/passes/PassesService.h"
 
 #include "../repository/runtime/RuntimeRepository.h"
@@ -54,6 +55,7 @@ namespace Metal {
         CameraService cameraService{*this};
         AudioProcessorService audioProcessorService{*this};
         VoxelProcessorService voxelProcessorService{*this};
+        ControlService controlService{*this};
         // ----------- Services
 
         // ----------- Repository

@@ -13,13 +13,14 @@ namespace Metal {
 
         bool isFirst = true;
         bool isInfoCollapsed = false;
+        float inspectorHeight = 0;
+
+        void renderInspector();
+
+        void renderInformation();
 
     public:
         void onInitialize() override;
-
-        void renderInspector() const;
-
-        void renderInformation();
 
         void onSync() override;
     };

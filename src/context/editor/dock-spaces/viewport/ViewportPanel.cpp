@@ -11,10 +11,13 @@
 #include <vector>
 #include <glm/vec3.hpp>
 
+#include "../../../../common/interface/Icons.h"
+
+#define GIZMO_SIZE 100.0f
+
 namespace Metal {
     void ViewportPanel::renderContent() {
-        updateInputs();
-        updateCamera();
+        context->controlService.onSync();
 
         const ImVec2 windowSize = ImGui::GetWindowSize();
         auto *framebuffer = context->coreFrameBuffers.imageFBO;
@@ -22,6 +25,17 @@ namespace Metal {
         ImGui::Image(reinterpret_cast<ImTextureID>(framebuffer->attachments[0]->imageDescriptor->vkDescriptorSet),
                      windowSize);
         renderCameraGizmo();
+
+        const char *buttonLabel = !context->editorRepository.isOrthographic ? "Perspectiva" : "Ortográfica";
+        ImGui::SetCursorPos(ImVec2(ImGui::GetWindowSize().x - ImGui::CalcTextSize(buttonLabel).x - 24, GIZMO_SIZE + 8));
+        if (ImGui::Button(buttonLabel)) {
+            context->editorRepository.isOrthographic = !context->editorRepository.isOrthographic;
+            if (context->engineContext.camera.isOrthographic != context->editorRepository.isOrthographic) {
+                context->engineContext.camera.isOrthographic = context->editorRepository.isOrthographic;
+                context->cameraService.updateCameraTarget();
+            }
+        }
+        // UIUtil::Draw3DLabel({0, 10, 0}, "Teste", context->engineContext.camera.projViewMatrix);
     }
 
     void ViewportPanel::onSync() {
@@ -47,78 +61,24 @@ namespace Metal {
         ImVec2 viewportSize = ImGui::GetWindowSize();
         ImGuizmo::SetRect(viewportPos.x, viewportPos.y, viewportSize.x, viewportSize.y);
 
-        float gizmoSize = 100.0f;
-        ImVec2 gizmoPos = ImVec2(viewportPos.x, viewportPos.y);
+        ImVec2 gizmoPos = ImVec2(viewportPos.x + viewportSize.x - GIZMO_SIZE, viewportPos.y);
 
         if (tempView != camera.viewMatrix && !isManipulating) {
             tempView = camera.viewMatrix;
         }
-        ImGuizmo::ViewManipulate(glm::value_ptr(tempView), 4.0f, gizmoPos, ImVec2(gizmoSize, gizmoSize),
+        ImGuizmo::ViewManipulate(glm::value_ptr(tempView), 4.0f, gizmoPos, ImVec2(GIZMO_SIZE, GIZMO_SIZE),
                                  IM_COL32(40, 40, 40, 0));
+        ImGui::SetCursorPos(gizmoPos);
+        ImGui::InvisibleButton("gizmoButton", ImVec2(GIZMO_SIZE, GIZMO_SIZE));
 
         isManipulating = camera.viewMatrix != tempView && ImGui::IsItemHovered();
         if (isManipulating) {
-            glm::vec3 forward = glm::normalize(glm::vec3(-tempView[2]));
+            glm::vec3 forward = glm::normalize(glm::inverse(tempView)[2]); // world-space forward
 
-            camera.yaw = -atan2(forward.x, forward.z);
+            camera.yaw = atan2(forward.x, forward.z);
             camera.pitch = asin(forward.y);
-            // camera.pitch = glm::clamp(camera.pitch, -MIN_MAX_xPITCH, MIN_MAX_PITCH);
 
             camera.changed = true;
         }
-    }
-
-    void ViewportPanel::updateCamera() {
-        auto &engineContext = context->engineContext;
-        const auto &cameraService = context->cameraService;
-
-        if (ImGui::IsWindowHovered() && !ImGuizmo::IsUsing()) {
-            if (const auto &io = ImGui::GetIO(); io.MouseWheel != 0) {
-                if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) {
-                    engineContext.camera.movementSensitivity += io.MouseWheel * 100 * context->engineContext.deltaTime;
-                    engineContext.camera.movementSensitivity =
-                            std::max(.1f, engineContext.camera.movementSensitivity);
-                } else {
-                    cameraService.handleScroll(io.MouseWheel);
-                }
-            }
-            if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
-                cameraService.handleInput(isFirstMovement);
-                isFirstMovement = false;
-            } else {
-                isFirstMovement = true;
-            }
-        } else {
-            isFirstMovement = true;
-        }
-    }
-
-    void ViewportPanel::updateInputs() const {
-        auto &repo = context->runtimeRepository;
-        const ImVec2 windowSize = ImGui::GetWindowSize();
-
-        repo.viewportH = windowSize.y;
-        repo.viewportW = windowSize.x;
-
-        const ImVec2 windowPos = ImGui::GetWindowPos();
-        repo.viewportX = windowPos.x;
-        repo.viewportY = windowPos.y;
-
-        repo.isFocused = ImGui::IsWindowHovered();
-        repo.forwardPressed = ImGui::IsKeyDown(ImGuiKey_W);
-        repo.backwardPressed = ImGui::IsKeyDown(ImGuiKey_S);
-        repo.leftPressed = ImGui::IsKeyDown(ImGuiKey_A);
-        repo.rightPressed = ImGui::IsKeyDown(ImGuiKey_D);
-        repo.upPressed = ImGui::IsKeyDown(ImGuiKey_Space);
-        repo.downPressed = ImGui::IsKeyDown(ImGuiKey_LeftCtrl);
-        repo.mousePressed = ImGui::IsWindowFocused() && ImGui::IsWindowHovered() && ImGui::IsMouseDown(
-                                ImGuiMouseButton_Left);
-
-        const ImVec2 mousePos = ImGui::GetMousePos();
-        repo.mouseX = mousePos.x;
-        repo.mouseY = mousePos.y;
-
-        repo.normalizedMouseX = (repo.mouseX + repo.viewportX) / repo.viewportW;
-        repo.normalizedMouseY = (repo.viewportH - repo.mouseY + repo.viewportY) / repo.viewportH;
     }
 }

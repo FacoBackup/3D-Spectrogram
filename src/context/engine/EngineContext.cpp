@@ -26,6 +26,17 @@ namespace Metal {
     void EngineContext::onSync() {
         updateCurrentTime();
 
+        if (context.editorRepository.isNotFrozen() && !context.editorRepository.pathToAudio.empty()) {
+            if ((currentTimeMs - lastTriggerTime) >= 1000) {
+                std::cout << (currentTimeMs - lastTriggerTime) << std::endl;
+                lastTriggerTime = currentTimeMs;
+                context.editorRepository.freezeVersion();
+                context.voxelProcessorService.process();
+            }
+        }else {
+            lastTriggerTime = currentTimeMs;
+        }
+
         context.cameraService.onSync();
 
         updateGlobalData();
