@@ -22,34 +22,6 @@ namespace Metal {
         }
     }
 
-    void InspectorPanel::beginBox(std::string name, float height) {
-        ImGui::PushStyleColor(ImGuiCol_ChildBg, context->themeService.palette2);
-        ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 8.0f);
-        ImGui::BeginChild((id + name).c_str(), ImVec2(ImGui::GetContentRegionAvail().x, height),
-                          ImGuiChildFlags_Border);
-    }
-
-    void InspectorPanel::endBox() {
-        ImGui::EndChild();
-        ImGui::PopStyleVar();
-        ImGui::PopStyleColor();
-    }
-
-    void InspectorPanel::renderAudioInfo() {
-        ImGui::Text("Informações do arquivo");
-        ImGui::Separator();
-
-        UIUtil::Spacing(true);
-
-        ImGui::Text("Nome: %s", context->editorRepository.pathToAudio.substr(
-                        context->editorRepository.pathToAudio.find_last_of('/'),
-                        context->editorRepository.pathToAudio.size()).c_str());
-        ImGui::Text("Tamanho: %.2f", context->editorRepository.selectedAudioSize);
-        ImGui::Text("Sample rate: %d", context->editorRepository.sampleRate);
-        ImGui::Text("Channels: %d", context->editorRepository.channels);
-        ImGui::Text("Frames: %d", context->editorRepository.frames);
-    }
-
     void InspectorPanel::onSync() {
         ImGui::TextColored(ImVec4(0, 1, 0, 1), Icons::info.c_str());
         ImGui::SameLine();
@@ -74,14 +46,6 @@ namespace Metal {
             ImGui::Separator();
 
             timeStampPickerPanel->onSync();
-
-            ImGui::Separator();
-
-            renderAudioInfo();
-
-            ImGui::Separator();
         }
-        UIUtil::Spacing(true);
-
     }
 }

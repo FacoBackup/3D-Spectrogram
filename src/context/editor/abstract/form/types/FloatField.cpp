@@ -7,7 +7,7 @@ namespace Metal {
     void FloatField::onSync() {
         if (field.disabled) {
             ImGui::Text("%s:", field.name.c_str());
-            ImGui::TextDisabled("%f", field.field);
+            ImGui::TextDisabled("%.2f", *field.field);
         } else {
             ImGui::Text("%s", field.name.c_str());
             if (ImGui::DragFloat(id.c_str(), field.field, field.incrementF.value(), field.minF.value(),

@@ -5,6 +5,8 @@
 #include "../../common/inspection/Inspectable.h"
 
 #define ACTUAL_WINDOW_SIZE static_cast<int>(1u << (windowSizeScale + 9))
+#define ACTUAL_INTERPOLATION static_cast<int>(1u << (interpolationScale))
+
 namespace Metal {
     struct EditorRepository final : Inspectable {
         bool showRaySearchCountVoxels = false;
@@ -13,12 +15,15 @@ namespace Metal {
         int sampleSize = DEFAULT_WORLD_SIZE ;
         int windowSizeScale = 4; // power of 2
         int actualWindowSize = ACTUAL_WINDOW_SIZE; // power of 2
-        int interpolation = 64;
+        int interpolationScale = 8;
+        int interpolation = ACTUAL_INTERPOLATION;
+        int representationResolution = 2;
+
         int hopSizeScale = 2;
         float minMagnitude = 0.6;
         int maxFrequency = 10;
         int maxMagnitude = 10;
-        bool isOrthographic = false;
+        bool isOrthographic = true;
 
         std::string pathToAudio;
         float selectedAudioSize = 0.f;
@@ -26,7 +31,7 @@ namespace Metal {
         float rangeEnd = 10.f;
         int sampleRate;
         int channels;
-        int64_t frames;
+        int frames;
         int actualHopSize = actualWindowSize / hopSizeScale;
 
         void registerFields() override;

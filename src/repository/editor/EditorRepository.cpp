@@ -3,6 +3,9 @@
 #include "../../context/ApplicationContext.h"
 #define SAMPLE_SIZE "Tamanho da amostra (Segundos)"
 #define STFT_PARAMS "Parâmetros da transformada"
+#define RENDERING_PARAMS "Renderização"
+#define FILE_INFO "Informações do arquivo"
+#define DEBUG "Debug"
 
 namespace Metal {
     const char *EditorRepository::getTitle() {
@@ -25,20 +28,33 @@ namespace Metal {
         }
 
         actualWindowSize = ACTUAL_WINDOW_SIZE;
+        interpolation = ACTUAL_INTERPOLATION;
         actualHopSize = actualWindowSize / hopSizeScale;
     }
 
     void EditorRepository::registerFields() {
         registerInt(sampleSize, "", SAMPLE_SIZE);
-        registerInt(interpolation, "", "Interpolação das amostras", 1);
-        registerInt(windowSizeScale, STFT_PARAMS, "Escala da janela", 1, 5);
-        registerInt(actualWindowSize, STFT_PARAMS, "Tamanho da janela", 1, 5, true);
-        registerInt(hopSizeScale, STFT_PARAMS, "Escala do salto", 1, 10);
-        registerInt(actualHopSize, STFT_PARAMS, "Tamanho do salto", 1, 10, true);
-        registerFloat(minMagnitude, STFT_PARAMS, "Magnitude minima", 0);
 
-        registerInt(voxelSearchCount, "Debug", "Debug count divisor");
-        registerBool(showRaySearchCountVoxels, "Debug", "Show ray search count");
-        registerBool(showRayTestCountVoxels, "Debug", "Show ray test count");
+        registerFloat(minMagnitude, STFT_PARAMS, "Magnitude minima", 0);
+        registerInt(windowSizeScale, STFT_PARAMS, "Escala da janela", 1, 5);
+        registerInt(hopSizeScale, STFT_PARAMS, "Escala do salto", 1, 10);
+        registerInt(actualWindowSize, STFT_PARAMS, "Tamanho da janela", 1, 5, true);
+        registerInt(actualHopSize, STFT_PARAMS, "Tamanho do salto", 1, 10, true);
+
+        registerInt(interpolationScale, RENDERING_PARAMS, "Escala da interpolação (Impacta desempenho)", 1);
+        registerInt(representationResolution, RENDERING_PARAMS, "Resolução da representação (Impacta desempenho)", 1,
+                    10);
+        registerInt(interpolation, RENDERING_PARAMS, "Interpolação das amostras", 1, 100, true);
+
+        registerInt(voxelSearchCount, DEBUG, "Debug count divisor");
+        registerBool(showRaySearchCountVoxels, DEBUG, "Show ray search count");
+        registerBool(showRayTestCountVoxels, DEBUG, "Show ray test count");
+
+
+        registerText(pathToAudio, FILE_INFO, "Caminho do arquivo", true);
+        registerFloat(selectedAudioSize, FILE_INFO, "Tamanho (segundos)", 0, 0, true);
+        registerInt(channels, FILE_INFO, "Canais", 0, 0, true);
+        registerInt(frames, FILE_INFO, "Frames", 0, 0, true);
+        registerInt(sampleRate, FILE_INFO, "Sample rate", 0, 0, true);
     }
 }

@@ -11,16 +11,10 @@ namespace Metal {
         FormPanel *formPanel = nullptr;
         AbstractPanel *timeStampPickerPanel = nullptr;
 
-    public:
-        void onInitialize() override;
-
         void renderFileSelection() const;
 
-        void beginBox(std::string name, float height);
-
-        void endBox();
-
-        void renderAudioInfo();
+    public:
+        void onInitialize() override;
 
         void onSync() override;
     };

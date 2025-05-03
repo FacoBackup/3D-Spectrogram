@@ -6,7 +6,7 @@
 
 namespace Metal {
     void VoxelProcessorService::process() {
-        const float fScale = 10;
+        const float fScale = 8 + context.editorRepository.representationResolution;
         unsigned int maxWorldSize = context.editorRepository.sampleSize * WORLD_VOXEL_SCALE;
         auto builder = SparseVoxelOctreeBuilder(maxWorldSize, fScale);
 

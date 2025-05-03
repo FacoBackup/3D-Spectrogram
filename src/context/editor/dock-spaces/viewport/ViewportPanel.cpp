@@ -11,7 +11,7 @@
 #include <vector>
 #include <glm/vec3.hpp>
 
-#include "../../../../common/interface/Icons.h"
+#include "../../../../util/UIUtil.h"
 
 #define GIZMO_SIZE 100.0f
 
@@ -35,7 +35,18 @@ namespace Metal {
                 context->cameraService.updateCameraTarget();
             }
         }
-        // UIUtil::Draw3DLabel({0, 10, 0}, "Teste", context->engineContext.camera.projViewMatrix);
+        if (context->editorRepository.isOrthographic) {
+            for (int i = 1; i <= context->editorRepository.maxFrequency; i += 2) {
+                int fq = context->editorRepository.maxFrequency - i;
+                UIUtil::Draw3DLabel({context->editorRepository.sampleSize, 0, i}, (std::to_string(fq * 10) + "hz").c_str(),
+                                    context->engineContext.camera.projViewMatrix);
+            }
+
+            for (int i = 1; i <= context->editorRepository.sampleSize; i += 2) {
+                UIUtil::Draw3DLabel({context->editorRepository.sampleSize - i, 0, context->editorRepository.maxFrequency}, (std::to_string(i) + "s").c_str(),
+                                    context->engineContext.camera.projViewMatrix);
+            }
+        }
     }
 
     void ViewportPanel::onSync() {
