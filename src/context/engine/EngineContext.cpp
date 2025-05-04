@@ -26,6 +26,17 @@ namespace Metal {
     void EngineContext::onSync() {
         updateCurrentTime();
 
+        if (context.editorRepository.isNotFrozen() && !context.editorRepository.pathToAudio.empty()) {
+            if ((currentTimeMs - lastTriggerTime) >= 1000) {
+                std::cout << (currentTimeMs - lastTriggerTime) << std::endl;
+                lastTriggerTime = currentTimeMs;
+                context.editorRepository.freezeVersion();
+                context.voxelProcessorService.process();
+            }
+        }else {
+            lastTriggerTime = currentTimeMs;
+        }
+
         context.cameraService.onSync();
 
         updateGlobalData();
@@ -42,6 +53,10 @@ namespace Metal {
         globalDataUBO.invProj = camera.invProjectionMatrix;
         globalDataUBO.invView = camera.invViewMatrix;
         globalDataUBO.cameraWorldPosition = camera.position;
+        globalDataUBO.xAxisLength = SAMPLE_SIZE_SECONDS;
+        globalDataUBO.zAxisLength = context.editorRepository.maxFrequency;
+        globalDataUBO.yAxisLength = context.editorRepository.maxMagnitude;
+        globalDataUBO.isOrtho = context.engineContext.camera.isOrthographic;
         context.coreBuffers.globalData->update(&globalDataUBO);
     }
 }

@@ -3,6 +3,8 @@
 
 #include "imgui.h"
 #include <string>
+#include <glm/mat4x4.hpp>
+#include <glm/vec3.hpp>
 
 #include "../common/interface/Icons.h"
 
@@ -64,13 +66,13 @@ namespace Metal::UIUtil {
     }
 
     static void Spacing(bool vertical = false) {
-        ImGui::SameLine();
         if (vertical) {
             ImGui::Dummy(MEDIUM_SPACING_VERTICAL);
         } else {
+            ImGui::SameLine();
             ImGui::Dummy(MEDIUM_SPACING);
+            ImGui::SameLine();
         }
-        ImGui::SameLine();
     }
 
     static void DynamicSpacing(float size) {
@@ -79,6 +81,25 @@ namespace Metal::UIUtil {
         AUX_VEC2.y = 0;
         ImGui::Dummy(AUX_VEC2);
         ImGui::SameLine();
+    }
+
+    static void Draw3DLabel(glm::vec3 worldPos, const char *text, const glm::mat4 projView) {
+
+        glm::vec4 clip = projView * glm::vec4(worldPos, 1.0f);
+
+        if (clip.w <= 0.0f)
+            return; // Behind the camera
+
+        glm::vec3 ndc = glm::vec3(clip) / clip.w;
+
+        if (ndc.x < -1.0f || ndc.x > 1.0f ||
+            ndc.y < -1.0f || ndc.y > 1.0f ||
+            ndc.z < 0.0f   || ndc.z > 1.0f)
+            return;
+
+        float x = (1.0f - (ndc.x * 0.5f + 0.5f)) * ImGui::GetWindowWidth(); // Flip X
+        float y = (1.0f - (ndc.y * 0.5f + 0.5f)) * ImGui::GetWindowHeight();
+        ImGui::GetForegroundDrawList()->AddText({x, y}, IM_COL32_BLACK, text);
     }
 }
 #endif

@@ -101,6 +101,7 @@ SurfaceInteraction trace(
     float minDistance = 1e10;// Large initial value
 
     if (!intersect(minBox, maxBox, ray)) return hitData;
+
     Stack stack[12];
     scale *= 0.5f;
     stack[0] = Stack(0u, center, scale, 1);

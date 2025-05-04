@@ -7,7 +7,6 @@
 
 constexpr float PI_OVER_2 = glm::pi<float>() / 2.0f;
 constexpr float PI_2 = glm::pi<float>() * 2.0f;
-constexpr float MIN_MAX_PITCH = glm::radians(89.0f);
 
 namespace Metal {
     class ApplicationContext;
@@ -33,6 +32,8 @@ namespace Metal {
         void handleInput(bool isFirstMovement) const;
 
         void handleScroll(float scrollDelta) const;
+
+        void updateCameraTarget();
 
         explicit CameraService(ApplicationContext &context);
 

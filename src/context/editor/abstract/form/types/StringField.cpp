@@ -10,14 +10,14 @@ namespace Metal {
     void StringField::onSync() {
         if (!field.disabled) {
             strcpy(buffer, field.field->c_str());
-            ImGui::Text(field.name.c_str());
+            ImGui::TextWrapped(field.name.c_str());
             if (ImGui::InputText(field.id.c_str(), buffer, sizeof(buffer))) {
                 *field.field = buffer;
                 field.instance->registerChange();
 field.instance->onUpdate(&field, *context);
             }
         } else {
-            ImGui::Text("%s: %s", field.name.c_str(), field.field->c_str());
+            ImGui::TextWrapped("%s: %s", field.name.c_str(), field.field->c_str());
         }
     }
 } // Metal

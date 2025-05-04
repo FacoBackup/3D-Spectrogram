@@ -6,39 +6,36 @@ namespace Metal {
     glm::vec3 ThemeService::BACKGROUND_COLOR = glm::vec3(0.f);
 
     void ThemeService::onSync() {
-        EditorRepository &editorRepository = context.editorRepository;
-        if (glm::length(editorRepository.accentColor) == prevLength) {
-            return;
-        }
-        prevLength = glm::length(editorRepository.accentColor);
+        if (isDone) return;
+        isDone = true;
 
         ImGuiStyle &style = ImGui::GetStyle();
         auto &colors = style.Colors;
 
-        ImGui::StyleColorsDark();
+        ImGui::StyleColorsLight();
         palette0 = ImVec4(10.0f / 255.0f, 10.0f / 255.0f, 10.0f / 255.0f, 1.0f);
-        palette1 = ImVec4(18.0f / 255.0f, 18.0f / 255.0f, 18.0f / 255.0f, 1.0f);
-        palette2 = ImVec4(22.0f / 255.0f, 22.0f / 255.0f, 22.0f / 255.0f, 1.0f);
+        palette1 = ImVec4(18.0f / 255.0f, 18.0f / 255.0f, 18.0f / 255.0f, .1f);
+        palette2 = ImVec4(225.0f / 255.0f, 225.0f / 255.0f, 225.0f / 255.0f, 1.0f); // medium gray
         neutralPalette = palette2;
-        palette3 = ImVec4(35.0f / 255.0f, 35.0f / 255.0f, 35.0f / 255.0f, 1.0f);
-        palette4 = ImVec4(65.0f / 255.0f, 65.0f / 255.0f, 65.0f / 255.0f, 1.0f);
-        palette5 = ImVec4(119.0f / 255.0f, 119.0f / 255.0f, 119.0f / 255.0f, 1.0f);
-        palette6 = ImVec4(224.0f / 255.0f, 224.0f / 255.0f, 224.0f / 255.0f, 1.0f);
+        palette3 = ImVec4(200.0f / 255.0f, 200.0f / 255.0f, 200.0f / 255.0f, 1.0f); // darker gray
+        palette4 = ImVec4(160.0f / 255.0f, 160.0f / 255.0f, 160.0f / 255.0f, 1.0f); // even darker gray
+        palette5 = ImVec4(120.0f / 255.0f, 120.0f / 255.0f, 120.0f / 255.0f, 1.0f); // dark gray
+        palette6 = ImVec4(10.0f / 255.0f, 10.0f / 255.0f, 10.0f / 255.0f, 1.0f); // very dark gray
 
         textDisabled = ImVec4(palette6.x / 2.f, palette6.y / 2.f, palette6.z / 2.f, 1);
-        colors[ImGuiCol_Text] = palette6;
+        colors[ImGuiCol_Text] = palette0;
         colors[ImGuiCol_TextDisabled] = textDisabled;
         colors[ImGuiCol_WindowBg] = palette1;
         colors[ImGuiCol_ChildBg] = palette1;
         colors[ImGuiCol_PopupBg] = palette1;
-        colors[ImGuiCol_Border] = palette3;
-        colors[ImGuiCol_BorderShadow] = ImVec4(0.f, 0.f, 0.f, 0.f);
+        colors[ImGuiCol_Border] = palette1;
+        colors[ImGuiCol_BorderShadow] = ImVec4(palette1.x, palette1.y, palette1.z, .5f);
         colors[ImGuiCol_FrameBg] = palette2;
         colors[ImGuiCol_TitleBg] = palette1;
         colors[ImGuiCol_TitleBgActive] = palette1;
         colors[ImGuiCol_TitleBgCollapsed] = palette1;
         colors[ImGuiCol_MenuBarBg] = palette0;
-        colors[ImGuiCol_ScrollbarBg] = palette0;
+        colors[ImGuiCol_ScrollbarBg] = palette1;
         colors[ImGuiCol_ScrollbarGrab] = palette3;
         colors[ImGuiCol_ScrollbarGrabHovered] = palette4;
         colors[ImGuiCol_ScrollbarGrabActive] = palette2;
@@ -61,25 +58,24 @@ namespace Metal {
         colors[ImGuiCol_NavWindowingHighlight] = palette2;
         colors[ImGuiCol_NavWindowingDimBg] = palette2;
         colors[ImGuiCol_ModalWindowDimBg] = palette2;
+        ImVec4 accent{};
+        accent.y = accentColor.y;
+        accent.z = accentColor.z;
+        accent.x = accentColor.x;
+        accent.w = 1;
 
-        editorRepository.accent.y = editorRepository.accentColor.y;
-        editorRepository.accent.z = editorRepository.accentColor.z;
-        editorRepository.accent.x = editorRepository.accentColor.x;
-        editorRepository.accent.w = 1;
-        editorRepository.accentU32 = ImGui::GetColorU32(editorRepository.accent);
-
-        colors[ImGuiCol_FrameBgHovered] = editorRepository.accent;
-        colors[ImGuiCol_FrameBgActive] = editorRepository.accent;
-        colors[ImGuiCol_CheckMark] = editorRepository.accent;
-        colors[ImGuiCol_SliderGrabActive] = editorRepository.accent;
+        colors[ImGuiCol_FrameBgHovered] = accent;
+        colors[ImGuiCol_FrameBgActive] = accent;
+        colors[ImGuiCol_CheckMark] = accent;
+        colors[ImGuiCol_SliderGrabActive] = accent;
         colors[ImGuiCol_Button] = palette3;
-        colors[ImGuiCol_ButtonHovered] = editorRepository.accent;
-        colors[ImGuiCol_Header] = editorRepository.accent;
-        colors[ImGuiCol_HeaderHovered] = editorRepository.accent;
-        colors[ImGuiCol_HeaderActive] = editorRepository.accent;
-        colors[ImGuiCol_ResizeGripHovered] = editorRepository.accent;
-        colors[ImGuiCol_ResizeGripActive] = editorRepository.accent;
-        colors[ImGuiCol_TextSelectedBg] = editorRepository.accent;
+        colors[ImGuiCol_ButtonHovered] = accent;
+        colors[ImGuiCol_Header] = accent;
+        colors[ImGuiCol_HeaderHovered] = accent;
+        colors[ImGuiCol_HeaderActive] = accent;
+        colors[ImGuiCol_ResizeGripHovered] = accent;
+        colors[ImGuiCol_ResizeGripActive] = accent;
+        colors[ImGuiCol_TextSelectedBg] = accent;
 
         BACKGROUND_COLOR[0] = colors[ImGuiCol_WindowBg].x;
         BACKGROUND_COLOR[1] = colors[ImGuiCol_WindowBg].y;

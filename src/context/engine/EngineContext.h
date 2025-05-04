@@ -14,7 +14,7 @@ using TimePoint = std::chrono::time_point<Clock>;
 namespace Metal {
     struct EngineContext final : AbstractRuntimeComponent {
         Camera camera{};
-
+        long long  lastTriggerTime = 0;
         GlobalDataUBO globalDataUBO{};
         unsigned int lightsCount = 0;
         long long start = -1;

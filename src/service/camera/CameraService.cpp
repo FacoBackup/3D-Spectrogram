@@ -38,9 +38,18 @@ namespace Metal {
     }
 
     void CameraService::updateProjection() const {
-        camera->projectionMatrix = glm::perspective(camera->fov * Util::TO_RADIANS, camera->aspectRatio,
-                                                    camera->zNear,
-                                                    camera->zFar);
+        if (camera->isOrthographic) {
+            float size = camera->orthographicProjectionSize * context.editorRepository.minMagnitude;
+            camera->projectionMatrix = glm::ortho(-size,
+                                                  size,
+                                                  -size / camera->aspectRatio,
+                                                  size / camera->aspectRatio,
+                                                  -camera->zFar, camera->zFar);
+        } else {
+            camera->projectionMatrix = glm::perspective(camera->fov * Util::TO_RADIANS, camera->aspectRatio,
+                                                        camera->zNear,
+                                                        camera->zFar);
+        }
         camera->projectionMatrix[1][1] *= -1;
         camera->invProjectionMatrix = glm::inverse(camera->projectionMatrix);
     }
@@ -72,9 +81,23 @@ namespace Metal {
     }
 
     void CameraService::handleScroll(float scrollDelta) const {
-        camera->orbitDistance -= scrollDelta * camera->movementSensitivity;
-        camera->orbitDistance = glm::clamp(camera->orbitDistance, 0.5f, 100.0f);
+        if (camera->isOrthographic) {
+            camera->orthographicProjectionSize -= scrollDelta * camera->movementSensitivity * 10.f;
+            camera->orthographicProjectionSize = glm::max(camera->orthographicProjectionSize, 1.f);
+        }else {
+            camera->orbitDistance -= scrollDelta * camera->movementSensitivity;
+            camera->orbitDistance = glm::clamp(camera->orbitDistance, 0.5f, 100.0f);
+        }
         camera->changed = true;
+
+    }
+
+    void CameraService::updateCameraTarget() {
+        context.engineContext.camera.target = glm::vec3(static_cast<float>(SAMPLE_SIZE_SECONDS / 2),
+                                                        static_cast<float>(context.editorRepository.maxMagnitude / 2),
+                                                        static_cast<float>(context.editorRepository.maxFrequency / 2));
+        context.engineContext.camera.changed = true;
+        context.engineContext.setCameraUpdated(true);
     }
 
     void CameraService::createViewMatrix() {

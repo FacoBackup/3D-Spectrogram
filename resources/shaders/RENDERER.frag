@@ -16,34 +16,44 @@ layout(push_constant) uniform Push {
     uint searchCountDivisor;
 } settings;
 
-vec3 randomColor(float seed) {
-    float r = rand(vec3(seed));
-    float g = rand(vec3(seed + r));
-    return vec3(r, g, rand(vec3(seed + g)));
+float sdBoxFrame(vec3 p, vec3 boxWidth, float thickness) {
+    p = abs(p)-boxWidth;
+    vec3 q = abs(p+thickness)-thickness;
+    return min(min(
+    length(max(vec3(p.x, q.y, q.z), 0.0))+min(max(p.x, max(q.y, q.z)), 0.0),
+    length(max(vec3(q.x, p.y, q.z), 0.0))+min(max(q.x, max(p.y, q.z)), 0.0)),
+    length(max(vec3(q.x, q.y, p.z), 0.0))+min(max(q.x, max(q.y, p.z)), 0.0));
 }
 
-
-bool rayMarch(vec3 ro, vec3 rd, out vec3 hitPos) {
+bool rayMarchCombined(vec3 ro, vec3 rd, out vec3 hitPos, out uint hitType) {
     float t = 0.0;
-    hitPos = ro;
+    hitType = 0;// 0 = no hit, 1 = box frame, 2 = ground
+
+    vec3 boxSize = vec3(globalData.xAxisLength / 2.0,
+    globalData.yAxisLength / 2.0,
+    globalData.zAxisLength / 2.0);
 
     for (int i = 0; i < 256; i++) {
-        vec3 currentP = ro + t * rd;
-        float distToPlanes = min(min(abs(currentP.x), abs(currentP.y)), abs(currentP.z));
+        hitPos = ro + t * rd;
 
-        if (distToPlanes < 0.001) {
-            hitPos = currentP;
+        // Signed distances to each object
+        float dBox = sdBoxFrame(hitPos - boxSize, boxSize, 0.1);
+        float dGround = hitPos.y;
+
+        // Minimum distance
+        float d = min(dBox, dGround);
+
+        if (d < 0.001) {
+            // Determine what was hit
+            if (dBox < dGround) hitType = 1;
+            else hitType = 2;
             return true;
         }
 
-        if (t > THRESHOLD) {
-            break;
-        }
-
-        t += max(distToPlanes, 0.001);
+        if (t > THRESHOLD || d < 0.0) break;
+        t += max(d, 0.001);
     }
 
-    hitPos = vec3(0.0);
     return false;
 }
 
@@ -55,18 +65,37 @@ float getGridLine3D(vec3 pos, float gridScale){
     float dist_z_plane = min(abs(fract(pos.z / scale) * scale), abs(fract(-pos.z / scale) * scale));
 
     float onLineZ = (1.0 - step(THICKNESS, dist_x_plane)) * (1.0 - step(THICKNESS, dist_y_plane));
-    float onLineY = (1.0 - step(THICKNESS, dist_x_plane)) * (1.0 - step(THICKNESS, dist_z_plane));
     float onLineX = (1.0 - step(THICKNESS, dist_y_plane)) * (1.0 - step(THICKNESS, dist_z_plane));
 
-    float onAnyLine = max(max(onLineX, onLineY), onLineZ);
+    float onAnyLine = max(onLineX, onLineZ);
     return 1.0 - onAnyLine;
 }
 
-vec4 getGridColor(vec2 texCoords) {
+vec4 getGridColor(vec2 texCoords, inout vec3 hitPoint) {
     bool hasData = false;
-    vec3 hitPoint;
-    vec3 rayDir = createRay(texCoords, globalData.invProj, globalData.invView);
-    hasData = rayMarch(globalData.cameraWorldPosition.xyz, rayDir, hitPoint);
+    vec3 rayDir;
+    vec3 rayOrigin;
+    createRay(texCoords, globalData.invProj, globalData.invView, globalData.isOrtho, rayOrigin, rayDir);
+    uint hitType;
+    hasData = rayMarchCombined(rayOrigin, rayDir, hitPoint, hitType);
+
+    vec3 xAxisColor = vec3(1.0, 0.0, 0.0);
+    vec3 yAxisColor = vec3(0.0, 1.0, 0.0);
+    vec3 zAxisColor = vec3(0.0, 0.0, 1.0);
+
+    if (hitType == 1) {
+
+        float isXAxis = step(max(abs(hitPoint.y ), abs(hitPoint.z)), .25);
+        float isYAxis = step(max(abs(hitPoint.x ), abs(hitPoint.z)), .25);
+        float isZAxis = step(max(abs(hitPoint.x ), abs(hitPoint.y)), .25);
+
+        vec3 axisColorSum = xAxisColor * isXAxis + yAxisColor * isYAxis + zAxisColor * isZAxis;
+        axisColorSum = clamp(axisColorSum, 0.0, 1.0);
+
+        if(length(axisColorSum.rgb) == 0) return vec4(1);
+        return vec4(axisColorSum.rgb, 1);
+    }
+
 
     if (hasData){
         float distanceFromCamera = length(globalData.cameraWorldPosition.xyz - hitPoint);
@@ -78,14 +107,11 @@ vec4 getGridColor(vec2 texCoords) {
             alpha = smoothstep(THRESHOLD, THRESHOLD - fadeRange, distanceFromCamera);
         }
 
-        float inBounds = step(abs(hitPoint.x), WORLD_SIZE) * step(abs(hitPoint.y), WORLD_SIZE) * step(abs(hitPoint.z), WORLD_SIZE);
+        float inBounds = hitPoint.x < 0 || hitPoint.z < 0 ? 0 : step(hitPoint.x, float(globalData.xAxisLength)) * step(hitPoint.z, float(globalData.zAxisLength));
         alpha *= inBounds;
 
         if (alpha > 0.0){
             vec3 baseColor = vec3(0.9);
-            vec3 xAxisColor = vec3(1.0, 0.0, 0.0);
-            vec3 yAxisColor = vec3(0.0, 1.0, 0.0);
-            vec3 zAxisColor = vec3(0.0, 0.0, 1.0);
 
             float scaleEffect = SCALE;
             float thicknessCheck = THICKNESS / max(scaleEffect, 0.01);
@@ -106,7 +132,7 @@ vec4 getGridColor(vec2 texCoords) {
             vec4 final = mix(gridColor, centerLineColor, onAnyAxis);
             final.a = min(alpha, final.a);
 
-            if (final.a == 0.0 || isDitherDiscard(final.a)) {
+            if (final.a == 0.0 || isDitherDiscard(final.a) && !globalData.isOrtho) {
                 return vec4(0);
             }
 
@@ -125,7 +151,7 @@ vec3 hsv2rgb(vec3 c) {
     return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 }
 
-vec3 colorFromPosition(vec3 position) {
+vec3 colorFromPosition(vec3 position, bool sat0) {
     float time = position.x;
     float magnitude = position.y;
     float amplitude = position.z;
@@ -138,26 +164,35 @@ vec3 colorFromPosition(vec3 position) {
     float saturation = 0.3 + 0.7 * normalizedAmp;
     float value = 0.2 + 0.8 * normalizedMag;
 
-    return hsv2rgb(vec3(hue, saturation, value));
+    return hsv2rgb(vec3(hue, sat0 ? 0. : saturation, value));
 }
 
 void main() {
-    finalColor = getGridColor(texCoords);
-    if(finalColor.a == 0) {
-        finalColor = vec4(.8, .8, .8, 1);
+    finalColor = vec4(0);
+    vec3 gridHitPoint;
+    finalColor = getGridColor(texCoords, gridHitPoint);
+
+    if (finalColor.a == 0) {
+        finalColor = vec4(vec3(.8), 1);
     }
 
-    vec3 rayOrigin = globalData.cameraWorldPosition.xyz;
-    vec3 rayDirection = createRay(texCoords, globalData.invProj, globalData.invView);
+    vec3 rayDirection;
+    vec3 rayOrigin;
+    createRay(texCoords, globalData.invProj, globalData.invView, globalData.isOrtho, rayOrigin, rayDirection);
+
     ivec2 colorData = ivec2(0);
     Ray ray = Ray(rayOrigin, rayDirection, 1./rayDirection);
-    SurfaceInteraction hitData = trace(ray, settings.showRaySearchCount, settings.showRayTestCount, colorData, WORLD_SIZE * 10.f);
+    SurfaceInteraction hitData = trace(ray, settings.showRaySearchCount, settings.showRayTestCount, colorData, float(globalData.xAxisLength) * 10.f);
+
+    if (length(globalData.cameraWorldPosition - hitData.voxelPosition) > length(globalData.cameraWorldPosition - gridHitPoint)){
+        return;
+    }
     if (hitData.voxel == 0){
         if (settings.showRaySearchCount || settings.showRayTestCount){
             finalColor.rg = colorData/float(settings.searchCountDivisor);
             finalColor.a = 1;
         }
-    }else{
-        finalColor = vec4(colorFromPosition(hitData.voxelPosition.xyz), 1);
+    } else {
+        finalColor = vec4(colorFromPosition(hitData.voxelPosition.xyz, hitData.voxelPosition.y - hitData.voxelSize == 0), 1);
     }
 }

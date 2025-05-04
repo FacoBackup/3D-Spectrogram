@@ -146,7 +146,6 @@ namespace Metal {
         const std::string basePath = context.getShadersDirectory();
         std::string source = ProcessShader(BASE_PATH + pFilename);
         source = "#define DEBUG\n" + source;
-        source = "#define WORLD_SIZE " + std::to_string(WORLD_SIZE) + std::string("\n") + source;
         source = "#define PI_2 6.28318530718\n" + source;
         source = "#define PI 3.14159265\n" + source;
 

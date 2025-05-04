@@ -16,11 +16,15 @@
 #include "../service/descriptor/DescriptorService.h"
 #include "../service/theme/ThemeService.h"
 #include "../service/camera/CameraService.h"
+#include "../service/controls/ControlService.h"
 #include "./engine/passes/PassesService.h"
 
 #include "../repository/runtime/RuntimeRepository.h"
 #include "../repository/editor/EditorRepository.h"
+#include "../repository/notification/NotificationRepository.h"
 #include "editor/EditorPanel.h"
+#include "../service/audio/AudioProcessorService.h"
+#include "../service/voxel/VoxelProcessorService.h"
 #include "gui/GuiContext.h"
 
 namespace Metal {
@@ -49,11 +53,15 @@ namespace Metal {
         DescriptorService descriptorService{*this};
         ThemeService themeService{*this};
         CameraService cameraService{*this};
+        AudioProcessorService audioProcessorService{*this};
+        VoxelProcessorService voxelProcessorService{*this};
+        ControlService controlService{*this};
         // ----------- Services
 
         // ----------- Repository
         RuntimeRepository runtimeRepository{};
         EditorRepository editorRepository{};
+        NotificationRepository notificationRepository{};
         // ----------- Repository
 
         [[nodiscard]] bool isDebugMode() const { return debugMode; }

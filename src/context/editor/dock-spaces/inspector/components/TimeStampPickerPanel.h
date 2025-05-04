@@ -6,15 +6,10 @@
 
 namespace Metal {
     class TimeStampPickerPanel final : public AbstractPanel {
-        void renderBackground(float timelineWidth, ImDrawList *&drawList, ImVec2 &canvasPos, ImVec2 &canvasSize,
-                              ImVec2 &canvasEnd);
+        static void renderBackground(float timelineWidth, ImDrawList *&drawList, ImVec2 &canvasPos, ImVec2 &canvasSize,
+                                     ImVec2 &canvasEnd);
 
-        void renderEndHandle(float timelineWidth,
-                             ImDrawList *drawList, ImVec2 canvasPos, ImVec2 canvasSize, ImVec2 canvasEnd, float xEnd);
-
-        void renderStartHandle(float timelineWidth,
-                               ImDrawList *drawList, ImVec2 canvasPos, ImVec2 canvasSize, ImVec2 canvasEnd,
-                               float xStart);
+        void handleDrag(float timelineWidth) const;
 
     public:
         void onSync() override;

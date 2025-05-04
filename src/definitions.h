@@ -1,0 +1,7 @@
+#ifndef DEFINITIONS_H
+#define DEFINITIONS_H
+
+#define DEFAULT_WORLD_SIZE 10
+#define WORLD_VOXEL_SCALE 10
+
+#endif
