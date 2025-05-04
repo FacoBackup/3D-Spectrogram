@@ -1,9 +1,9 @@
 #include "EditorRepository.h"
 #include "../../common/interface/Icons.h"
 #include "../../context/ApplicationContext.h"
-#define SAMPLE_SIZE "Tamanho da amostra (Segundos)"
 #define STFT_PARAMS "Parâmetros da transformada"
 #define RENDERING_PARAMS "Renderização"
+#define FILTERING_PARAMS "Filtro"
 #define FILE_INFO "Informações do arquivo"
 #define DEBUG "Debug"
 
@@ -17,29 +17,24 @@ namespace Metal {
     }
 
     void EditorRepository::onUpdate(InspectableMember *member, ApplicationContext &context) {
-        if (member->name == SAMPLE_SIZE) {
-            if (!pathToAudio.empty() && static_cast<int>(selectedAudioSize) < sampleSize) {
-                pathToAudio = "";
-                context.notificationRepository.addNotification("Audio selecionado é menor que o tamanho da amostra");
-            }
-            rangeEnd = static_cast<float>(sampleSize);
-            rangeStart = 0;
-            context.cameraService.updateCameraTarget();
-        }
-
         actualWindowSize = ACTUAL_WINDOW_SIZE;
         interpolation = ACTUAL_INTERPOLATION;
         actualHopSize = actualWindowSize / hopSizeScale;
+
+        if (member->group != RENDERING_PARAMS && member->group != FILTERING_PARAMS) {
+            needsDataRefresh = true;
+        }
     }
 
     void EditorRepository::registerFields() {
-        registerInt(sampleSize, "", SAMPLE_SIZE);
-
         registerFloat(minMagnitude, STFT_PARAMS, "Magnitude minima", 0);
         registerInt(windowSizeScale, STFT_PARAMS, "Escala da janela", 1, 5);
         registerInt(hopSizeScale, STFT_PARAMS, "Escala do salto", 1, 10);
         registerInt(actualWindowSize, STFT_PARAMS, "Tamanho da janela", 1, 5, true);
         registerInt(actualHopSize, STFT_PARAMS, "Tamanho do salto", 1, 10, true);
+
+        registerBool(filterWindows, FILTERING_PARAMS, "Filtrar janela da análise?");
+        registerInt(windowIndex, FILTERING_PARAMS, "Janela da análise", 0, SAMPLE_SIZE_SECONDS);
 
         registerInt(interpolationScale, RENDERING_PARAMS, "Escala da interpolação (Impacta desempenho)", 1);
         registerInt(representationResolution, RENDERING_PARAMS, "Resolução da representação (Impacta desempenho)", 1,

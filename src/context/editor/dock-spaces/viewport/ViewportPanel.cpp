@@ -38,12 +38,12 @@ namespace Metal {
         if (context->editorRepository.isOrthographic) {
             for (int i = 1; i <= context->editorRepository.maxFrequency; i += 2) {
                 int fq = context->editorRepository.maxFrequency - i;
-                UIUtil::Draw3DLabel({context->editorRepository.sampleSize, 0, i}, (std::to_string(fq * 10) + "hz").c_str(),
+                UIUtil::Draw3DLabel({SAMPLE_SIZE_SECONDS, 0, i}, (std::to_string(fq * 10) + "hz").c_str(),
                                     context->engineContext.camera.projViewMatrix);
             }
 
-            for (int i = 1; i <= context->editorRepository.sampleSize; i += 2) {
-                UIUtil::Draw3DLabel({context->editorRepository.sampleSize - i, 0, context->editorRepository.maxFrequency}, (std::to_string(i) + "s").c_str(),
+            for (int i = 1; i <= SAMPLE_SIZE_SECONDS; i += 2) {
+                UIUtil::Draw3DLabel({SAMPLE_SIZE_SECONDS - i, 0, context->editorRepository.maxFrequency}, (std::to_string(i) + "s").c_str(),
                                     context->engineContext.camera.projViewMatrix);
             }
         }

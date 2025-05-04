@@ -4,21 +4,31 @@
 #include "../../service/voxel/impl/SparseVoxelOctreeBuilder.h"
 #include "../buffer/BufferInstance.h"
 
+#define WI context.editorRepository.windowIndex
+
 namespace Metal {
     void VoxelProcessorService::process() {
         const float fScale = 8 + context.editorRepository.representationResolution;
-        unsigned int maxWorldSize = context.editorRepository.sampleSize * WORLD_VOXEL_SCALE;
+        unsigned int maxWorldSize = SAMPLE_SIZE_SECONDS * WORLD_VOXEL_SCALE;
         auto builder = SparseVoxelOctreeBuilder(maxWorldSize, fScale);
 
-        auto audioData = context.audioProcessorService.readAudioData();
-        STFTUtil::ComputeSTFT(audioData,
-                              context.editorRepository.actualWindowSize,
-                              context.editorRepository.actualHopSize,
-                              context.editorRepository.minMagnitude);
+        if (context.editorRepository.needsDataRefresh) {
+            std::cout << "Updating voxel data..." << std::endl;
+            context.editorRepository.needsDataRefresh = false;
+            audioData = context.audioProcessorService.readAudioData();
+            STFTUtil::ComputeSTFT(audioData,
+                                  context.editorRepository.actualWindowSize,
+                                  context.editorRepository.actualHopSize,
+                                  context.editorRepository.minMagnitude);
+        }
 
+        float offset = .25;
         for (const auto &point: audioData.data) {
             auto timestamp = (point.timestamp - context.editorRepository.rangeStart);
             if (!point.frequencies.empty()) {
+                if (context.editorRepository.filterWindows && (point.timestamp > WI + offset || point.timestamp < WI - offset)) {
+                    continue;
+                }
                 for (const auto &fq: point.frequencies) {
                     const double frequency = fq.frequency / fScale;
                     int magnitudeSteps = context.editorRepository.interpolation;
@@ -44,5 +54,6 @@ namespace Metal {
 
         auto voxels = builder.buildBuffer();
         context.coreBuffers.svoData->update(voxels.data());
+        builder.dispose();
     }
 } // Metal

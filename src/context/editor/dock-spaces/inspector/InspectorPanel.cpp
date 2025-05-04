@@ -19,6 +19,7 @@ namespace Metal {
         if (ImGui::Button(("Selecionar arquivo" + id + "selectAudio").c_str())) {
             context->editorRepository.pathToAudio = FilePickerUtil::selectAudioFile();
             context->audioProcessorService.extractAudioData();
+            context->editorRepository.needsDataRefresh = true;
         }
     }
 

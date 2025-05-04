@@ -53,7 +53,7 @@ namespace Metal {
         globalDataUBO.invProj = camera.invProjectionMatrix;
         globalDataUBO.invView = camera.invViewMatrix;
         globalDataUBO.cameraWorldPosition = camera.position;
-        globalDataUBO.xAxisLength = context.editorRepository.sampleSize;
+        globalDataUBO.xAxisLength = SAMPLE_SIZE_SECONDS;
         globalDataUBO.zAxisLength = context.editorRepository.maxFrequency;
         globalDataUBO.yAxisLength = context.editorRepository.maxMagnitude;
         globalDataUBO.isOrtho = context.engineContext.camera.isOrthographic;

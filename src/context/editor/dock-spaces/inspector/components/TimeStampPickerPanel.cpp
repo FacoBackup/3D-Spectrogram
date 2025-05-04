@@ -62,6 +62,7 @@ namespace Metal {
         if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
             handleDrag(timelineWidth);
             context->editorRepository.registerChange();
+            context->editorRepository.needsDataRefresh = true;
         }
 
         ImGui::Text("%.2fs até %.2fs", context->editorRepository.rangeStart,
