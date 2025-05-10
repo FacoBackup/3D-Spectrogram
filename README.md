@@ -6,9 +6,7 @@ This C++ project visualizes the frequency and magnitude of an audio signal over 
 
 ## 🎥 Demo
 
-<div align="center">
-  <video src="samples/sample-video.mp4" controls width="720"></video>
-</div>
+![](samples/sample.gif)
 
 ---
 
