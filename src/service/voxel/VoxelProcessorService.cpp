@@ -9,8 +9,7 @@
 namespace Metal {
     void VoxelProcessorService::process() {
         const float fScale = 8 + context.editorRepository.representationResolution;
-        unsigned int maxWorldSize = WORLD_VOXEL_SCALE;
-        auto builder = SparseVoxelOctreeBuilder(maxWorldSize, fScale);
+        auto builder = SparseVoxelOctreeBuilder(WORLD_VOXEL_SCALE, fScale);
 
         if (context.editorRepository.needsDataRefresh) {
             std::cout << "Updating voxel data..." << std::endl;
@@ -52,7 +51,7 @@ namespace Metal {
         context.editorRepository.maxFrequency = audioData.maxFrequency / fScale;
         context.editorRepository.maxMagnitude = std::min(
             static_cast<unsigned int>(std::ceil(audioData.maxMagnitude / fScale)),
-            maxWorldSize / 2);
+            static_cast<unsigned int>(WORLD_VOXEL_SCALE / 4.f));
 
         context.cameraService.updateCameraTarget();
 

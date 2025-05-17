@@ -19,7 +19,10 @@ namespace Metal {
         if (ImGui::Button(("Selecionar arquivo" + id + "selectAudio").c_str())) {
             context->editorRepository.pathToAudio = FilePickerUtil::selectAudioFile();
             context->audioProcessorService.extractAudioData();
+            context->editorRepository.registerChange();
             context->editorRepository.needsDataRefresh = true;
+            context->editorRepository.rangeStart = 0.f;
+            context->editorRepository.rangeEnd = SAMPLE_SIZE_SECONDS / 2.f;
         }
     }
 
@@ -47,7 +50,7 @@ namespace Metal {
             ImGui::Separator();
             timeStampPickerPanel->onSync();
             ImGui::Separator();
-            ImGui::Text("Frequência de Nyquist: %d", context->editorRepository.sampleRate/2);
+            ImGui::Text("Frequência de Nyquist: %d", context->editorRepository.sampleRate / 2);
         }
     }
 }
