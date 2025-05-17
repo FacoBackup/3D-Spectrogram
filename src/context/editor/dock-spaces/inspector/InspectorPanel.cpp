@@ -45,8 +45,9 @@ namespace Metal {
 
         if (!context->editorRepository.pathToAudio.empty()) {
             ImGui::Separator();
-
             timeStampPickerPanel->onSync();
+            ImGui::Separator();
+            ImGui::Text("Frequência de Nyquist: %d", context->editorRepository.sampleRate/2);
         }
     }
 }

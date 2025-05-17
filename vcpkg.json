@@ -37,14 +37,8 @@
     "name" : "nativefiledialog-extended",
     "version>=" : "1.2.1"
   }, {
-    "name" : "assimp",
-    "version>=" : "5.4.3"
-  }, {
     "name" : "meshoptimizer",
     "version>=" : "0.22"
-  }, {
-    "name" : "cereal",
-    "version>=" : "1.3.2#1"
   }, {
     "name" : "libsndfile",
     "version>=" : "1.2.2"

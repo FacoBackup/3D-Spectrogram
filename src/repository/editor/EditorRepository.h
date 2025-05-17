@@ -6,7 +6,6 @@
 
 #define ACTUAL_WINDOW_SIZE static_cast<int>(1u << (windowSizeScale + 9))
 #define ACTUAL_INTERPOLATION static_cast<int>(1u << (interpolationScale))
-#define SAMPLE_SIZE_SECONDS 10
 
 namespace Metal {
     struct EditorRepository final : Inspectable {
@@ -24,10 +23,10 @@ namespace Metal {
         int representationResolution = 2;
         int hopSizeScale = 2;
         float minMagnitude = 0.6;
-        int maxFrequency = 10;
-        int maxMagnitude = 10;
+        int maxFrequency = SAMPLE_SIZE_SECONDS;
+        int maxMagnitude = SAMPLE_SIZE_SECONDS;
         float rangeStart = 0.f;
-        float rangeEnd = 10.f;
+        float rangeEnd = SAMPLE_SIZE_SECONDS/2.f;
         // PROCESSING
 
         bool filterWindows = false;
@@ -37,7 +36,7 @@ namespace Metal {
 
         // METADATA
         std::string pathToAudio;
-        float selectedAudioSize = 0.f;
+        float selectedAudioSize = SAMPLE_SIZE_SECONDS;
         int sampleRate;
         int channels;
         int frames;

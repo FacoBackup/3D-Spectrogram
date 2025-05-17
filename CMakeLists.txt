@@ -116,8 +116,6 @@ add_executable(
         src/service/voxel/impl/VoxelData.h
         src/service/pipeline/PipelineBuilder.h
         src/service/framebuffer/FrameBufferAttachment.cpp
-        src/util/serialization-definitions.h
-        src/service/voxel/impl/SparseVoxelOctreeData.h
         src/context/engine/render-pass/impl/tools/VisualizerPass.cpp
         src/context/engine/render-pass/impl/tools/VisualizerPass.h
         src/dto/push-constant/VoxelDebugSettingsPushConstant.h
@@ -161,18 +159,14 @@ find_package(VulkanMemoryAllocator CONFIG REQUIRED)
 find_package(glslang CONFIG REQUIRED)
 find_package(imguizmo CONFIG REQUIRED)
 find_package(nfd CONFIG REQUIRED)
-find_package(assimp CONFIG REQUIRED)
 find_package(meshoptimizer CONFIG REQUIRED)
-find_package(cereal CONFIG REQUIRED)
 find_package(SndFile CONFIG REQUIRED)
 
 set(COMMON_LIBRARIES
         SndFile::sndfile
         glfw
         nfd::nfd
-        cereal::cereal
         meshoptimizer::meshoptimizer
-        assimp::assimp
         Vulkan::Headers
         vk-bootstrap
         vk-bootstrap-compiler-warnings
@@ -195,21 +189,3 @@ add_subdirectory(dependencies/vk-bootstrap)
 # ------ STATIC RESOURCES
 file(COPY "${CMAKE_SOURCE_DIR}/resources" DESTINATION "${CMAKE_BINARY_DIR}/")
 # ------ STATIC RESOURCES
-
-# ------ VCPKG
-set(CMAKE_TOOLCHAIN_FILE "/Users/gustavoroque/vcpkg/scripts/buildsystems/vcpkg.cmake")
-set(VCPKG_JSON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg.json")
-
-# Include vcpkg toolchain
-if (EXISTS "${VCPKG_JSON_PATH}")
-    set(VCPKG_TOOLCHAIN "${CMAKE_TOOLCHAIN_FILE}")
-    if (EXISTS "${VCPKG_TOOLCHAIN}")
-        message(STATUS "Using Vcpkg toolchain file: ${VCPKG_TOOLCHAIN}")
-        include("${VCPKG_TOOLCHAIN}")
-    else ()
-        message(FATAL_ERROR "Vcpkg toolchain file not found. Please install Vcpkg and create a vcpkg.json file for your project.")
-    endif ()
-else ()
-    message(FATAL_ERROR "Vcpkg JSON file not found. Please create a vcpkg.json file for your project.")
-endif ()
-# ------ VCPKG

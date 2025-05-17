@@ -4,11 +4,12 @@
 
 #include "../service/pipeline/ShaderModule.h"
 #include "../util/VulkanUtils.h"
-#include "../util/Util.h"
 #include "../context/ApplicationContext.h"
+#include "../definitions.h"
 #include "FilesUtil.h"
 #include "glslang/Include/glslang_c_interface.h"
 #include "glslang/Public/resource_limits_c.h"
+
 #define BASE_PATH "../resources/shaders/"
 
 namespace Metal {
@@ -148,6 +149,7 @@ namespace Metal {
         source = "#define DEBUG\n" + source;
         source = "#define PI_2 6.28318530718\n" + source;
         source = "#define PI 3.14159265\n" + source;
+        source = "#define WORLD_VOXEL_SCALE " + std::to_string(WORLD_VOXEL_SCALE) + std::string("\n") + source;
 
         const glslang_stage_t shaderStage = ShaderStageFromFilename(pFilename.c_str());
 

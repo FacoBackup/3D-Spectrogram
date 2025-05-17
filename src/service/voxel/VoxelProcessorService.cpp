@@ -9,7 +9,7 @@
 namespace Metal {
     void VoxelProcessorService::process() {
         const float fScale = 8 + context.editorRepository.representationResolution;
-        unsigned int maxWorldSize = SAMPLE_SIZE_SECONDS * WORLD_VOXEL_SCALE;
+        unsigned int maxWorldSize = WORLD_VOXEL_SCALE;
         auto builder = SparseVoxelOctreeBuilder(maxWorldSize, fScale);
 
         if (context.editorRepository.needsDataRefresh) {
@@ -22,21 +22,26 @@ namespace Metal {
                                   context.editorRepository.minMagnitude);
         }
 
+        const double sampleRate = context.editorRepository.sampleRate;
+        const double nyquistFrequency = sampleRate / 2.0;
+
         float offset = .25;
         for (const auto &point: audioData.data) {
-            auto timestamp = (point.timestamp - context.editorRepository.rangeStart);
             if (!point.frequencies.empty()) {
                 if (context.editorRepository.filterWindows && (point.timestamp > WI + offset || point.timestamp < WI - offset)) {
                     continue;
                 }
                 for (const auto &fq: point.frequencies) {
+                    if (fq.frequency > nyquistFrequency) {
+                        continue;
+                    }
                     const double frequency = fq.frequency / fScale;
                     int magnitudeSteps = context.editorRepository.interpolation;
                     for (int step = 1; step <= magnitudeSteps; ++step) {
                         double interpolatedMagnitude =
                                 (fq.magnitude / fScale) * (static_cast<double>(step) / magnitudeSteps);
                         builder.insert({
-                                           timestamp,
+                                           point.timestamp,
                                            interpolatedMagnitude,
                                            frequency
                                        }, VoxelData{{1, 1, 1}});
@@ -44,8 +49,7 @@ namespace Metal {
                 }
             }
         }
-        context.editorRepository.maxFrequency = std::min(static_cast<unsigned int>(audioData.maxFrequency / fScale),
-                                                         maxWorldSize / 2);
+        context.editorRepository.maxFrequency = audioData.maxFrequency / fScale;
         context.editorRepository.maxMagnitude = std::min(
             static_cast<unsigned int>(std::ceil(audioData.maxMagnitude / fScale)),
             maxWorldSize / 2);

@@ -43,7 +43,7 @@ namespace Metal {
         bool isOrthographic = true;
         float orthographicProjectionSize = 50;
 
-        glm::vec3 target = glm::vec3(DEFAULT_WORLD_SIZE / 2.f);
+        glm::vec3 target = glm::vec3(SAMPLE_SIZE_SECONDS / 2.f);
         float orbitDistance = 25.0f;
     };
 }

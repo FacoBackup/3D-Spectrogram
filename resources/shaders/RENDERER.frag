@@ -29,7 +29,8 @@ bool rayMarchCombined(vec3 ro, vec3 rd, out vec3 hitPos, out uint hitType) {
     float t = 0.0;
     hitType = 0;// 0 = no hit, 1 = box frame, 2 = ground
 
-    vec3 boxSize = vec3(globalData.xAxisLength / 2.0,
+    vec3 boxSize = vec3(
+    globalData.xAxisLength / 2.0,
     globalData.yAxisLength / 2.0,
     globalData.zAxisLength / 2.0);
 
@@ -182,7 +183,7 @@ void main() {
 
     ivec2 colorData = ivec2(0);
     Ray ray = Ray(rayOrigin, rayDirection, 1./rayDirection);
-    SurfaceInteraction hitData = trace(ray, settings.showRaySearchCount, settings.showRayTestCount, colorData, float(globalData.xAxisLength) * 10.f);
+    SurfaceInteraction hitData = trace(ray, settings.showRaySearchCount, settings.showRayTestCount, colorData, WORLD_VOXEL_SCALE);
 
     if (length(globalData.cameraWorldPosition - hitData.voxelPosition) > length(globalData.cameraWorldPosition - gridHitPoint)){
         return;
