@@ -14,8 +14,8 @@ namespace Metal {
         if (context.editorRepository.needsDataRefresh) {
             std::cout << "Updating voxel data..." << std::endl;
             context.editorRepository.needsDataRefresh = false;
-            audioData = context.audioProcessorService.readAudioData();
-            STFTUtil::ComputeSTFT(audioData,
+            context.editorRepository.audioData = context.audioProcessorService.readAudioData();
+            STFTUtil::ComputeSTFT(context.editorRepository.audioData,
                                   context.editorRepository.actualWindowSize,
                                   context.editorRepository.actualHopSize,
                                   context.editorRepository.minMagnitude);
@@ -25,7 +25,7 @@ namespace Metal {
         const double nyquistFrequency = sampleRate / 2.0;
 
         float offset = .25;
-        for (const auto &point: audioData.data) {
+        for (const auto &point: context.editorRepository.audioData.data) {
             if (!point.frequencies.empty()) {
                 if (context.editorRepository.filterWindows && (point.timestamp > WI + offset || point.timestamp < WI - offset)) {
                     continue;
@@ -48,9 +48,9 @@ namespace Metal {
                 }
             }
         }
-        context.editorRepository.maxFrequency = audioData.maxFrequency / fScale;
+        context.editorRepository.maxFrequency = context.editorRepository.audioData.maxFrequency / fScale;
         context.editorRepository.maxMagnitude = std::min(
-            static_cast<unsigned int>(std::ceil(audioData.maxMagnitude / fScale)),
+            static_cast<unsigned int>(std::ceil(context.editorRepository.audioData.maxMagnitude / fScale)),
             static_cast<unsigned int>(WORLD_VOXEL_SCALE / 4.f));
 
         context.cameraService.updateCameraTarget();

@@ -3,6 +3,7 @@
 
 #include "../../definitions.h"
 #include "../../common/inspection/Inspectable.h"
+#include "../../service/audio/AudioData.h"
 
 #define ACTUAL_WINDOW_SIZE static_cast<int>(1u << (windowSizeScale + 9))
 #define ACTUAL_INTERPOLATION static_cast<int>(1u << (interpolationScale))
@@ -14,6 +15,8 @@ namespace Metal {
         bool showRayTestCountVoxels = false;
         int voxelSearchCount = 32;
         // DEBUG
+
+        AudioDataVector audioData;
 
         // PROCESSING
         int windowSizeScale = 4; // power of 2

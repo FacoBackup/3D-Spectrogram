@@ -145,6 +145,8 @@ add_executable(
         src/service/voxel/VoxelProcessorService.h
         src/service/controls/ControlService.cpp
         src/service/controls/ControlService.h
+        src/context/editor/dock-spaces/inspector/components/WaveformPanel.cpp
+        src/context/editor/dock-spaces/inspector/components/WaveformPanel.h
 )
 
 

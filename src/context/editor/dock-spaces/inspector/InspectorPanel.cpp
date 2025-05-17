@@ -6,13 +6,16 @@
 #include "../../../../common/inspection/Inspectable.h"
 #include "../../../../context/ApplicationContext.h"
 #include "components/TimeStampPickerPanel.h"
+#include "components/WaveformPanel.h"
 
 namespace Metal {
     void InspectorPanel::onInitialize() {
         formPanel = new FormPanel();
         timeStampPickerPanel = new TimeStampPickerPanel();
+        waveformPanel = new WaveformPanel();
         appendChild(formPanel);
         appendChild(timeStampPickerPanel);
+        appendChild(waveformPanel);
     }
 
     void InspectorPanel::renderFileSelection() const {
@@ -49,6 +52,7 @@ namespace Metal {
         if (!context->editorRepository.pathToAudio.empty()) {
             ImGui::Separator();
             timeStampPickerPanel->onSync();
+            waveformPanel->onSync();
             ImGui::Separator();
             ImGui::Text("Frequência de Nyquist: %d", context->editorRepository.sampleRate / 2);
         }
