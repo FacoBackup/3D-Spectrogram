@@ -24,9 +24,17 @@ namespace Metal {
         if (member->group != RENDERING_PARAMS && member->group != FILTERING_PARAMS) {
             needsDataRefresh = true;
         }
+        if (isShowingOriginalWave) {
+            interpolationScale = 1;
+            representationResolution = 6;
+        } else {
+            interpolationScale = 8;
+            representationResolution = 2;
+        }
     }
 
     void EditorRepository::registerFields() {
+        registerBool(isShowingOriginalWave, "", "Mostrar onda original?");
         registerFloat(minMagnitude, STFT_PARAMS, "Magnitude minima", 0);
         registerInt(windowSizeScale, STFT_PARAMS, "Escala da janela", 1, 5);
         registerInt(hopSizeScale, STFT_PARAMS, "Escala do salto", 1, 10);

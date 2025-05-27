@@ -2,6 +2,7 @@
 #define VOXELPROCESSORSERVICE_H
 #include "../abstract/AbstractResourceService.h"
 #include "../audio/AudioData.h"
+#include "impl/SparseVoxelOctreeBuilder.h"
 
 namespace Metal {
     class VoxelProcessorService final : public AbstractResourceService {
@@ -9,6 +10,10 @@ namespace Metal {
         explicit VoxelProcessorService(ApplicationContext &context)
             : AbstractResourceService(context) {
         }
+
+        void processOriginalWave(SparseVoxelOctreeBuilder &builder);
+
+        void processTransformedSignal(float fScale, SparseVoxelOctreeBuilder &builder);
 
         void process();
     };

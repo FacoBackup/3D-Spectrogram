@@ -36,15 +36,41 @@ namespace Metal {
             }
         }
         if (context->editorRepository.isOrthographic) {
-            for (int i = 0; i <= context->editorRepository.maxFrequency; i += 2) {
-                int fq = context->editorRepository.maxFrequency - i;
-                UIUtil::Draw3DLabel({SAMPLE_SIZE_SECONDS, 0, i - 1 }, (std::to_string(fq * 50) + "hz").c_str(),
-                                    context->engineContext.camera.projViewMatrix);
-            }
+            if (context->editorRepository.isShowingOriginalWave) {
+                for (float i = 0; i <= SAMPLE_SIZE_SECONDS / 2.f; i += 0.2f) {
+                    std::ostringstream ss;
+                    ss.precision(2);
+                    ss << std::fixed << (context->editorRepository.rangeEnd - i + context->editorRepository.rangeStart);
 
-            for (int i = 1; i <= static_cast<int>(context->editorRepository.selectedAudioSize); i += 2) {
-                UIUtil::Draw3DLabel({SAMPLE_SIZE_SECONDS - i, 0, context->editorRepository.maxFrequency}, (std::to_string(i) + "s").c_str(),
-                                    context->engineContext.camera.projViewMatrix);
+                    std::string label = ss.str() + "s";
+
+                    UIUtil::Draw3DLabel(
+                        {
+                            ( i) * ORIGINAL_WAVE_SCALE ,
+                            0,
+                            context->editorRepository.maxFrequency
+                        },
+                        context->engineContext.camera.target.x,
+                        label.c_str(),
+                        context->engineContext.camera.projViewMatrix
+                    );
+                }
+            } else {
+                for (int i = 0; i <= context->editorRepository.maxFrequency; i += 2) {
+                    int fq = context->editorRepository.maxFrequency - i;
+                    UIUtil::Draw3DLabel({context->editorRepository.selectedAudioSize, 0, i - 1},
+                                        0,
+
+                                        (std::to_string(fq * 50) + "hz").c_str(),
+                                        context->engineContext.camera.projViewMatrix);
+                }
+
+                for (int i = 0; i <= static_cast<int>(context->editorRepository.selectedAudioSize); i += 2) {
+                    UIUtil::Draw3DLabel({context->editorRepository.selectedAudioSize - i, 0, context->editorRepository.maxFrequency},
+                                        0,
+                                        (std::to_string(i ) + "s").c_str(),
+                                        context->engineContext.camera.projViewMatrix);
+                }
             }
         }
     }

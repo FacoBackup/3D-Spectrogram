@@ -12,9 +12,6 @@ namespace Metal {
         bool hasCopiedView = false;
         glm::mat4 tempView{};
 
-        void Draw3DLabel(const glm::vec3 &worldPos, const char *text, const glm::mat4 &view, const glm::mat4 &proj,
-                         int screenWidth, int screenHeight);
-
         void renderContent();
 
         void renderCameraGizmo();

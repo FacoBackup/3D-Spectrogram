@@ -40,6 +40,7 @@ namespace Metal {
         // METADATA
         std::string pathToAudio;
         float selectedAudioSize = SAMPLE_SIZE_SECONDS;
+        bool isShowingOriginalWave = false;
         int sampleRate;
         int channels;
         int frames;

@@ -49,11 +49,13 @@ namespace Metal {
     void EngineContext::updateGlobalData() {
         globalDataUBO.viewMatrix = camera.viewMatrix;
         globalDataUBO.projectionMatrix = camera.projectionMatrix;
-        globalDataUBO.projView = camera.projViewMatrix;
         globalDataUBO.invProj = camera.invProjectionMatrix;
         globalDataUBO.invView = camera.invViewMatrix;
         globalDataUBO.cameraWorldPosition = camera.position;
-        globalDataUBO.xAxisLength = static_cast<int>(context.editorRepository.selectedAudioSize);
+        globalDataUBO.xAxisLength =  context.editorRepository.isShowingOriginalWave ?
+        static_cast<int>(SAMPLE_SIZE_SECONDS * ORIGINAL_WAVE_SCALE/2.f)
+        :
+        static_cast<int>(context.editorRepository.selectedAudioSize);
         globalDataUBO.zAxisLength = context.editorRepository.maxFrequency;
         globalDataUBO.yAxisLength = context.editorRepository.maxMagnitude;
         globalDataUBO.isOrtho = context.engineContext.camera.isOrthographic;

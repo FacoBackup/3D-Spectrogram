@@ -7,27 +7,39 @@
 #define WI context.editorRepository.windowIndex
 
 namespace Metal {
-    void VoxelProcessorService::process() {
-        const float fScale = 8 + context.editorRepository.representationResolution;
-        auto builder = SparseVoxelOctreeBuilder(WORLD_VOXEL_SCALE, fScale);
+    void VoxelProcessorService::processOriginalWave(SparseVoxelOctreeBuilder &builder) {
+        double amplitudeThreshold = 0.005; // Ignore amplitudes below this normalized value
 
-        if (context.editorRepository.needsDataRefresh) {
-            std::cout << "Updating voxel data..." << std::endl;
-            context.editorRepository.needsDataRefresh = false;
-            context.editorRepository.audioData = context.audioProcessorService.readAudioData();
-            STFTUtil::ComputeSTFT(context.editorRepository.audioData,
-                                  context.editorRepository.actualWindowSize,
-                                  context.editorRepository.actualHopSize,
-                                  context.editorRepository.minMagnitude);
+        for (const auto &point: context.editorRepository.audioData.data) {
+            if (point.amplitude < -amplitudeThreshold || point.amplitude > amplitudeThreshold)
+                continue; // Skip insignificant amplitudes
+
+            int magnitudeSteps = context.editorRepository.interpolation;
+            for (int step = 1; step <= magnitudeSteps; ++step) {
+                double interpolatedMagnitude =
+                        (point.amplitude * 500.0) * (static_cast<double>(step) / magnitudeSteps);
+
+                builder.insert({
+                                   (point.timestamp - context.editorRepository.rangeStart) * ORIGINAL_WAVE_SCALE,
+                                   interpolatedMagnitude + 5.0, // vertical offset for visibility
+                                   0.0
+                               }, VoxelData{{1, 1, 1}});
+            }
         }
 
+        context.editorRepository.maxFrequency = 1;
+        context.editorRepository.maxMagnitude = 10;
+    }
+
+    void VoxelProcessorService::processTransformedSignal(const float fScale, SparseVoxelOctreeBuilder &builder) {
         const double sampleRate = context.editorRepository.sampleRate;
         const double nyquistFrequency = sampleRate / 2.0;
 
         float offset = .25;
         for (const auto &point: context.editorRepository.audioData.data) {
             if (!point.frequencies.empty()) {
-                if (context.editorRepository.filterWindows && (point.timestamp > WI + offset || point.timestamp < WI - offset)) {
+                if (context.editorRepository.filterWindows && (
+                        point.timestamp > WI + offset || point.timestamp < WI - offset)) {
                     continue;
                 }
                 for (const auto &fq: point.frequencies) {
@@ -52,6 +64,27 @@ namespace Metal {
         context.editorRepository.maxMagnitude = std::min(
             static_cast<unsigned int>(std::ceil(context.editorRepository.audioData.maxMagnitude / fScale)),
             static_cast<unsigned int>(WORLD_VOXEL_SCALE / 4.f));
+    }
+
+    void VoxelProcessorService::process() {
+        const float fScale = 8 + context.editorRepository.representationResolution;
+        auto builder = SparseVoxelOctreeBuilder(WORLD_VOXEL_SCALE, fScale);
+
+        if (context.editorRepository.needsDataRefresh) {
+            std::cout << "Updating voxel data..." << std::endl;
+            context.editorRepository.needsDataRefresh = false;
+            context.editorRepository.audioData = context.audioProcessorService.readAudioData();
+            STFTUtil::ComputeSTFT(context.editorRepository.audioData,
+                                  context.editorRepository.actualWindowSize,
+                                  context.editorRepository.actualHopSize,
+                                  context.editorRepository.minMagnitude);
+        }
+
+        if (context.editorRepository.isShowingOriginalWave) {
+            processOriginalWave(builder);
+        } else {
+            processTransformedSignal(fScale, builder);
+        }
 
         context.cameraService.updateCameraTarget();
 

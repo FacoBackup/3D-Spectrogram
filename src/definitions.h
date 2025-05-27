@@ -2,6 +2,7 @@
 #define DEFINITIONS_H
 
 #define SAMPLE_SIZE_SECONDS 5
+#define ORIGINAL_WAVE_SCALE 10
 #define WORLD_VOXEL_SCALE 100
 
 #endif

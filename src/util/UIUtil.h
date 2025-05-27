@@ -83,8 +83,8 @@ namespace Metal::UIUtil {
         ImGui::SameLine();
     }
 
-    static void Draw3DLabel(glm::vec3 worldPos, const char *text, const glm::mat4 projView) {
-
+    static void Draw3DLabel(glm::vec3 worldPos, float offset, const char *text, const glm::mat4 projView) {
+        // worldPos.x += offset/2;
         glm::vec4 clip = projView * glm::vec4(worldPos, 1.0f);
 
         if (clip.w <= 0.0f)
