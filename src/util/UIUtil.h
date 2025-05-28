@@ -83,8 +83,7 @@ namespace Metal::UIUtil {
         ImGui::SameLine();
     }
 
-    static void Draw3DLabel(glm::vec3 worldPos, float offset, const char *text, const glm::mat4 projView) {
-        // worldPos.x += offset/2;
+    static void Draw3DLabel(glm::vec3 worldPos, const char *text, const glm::mat4 projView, ImU32 color) {
         glm::vec4 clip = projView * glm::vec4(worldPos, 1.0f);
 
         if (clip.w <= 0.0f)
@@ -94,12 +93,12 @@ namespace Metal::UIUtil {
 
         if (ndc.x < -1.0f || ndc.x > 1.0f ||
             ndc.y < -1.0f || ndc.y > 1.0f ||
-            ndc.z < 0.0f   || ndc.z > 1.0f)
+            ndc.z < 0.0f || ndc.z > 1.0f)
             return;
 
         float x = (1.0f - (ndc.x * 0.5f + 0.5f)) * ImGui::GetWindowWidth(); // Flip X
         float y = (1.0f - (ndc.y * 0.5f + 0.5f)) * ImGui::GetWindowHeight();
-        ImGui::GetForegroundDrawList()->AddText({x, y}, IM_COL32_BLACK, text);
+        ImGui::GetForegroundDrawList()->AddText({x, y}, color, text);
     }
 }
 #endif

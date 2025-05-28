@@ -46,30 +46,47 @@ namespace Metal {
 
                     UIUtil::Draw3DLabel(
                         {
-                            ( i) * ORIGINAL_WAVE_SCALE ,
+                            (i) * ORIGINAL_WAVE_SCALE,
                             0,
                             context->editorRepository.maxFrequency
                         },
-                        context->engineContext.camera.target.x,
                         label.c_str(),
-                        context->engineContext.camera.projViewMatrix
+                        context->engineContext.camera.projViewMatrix,
+                        IM_COL32_BLACK
                     );
                 }
-            } else {
+            } else if (!context->editorRepository.pathToAudio.empty()) {
                 for (int i = 0; i <= context->editorRepository.maxFrequency; i += 2) {
                     int fq = context->editorRepository.maxFrequency - i;
-                    UIUtil::Draw3DLabel({context->editorRepository.selectedAudioSize, 0, i - 1},
-                                        0,
-
-                                        (std::to_string(fq * 50) + "hz").c_str(),
-                                        context->engineContext.camera.projViewMatrix);
+                    UIUtil::Draw3DLabel(
+                        {context->editorRepository.selectedAudioSize, -1, i - 1},
+                        (std::to_string(fq * 50) + "hz").c_str(),
+                        context->engineContext.camera.projViewMatrix,
+                        IM_COL32(0, 0, 255, 255)
+                    );
                 }
-
+                for (int i = 2; i <= context->editorRepository.maxMagnitude; i += 2) {
+                    int magnitude = context->editorRepository.maxMagnitude - i;
+                    UIUtil::Draw3DLabel(
+                        {
+                            context->editorRepository.selectedAudioSize,
+                            i - 2,
+                            context->editorRepository.maxFrequency
+                        },
+                        (std::to_string(magnitude)).c_str(),
+                        context->engineContext.camera.projViewMatrix,
+                        IM_COL32(0, 128, 0, 255)
+                    );
+                }
                 for (int i = 0; i <= static_cast<int>(context->editorRepository.selectedAudioSize); i += 2) {
-                    UIUtil::Draw3DLabel({context->editorRepository.selectedAudioSize - i, 0, context->editorRepository.maxFrequency},
-                                        0,
-                                        (std::to_string(i ) + "s").c_str(),
-                                        context->engineContext.camera.projViewMatrix);
+                    UIUtil::Draw3DLabel({
+                                            context->editorRepository.selectedAudioSize - i, -1,
+                                            context->editorRepository.maxFrequency
+                                        },
+                                        (std::to_string(i) + "s").c_str(),
+                                        context->engineContext.camera.projViewMatrix,
+                                        IM_COL32(255, 0, 0, 255)
+                    );
                 }
             }
         }
