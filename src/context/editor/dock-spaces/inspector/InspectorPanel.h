@@ -10,12 +10,13 @@ namespace Metal {
     class InspectorPanel final : public AbstractPanel {
         FormPanel *formPanel = nullptr;
         AbstractPanel *timeStampPickerPanel = nullptr;
-        AbstractPanel *waveformPanel = nullptr;
 
         void renderFileSelection() const;
 
     public:
         void onInitialize() override;
+
+        void updateAudioRelatedProperties() const;
 
         void onSync() override;
     };

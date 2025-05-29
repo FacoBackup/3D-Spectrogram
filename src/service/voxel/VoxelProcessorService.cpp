@@ -20,10 +20,10 @@ namespace Metal {
                         (point.amplitude * 500.0) * (static_cast<double>(step) / magnitudeSteps);
 
                 builder.insert({
-                                   (point.timestamp - context.editorRepository.rangeStart) * ORIGINAL_WAVE_SCALE,
-                                   interpolatedMagnitude + 5.0, // vertical offset for visibility
-                                   0.0
-                               }, VoxelData{{1, 1, 1}});
+                    (point.timestamp - context.editorRepository.rangeStart) * ORIGINAL_WAVE_SCALE,
+                    interpolatedMagnitude + 5.0, // vertical offset for visibility
+                    0.0
+                });
             }
         }
 
@@ -52,10 +52,10 @@ namespace Metal {
                         double interpolatedMagnitude =
                                 (fq.magnitude / fScale) * (static_cast<double>(step) / magnitudeSteps);
                         builder.insert({
-                                           point.timestamp,
-                                           interpolatedMagnitude,
-                                           frequency
-                                       }, VoxelData{{1, 1, 1}});
+                            point.timestamp,
+                            interpolatedMagnitude,
+                            frequency
+                        });
                     }
                 }
             }
@@ -66,9 +66,17 @@ namespace Metal {
             static_cast<unsigned int>(WORLD_VOXEL_SCALE / 4.f));
     }
 
+    void VoxelProcessorService::processAudioInfo(const float fScale, SparseVoxelOctreeBuilder &builder) {
+        if (context.editorRepository.isShowingOriginalWave) {
+            processOriginalWave(builder);
+        } else {
+            processTransformedSignal(fScale, builder);
+        }
+    }
+
     void VoxelProcessorService::process() {
-        const float fScale = 8 + context.editorRepository.representationResolution;
-        auto builder = SparseVoxelOctreeBuilder(WORLD_VOXEL_SCALE, fScale);
+        const auto fScale = static_cast<float>(8 + context.editorRepository.representationResolution);
+        auto builder = SparseVoxelOctreeBuilder(WORLD_VOXEL_SCALE, static_cast<int>(fScale));
 
         if (context.editorRepository.needsDataRefresh) {
             std::cout << "Updating voxel data..." << std::endl;
@@ -80,10 +88,12 @@ namespace Metal {
                                   context.editorRepository.minMagnitude);
         }
 
-        if (context.editorRepository.isShowingOriginalWave) {
-            processOriginalWave(builder);
+        if (context.editorRepository.isShowStaticCurve) {
+            if (context.editorRepository.selectedCurve > -1) {
+                context.editorRepository.curves[context.editorRepository.selectedCurve]->addVoxels(builder, fScale);
+            }
         } else {
-            processTransformedSignal(fScale, builder);
+            processAudioInfo(fScale, builder);
         }
 
         context.cameraService.updateCameraTarget();

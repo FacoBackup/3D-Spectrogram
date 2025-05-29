@@ -15,6 +15,8 @@ namespace Metal {
 
         void processTransformedSignal(float fScale, SparseVoxelOctreeBuilder &builder);
 
+        void processAudioInfo(float fScale, SparseVoxelOctreeBuilder &builder);
+
         void process();
     };
 } // Metal

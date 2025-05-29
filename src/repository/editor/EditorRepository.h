@@ -4,9 +4,14 @@
 #include "../../definitions.h"
 #include "../../common/inspection/Inspectable.h"
 #include "../../service/audio/AudioData.h"
+#include "../../service/voxel/curve/SineCurve.h"
 
 #define ACTUAL_WINDOW_SIZE static_cast<int>(1u << (windowSizeScale + 9))
 #define ACTUAL_INTERPOLATION static_cast<int>(1u << (interpolationScale))
+
+namespace Metal {
+    class AbstractCurve;
+}
 
 namespace Metal {
     struct EditorRepository final : Inspectable {
@@ -41,10 +46,13 @@ namespace Metal {
         std::string pathToAudio;
         float selectedAudioSize = SAMPLE_SIZE_SECONDS;
         bool isShowingOriginalWave = false;
+        bool isShowStaticCurve = true;
         int sampleRate;
         int channels;
         int frames;
         int actualHopSize = actualWindowSize / hopSizeScale;
+        std::array<std::unique_ptr<AbstractCurve>, 1> curves = {std::make_unique<SineCurve>()};
+        int selectedCurve = -1;
         // METADATA
 
         void registerFields() override;

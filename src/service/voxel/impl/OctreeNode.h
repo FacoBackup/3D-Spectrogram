@@ -7,7 +7,6 @@
 namespace Metal {
     struct OctreeNode final {
         std::array<OctreeNode *, 8> children;
-        unsigned int data;
         bool isLeaf = false;
         unsigned int depth;
         bool isStructureStart = false;

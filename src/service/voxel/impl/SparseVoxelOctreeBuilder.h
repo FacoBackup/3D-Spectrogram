@@ -19,7 +19,7 @@ namespace Metal {
         std::vector<uint32_t> voxels;
         unsigned int bufferIndex = 0;
 
-        void insertInternal(OctreeNode *node, glm::vec3 &point, VoxelData &data,
+        void insertInternal(OctreeNode *node, glm::vec3 &point,
                             glm::ivec3 &position, int depth);
 
         void fillStorage(OctreeNode *node);
@@ -51,7 +51,7 @@ namespace Metal {
             return root;
         }
 
-        void insert(glm::vec3 point, VoxelData data);
+        void insert(glm::vec3 point);
 
         void dispose();
     };
