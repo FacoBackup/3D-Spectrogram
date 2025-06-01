@@ -24,13 +24,19 @@ namespace Metal {
         if (member->group != RENDERING_PARAMS && member->group != FILTERING_PARAMS) {
             needsDataRefresh = true;
         }
+
+        if (isShowStaticCurve) {
+            representationResolution = 5;
+            return;
+        }
+
         if (isShowingOriginalWave) {
             interpolationScale = 1;
             representationResolution = 6;
-        } else {
-            interpolationScale = 8;
-            representationResolution = 2;
+            return;
         }
+        interpolationScale = 8;
+        representationResolution = 2;
     }
 
     void EditorRepository::registerFields() {
@@ -55,7 +61,7 @@ namespace Metal {
 
 
         registerText(pathToAudio, FILE_INFO, "Caminho do arquivo", true);
-        registerFloat(selectedAudioSize, FILE_INFO, "Tamanho (segundos)", 0, 0, true);
+        registerInt(maxXAxis, FILE_INFO, "Tamanho (segundos)", 0, 0, true);
         registerInt(channels, FILE_INFO, "Canais", 0, 0, true);
         registerInt(frames, FILE_INFO, "Frames", 0, 0, true);
         registerInt(sampleRate, FILE_INFO, "Sample rate", 0, 0, true);

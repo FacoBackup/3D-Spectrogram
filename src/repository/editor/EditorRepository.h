@@ -4,7 +4,10 @@
 #include "../../definitions.h"
 #include "../../common/inspection/Inspectable.h"
 #include "../../service/audio/AudioData.h"
-#include "../../service/voxel/curve/SineCurve.h"
+#include "../../service/voxel/curve/HarmonicPathCurve.h"
+#include "../../service/voxel/curve/HelixCurve.h"
+#include "../../service/voxel/curve/LorenzAttractorCurve.h"
+#include "../../service/voxel/curve/SineCurve2D.h"
 
 #define ACTUAL_WINDOW_SIZE static_cast<int>(1u << (windowSizeScale + 9))
 #define ACTUAL_INTERPOLATION static_cast<int>(1u << (interpolationScale))
@@ -28,11 +31,11 @@ namespace Metal {
         int actualWindowSize = ACTUAL_WINDOW_SIZE; // power of 2
         int interpolationScale = 8;
         int interpolation = ACTUAL_INTERPOLATION;
-        int representationResolution = 2;
+        int representationResolution = 5;
         int hopSizeScale = 2;
         float minMagnitude = 0.6;
-        int maxFrequency = SAMPLE_SIZE_SECONDS;
-        int maxMagnitude = SAMPLE_SIZE_SECONDS;
+        int maxZAxis = SAMPLE_SIZE_SECONDS;
+        int maxYAxis = SAMPLE_SIZE_SECONDS;
         float rangeStart = 0.f;
         float rangeEnd = SAMPLE_SIZE_SECONDS/2.f;
         // PROCESSING
@@ -44,14 +47,19 @@ namespace Metal {
 
         // METADATA
         std::string pathToAudio;
-        float selectedAudioSize = SAMPLE_SIZE_SECONDS;
+        int maxXAxis = SAMPLE_SIZE_SECONDS;
         bool isShowingOriginalWave = false;
         bool isShowStaticCurve = true;
         int sampleRate;
         int channels;
         int frames;
         int actualHopSize = actualWindowSize / hopSizeScale;
-        std::array<std::unique_ptr<AbstractCurve>, 1> curves = {std::make_unique<SineCurve>()};
+        std::array<std::unique_ptr<AbstractCurve>, 4> curves = {
+            std::make_unique<SineCurve2D>(),
+            std::make_unique<HelixCurve>(),
+            std::make_unique<HarmonicPathCurve>(),
+            std::make_unique<LorenzAttractorCurve>(),
+        };
         int selectedCurve = -1;
         // METADATA
 

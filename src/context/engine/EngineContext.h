@@ -37,8 +37,6 @@ namespace Metal {
 
         void onInitialize() override;
 
-        void updateVoxelData();
-
         void updateCurrentTime();
 
         explicit EngineContext(ApplicationContext &context) : AbstractRuntimeComponent(context) {
@@ -48,6 +46,8 @@ namespace Metal {
         void updateGlobalData();
 
         void onSync() override;
+
+        int getMaxX() const;
     };
 }
 #endif

@@ -92,9 +92,9 @@ namespace Metal {
             context.editorRepository.sampleRate = info.samplerate;
             context.editorRepository.channels = info.channels;
             context.editorRepository.frames = info.frames;
-            context.editorRepository.selectedAudioSize = static_cast<double>(info.frames) / info.samplerate;
+            context.editorRepository.maxXAxis = static_cast<double>(info.frames) / info.samplerate;
 
-            if (static_cast<int>(context.editorRepository.selectedAudioSize) < SAMPLE_SIZE_SECONDS) {
+            if (static_cast<int>(context.editorRepository.maxXAxis) < SAMPLE_SIZE_SECONDS) {
                 context.editorRepository.pathToAudio = "";
                 context.notificationRepository.addNotification(
                     "O tamanho audio é menor que " + std::to_string(SAMPLE_SIZE_SECONDS) + " segundos");

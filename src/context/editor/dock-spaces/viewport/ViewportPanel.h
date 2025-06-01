@@ -1,22 +1,27 @@
 #ifndef TCC_IESB_VIEWPORTPANEL_H
 #define TCC_IESB_VIEWPORTPANEL_H
 
-#include <glm/mat4x4.hpp>
-
 #include "../../abstract/AbstractPanel.h"
 
 namespace Metal {
     class ViewportPanel final : public AbstractPanel {
         bool isFirstMovement = false;
-        bool isManipulating = false;
-        bool hasCopiedView = false;
-        glm::mat4 tempView{};
 
-        void renderContent();
+        void renderSpectrogramAxisLabels() const;
 
-        void renderCameraGizmo();
+        void renderOriginalWaveAxisLabels() const;
+
+        void renderCameraModeToggle() const;
+
+        void renderFrame() const;
+
+        void renderStaticCurveLabels() const;
+
+        void renderContent() const;
 
     public:
+        void onInitialize() override;
+
         void onSync() override;
     };
 }

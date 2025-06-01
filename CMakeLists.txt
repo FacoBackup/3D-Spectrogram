@@ -113,7 +113,6 @@ add_executable(
         src/service/voxel/impl/SparseVoxelOctreeBuilder.h
         src/service/voxel/impl/OctreeNode.cpp
         src/service/voxel/impl/OctreeNode.h
-        src/service/voxel/impl/VoxelData.h
         src/service/pipeline/PipelineBuilder.h
         src/service/framebuffer/FrameBufferAttachment.cpp
         src/context/engine/render-pass/impl/tools/VisualizerPass.cpp
@@ -146,7 +145,12 @@ add_executable(
         src/service/controls/ControlService.cpp
         src/service/controls/ControlService.h
         src/service/voxel/curve/AbstractCurve.h
-        src/service/voxel/curve/SineCurve.h
+        src/service/voxel/curve/SineCurve2D.h
+        src/context/editor/dock-spaces/viewport/components/CameraGizmoPanel.cpp
+        src/context/editor/dock-spaces/viewport/components/CameraGizmoPanel.h
+        src/service/voxel/curve/HelixCurve.h
+        src/service/voxel/curve/HarmonicPathCurve.h
+        src/service/voxel/curve/LorenzAttractorCurve.h
 )
 
 

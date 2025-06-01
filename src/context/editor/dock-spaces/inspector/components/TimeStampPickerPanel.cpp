@@ -17,7 +17,7 @@ namespace Metal {
 
     void TimeStampPickerPanel::handleDrag(float timelineWidth) const {
         float delta = ImGui::GetIO().MouseDelta.x;
-        float deltaTime = (delta / timelineWidth) * context->editorRepository.selectedAudioSize;
+        float deltaTime = (delta / timelineWidth) * context->editorRepository.maxXAxis;
 
         context->editorRepository.rangeStart += deltaTime;
         context->editorRepository.rangeEnd += deltaTime;
@@ -27,8 +27,8 @@ namespace Metal {
             context->editorRepository.rangeStart = 0.0f;
             context->editorRepository.rangeEnd = rangeLength;
         }
-        if (context->editorRepository.rangeEnd > context->editorRepository.selectedAudioSize) {
-            context->editorRepository.rangeEnd = context->editorRepository.selectedAudioSize;
+        if (context->editorRepository.rangeEnd > context->editorRepository.maxXAxis) {
+            context->editorRepository.rangeEnd = context->editorRepository.maxXAxis;
             context->editorRepository.rangeStart = context->editorRepository.rangeEnd - rangeLength;
         }
     }
@@ -44,7 +44,7 @@ namespace Metal {
         renderBackground(timelineWidth, drawList, canvasPos, canvasSize, canvasEnd);
 
         auto timeToScreenX = [&](float t) -> float {
-            return canvasPos.x + (t / context->editorRepository.selectedAudioSize) * timelineWidth;
+            return canvasPos.x + (t / context->editorRepository.maxXAxis) * timelineWidth;
         };
 
         float xStart = timeToScreenX(context->editorRepository.rangeStart);

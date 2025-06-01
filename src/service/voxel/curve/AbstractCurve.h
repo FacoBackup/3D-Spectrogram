@@ -6,48 +6,57 @@
 namespace Metal {
     class SparseVoxelOctreeBuilder;
 
+    struct MaxAxis {
+        float x = 0.0f;
+        float y = 0.0f;
+        float z = 0.0f;
+    };
+
     class AbstractCurve : public Inspectable {
-        float maxX = 10;
-        float maxY = 10;
-        float maxZ = 10;
-        float iteration = .1;
-
     protected:
-        virtual float runFunctionX(float axisData) {
-            return 0.0f;
-        }
+        float maxT = 10.0f;
+        float iteration = .001;
 
-        virtual float runFunctionZ(float axisData) {
-            return 0.0f;
-        }
-
-        virtual float runFunctionY(float axisData) {
-            return 0.0f;
+        virtual glm::vec3 evaluate(float t) const {
+            return glm::vec3(0.0f);
         }
 
     public:
         bool isSelected = false;
 
-        virtual std::string getName() {
+        virtual std::string getCurveName() {
             throw std::logic_error("Not implemented");
         }
 
         void registerBaseFields() {
-            registerFloat(iteration, "", "Tamanho da iteração", .0001);
-
-            registerFloat(maxX, "", "Max X", .001);
-            registerFloat(maxY, "", "Max Y", .001);
-            registerFloat(maxZ, "", "Max Z", .001);
+            registerFloat(iteration, "", "Tamanho da iteração", 0.001f);
+            registerFloat(maxT, "", "Valor máximo de t", 0.001f);
         }
 
-        void addVoxels(SparseVoxelOctreeBuilder &builder, float fScale) {
-            for (float x = 0; x < maxX; x += iteration) {
-                for (float y = 0; y < maxY; y += iteration) {
-                    for (float z = 0; z < maxZ; z += iteration) {
-                        builder.insert({runFunctionX(x) / fScale, runFunctionY(y) / fScale, runFunctionZ(z) / fScale});
-                    }
+        float getMaxT() {
+            return maxT;
+        }
+
+        float getIteration() {
+            return iteration;
+        }
+
+        virtual MaxAxis addVoxels(SparseVoxelOctreeBuilder &builder) {
+            MaxAxis maxAxis{};
+            for (float t = 0.0f; t <= getMaxT(); t += getIteration()) {
+                glm::vec3 point = evaluate(t);
+                if (point.x > maxAxis.x) {
+                    maxAxis.x = point.x;
                 }
+                if (point.y > maxAxis.y) {
+                    maxAxis.y = point.y;
+                }
+                if (point.z > maxAxis.z) {
+                    maxAxis.z = point.z;
+                }
+                builder.insert(point);
             }
+            return maxAxis;
         }
     };
 }

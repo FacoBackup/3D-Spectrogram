@@ -68,9 +68,20 @@ namespace Metal {
             for (int i = 0; i < context->editorRepository.curves.size(); i++) {
                 std::unique_ptr<AbstractCurve> &curve = context->editorRepository.curves.at(i);
                 curve->isSelected = i == context->editorRepository.selectedCurve;
-                if (ImGui::Checkbox(curve->getName().c_str(), &curve->isSelected)) {
+                if (ImGui::Checkbox(curve->getCurveName().c_str(), &curve->isSelected)) {
                     context->editorRepository.selectedCurve = curve->isSelected ? i : -1;
                     context->editorRepository.registerChange();
+                }
+            }
+            if (context->editorRepository.selectedCurve > -1) {
+                ImGui::Separator();
+                std::unique_ptr<AbstractCurve> &curve = context->editorRepository.curves.at(
+                    context->editorRepository.selectedCurve);
+                formPanel->setInspection(curve.get());
+                formPanel->onSync();
+                if (curve->isNotFrozen()) {
+                    context->editorRepository.registerChange();
+                    curve->freezeVersion();
                 }
             }
         }

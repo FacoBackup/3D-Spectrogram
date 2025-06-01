@@ -2,15 +2,11 @@
 #define OCTREENODE_H
 #include <array>
 
-#include "VoxelData.h"
-
 namespace Metal {
     struct OctreeNode final {
         std::array<OctreeNode *, 8> children;
         bool isLeaf = false;
         unsigned int depth;
-        bool isStructureStart = false;
-        std::string treeHashId;
 
         /**
          * Target location of this node's data inside the SSBO buffer

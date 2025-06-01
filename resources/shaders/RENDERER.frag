@@ -30,9 +30,9 @@ bool rayMarchCombined(vec3 ro, vec3 rd, out vec3 hitPos, out uint hitType) {
     hitType = 0;// 0 = no hit, 1 = box frame, 2 = ground
 
     vec3 boxSize = vec3(
-    globalData.xAxisLength / 2.0,
-    globalData.yAxisLength / 2.0,
-    globalData.zAxisLength / 2.0);
+    globalData.axisLengths.x / 2.0,
+    globalData.axisLengths.y / 2.0,
+    globalData.axisLengths.z / 2.0);
 
     for (int i = 0; i < 256; i++) {
         hitPos = ro + t * rd;
@@ -86,17 +86,21 @@ vec4 getGridColor(vec2 texCoords, inout vec3 hitPoint) {
 
     if (hitType == 1) {
 
-        float isXAxis = step(max(abs(hitPoint.y ), abs(hitPoint.z)), .25);
-        float isYAxis = step(max(abs(hitPoint.x ), abs(hitPoint.z)), .25);
-        float isZAxis = step(max(abs(hitPoint.x ), abs(hitPoint.y)), .25);
+        float isXAxis = step(max(abs(hitPoint.y), abs(hitPoint.z)), .25);
+        float isYAxis = step(max(abs(hitPoint.x), abs(hitPoint.z)), .25);
+        float isZAxis = step(max(abs(hitPoint.x), abs(hitPoint.y)), .25);
 
         vec3 axisColorSum = xAxisColor * isXAxis + yAxisColor * isYAxis + zAxisColor * isZAxis;
         axisColorSum = clamp(axisColorSum, 0.0, 1.0);
 
-        if(length(axisColorSum.rgb) == 0) return vec4(1);
+        if (length(axisColorSum.rgb) == 0) return vec4(1);
+
         return vec4(axisColorSum.rgb, 1);
     }
 
+    if (globalData.isStaticCurve){
+        return vec4(0);
+    }
 
     if (hasData){
         float distanceFromCamera = length(globalData.cameraWorldPosition.xyz - hitPoint);
@@ -108,7 +112,7 @@ vec4 getGridColor(vec2 texCoords, inout vec3 hitPoint) {
             alpha = smoothstep(THRESHOLD, THRESHOLD - fadeRange, distanceFromCamera);
         }
 
-        float inBounds = hitPoint.x < 0 || hitPoint.z < 0 ? 0 : step(hitPoint.x, float(globalData.xAxisLength)) * step(hitPoint.z, float(globalData.zAxisLength));
+        float inBounds = hitPoint.x < 0 || hitPoint.z < 0 ? 0 : step(hitPoint.x, float(globalData.axisLengths.x)) * step(hitPoint.z, float(globalData.axisLengths.z));
         alpha *= inBounds;
 
         if (alpha > 0.0){
@@ -153,6 +157,10 @@ vec3 hsv2rgb(vec3 c) {
 }
 
 vec3 colorFromPosition(vec3 position, bool sat0) {
+    if (globalData.isStaticCurve){
+        return vec3(1, 0, 1) * (abs(position.y) / globalData.axisLengths.y + abs(position.x) / globalData.axisLengths.x + abs(position.z) / globalData.axisLengths.z) / 3.f;
+    }
+
     float time = position.x;
     float magnitude = position.y;
     float amplitude = position.z;
@@ -185,9 +193,10 @@ void main() {
     Ray ray = Ray(rayOrigin, rayDirection, 1./rayDirection);
     SurfaceInteraction hitData = trace(ray, settings.showRaySearchCount, settings.showRayTestCount, colorData, WORLD_VOXEL_SCALE);
 
-    if (length(globalData.cameraWorldPosition - hitData.voxelPosition) > length(globalData.cameraWorldPosition - gridHitPoint)){
-        return;
-    }
+//    if (length(globalData.cameraWorldPosition - hitData.voxelPosition) > length(globalData.cameraWorldPosition - gridHitPoint)){
+//        return;
+//    }
+
     if (hitData.voxel == 0){
         if (settings.showRaySearchCount || settings.showRayTestCount){
             finalColor.rg = colorData/float(settings.searchCountDivisor);

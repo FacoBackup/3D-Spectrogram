@@ -9,11 +9,9 @@ namespace Metal {
         alignas(16) glm::mat4x4 invView{};
         alignas(16) glm::mat4x4 invProj{};
         alignas(16) glm::vec3 cameraWorldPosition{};
-        alignas(4) unsigned int debugFlag;
-        alignas(4) unsigned int xAxisLength;
-        alignas(4) unsigned int zAxisLength;
-        alignas(4) unsigned int yAxisLength;
         alignas(4) bool isOrtho;
+        alignas(16) glm::ivec3 axisLengths{};
+        alignas(4) bool isStaticCurve;
 
     };
 }

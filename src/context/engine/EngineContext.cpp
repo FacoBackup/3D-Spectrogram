@@ -26,14 +26,14 @@ namespace Metal {
     void EngineContext::onSync() {
         updateCurrentTime();
 
-        if (context.editorRepository.isNotFrozen() && !context.editorRepository.pathToAudio.empty()) {
+        if (context.editorRepository.isNotFrozen()) {
             if ((currentTimeMs - lastTriggerTime) >= 1000) {
                 std::cout << (currentTimeMs - lastTriggerTime) << std::endl;
                 lastTriggerTime = currentTimeMs;
                 context.editorRepository.freezeVersion();
                 context.voxelProcessorService.process();
             }
-        }else {
+        } else {
             lastTriggerTime = currentTimeMs;
         }
 
@@ -46,19 +46,24 @@ namespace Metal {
         setCameraUpdated(false);
     }
 
+    int EngineContext::getMaxX() const {
+        if (context.editorRepository.isShowingOriginalWave) {
+            return static_cast<int>(SAMPLE_SIZE_SECONDS * ORIGINAL_WAVE_SCALE / 2.f);
+        }
+        return context.editorRepository.maxXAxis;
+    }
+
     void EngineContext::updateGlobalData() {
         globalDataUBO.viewMatrix = camera.viewMatrix;
         globalDataUBO.projectionMatrix = camera.projectionMatrix;
         globalDataUBO.invProj = camera.invProjectionMatrix;
         globalDataUBO.invView = camera.invViewMatrix;
         globalDataUBO.cameraWorldPosition = camera.position;
-        globalDataUBO.xAxisLength =  context.editorRepository.isShowingOriginalWave ?
-        static_cast<int>(SAMPLE_SIZE_SECONDS * ORIGINAL_WAVE_SCALE/2.f)
-        :
-        static_cast<int>(context.editorRepository.selectedAudioSize);
-        globalDataUBO.zAxisLength = context.editorRepository.maxFrequency;
-        globalDataUBO.yAxisLength = context.editorRepository.maxMagnitude;
+        globalDataUBO.axisLengths.x = getMaxX();
+        globalDataUBO.axisLengths.y = context.editorRepository.maxYAxis;
+        globalDataUBO.axisLengths.z = context.editorRepository.maxZAxis;
         globalDataUBO.isOrtho = context.engineContext.camera.isOrthographic;
+        globalDataUBO.isStaticCurve = context.editorRepository.isShowStaticCurve;
         context.coreBuffers.globalData->update(&globalDataUBO);
     }
 }

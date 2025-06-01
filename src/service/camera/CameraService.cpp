@@ -97,9 +97,9 @@ namespace Metal {
             context.editorRepository.isShowingOriginalWave ?
             (SAMPLE_SIZE_SECONDS/2.f) * ORIGINAL_WAVE_SCALE/2.f
             :
-            context.editorRepository.selectedAudioSize / 2.f,
-                                                        static_cast<float>(context.editorRepository.maxMagnitude / 2),
-                                                        static_cast<float>(context.editorRepository.maxFrequency / 2));
+            context.editorRepository.maxXAxis / 2.f,
+                                                        static_cast<float>(context.editorRepository.maxYAxis / 2),
+                                                        static_cast<float>(context.editorRepository.maxZAxis / 2));
         context.engineContext.camera.changed = true;
         context.engineContext.setCameraUpdated(true);
     }
