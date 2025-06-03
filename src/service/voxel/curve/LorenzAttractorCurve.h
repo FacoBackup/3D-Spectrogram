@@ -9,12 +9,16 @@ namespace Metal {
         float beta = 8.0f / 3.0f;
 
         float scaleBoxMax = 10;
-        glm::vec3 center = glm::vec3(scaleBoxMax/2.f);
+        glm::vec3 center = glm::vec3(scaleBoxMax / 2.f);
 
     public:
         LorenzAttractorCurve() {
-            iteration = .001;
-            maxT = 1000.0f;
+            setIteration(.001);
+            setMaxT(1000.0f);
+        }
+
+        bool hasDerivative() override {
+            return false;
         }
 
         void registerFields() override {
@@ -61,7 +65,7 @@ namespace Metal {
 
             MaxAxis maxAxis{};
 
-            for (auto &p : points) {
+            for (auto &p: points) {
                 glm::vec3 normalized = (p - minPt) * scale;
 
                 if (normalized.x > maxAxis.x) {
@@ -75,7 +79,7 @@ namespace Metal {
                 }
                 builder.insert(normalized);
             }
-             center = glm::vec3(scaleBoxMax/2.f);
+            center = glm::vec3(scaleBoxMax / 2.f);
 
             return maxAxis;
         }

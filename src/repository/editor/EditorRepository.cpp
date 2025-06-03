@@ -21,13 +21,8 @@ namespace Metal {
         interpolation = ACTUAL_INTERPOLATION;
         actualHopSize = actualWindowSize / hopSizeScale;
 
-        if (member->group != RENDERING_PARAMS && member->group != FILTERING_PARAMS) {
+        if (member != nullptr && member->group != RENDERING_PARAMS && member->group != FILTERING_PARAMS) {
             needsDataRefresh = true;
-        }
-
-        if (isShowStaticCurve) {
-            representationResolution = 5;
-            return;
         }
 
         if (isShowingOriginalWave) {

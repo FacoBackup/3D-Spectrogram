@@ -13,6 +13,8 @@ namespace Metal {
 
         void renderFileSelection() const;
 
+        void renderStaticCurveSettings();
+
     public:
         void onInitialize() override;
 

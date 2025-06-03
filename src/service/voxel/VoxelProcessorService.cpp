@@ -31,9 +31,14 @@ namespace Metal {
         context.editorRepository.maxYAxis = 10;
     }
 
-    void VoxelProcessorService::processTransformedSignal(const float fScale, SparseVoxelOctreeBuilder &builder) {
+    void VoxelProcessorService::processSpectrogram(const float fScale, SparseVoxelOctreeBuilder &builder) {
         const double sampleRate = context.editorRepository.sampleRate;
-        const double nyquistFrequency = sampleRate / 2.0;
+        const double nyquistFrequency = sampleRate / (WORLD_VOXEL_SCALE * 2.0);
+
+        STFTUtil::ComputeSTFT(context.editorRepository.audioData,
+                              context.editorRepository.actualWindowSize,
+                              context.editorRepository.actualHopSize,
+                              context.editorRepository.minMagnitude);
 
         float offset = .25;
         for (const auto &point: context.editorRepository.audioData.data) {
@@ -60,7 +65,7 @@ namespace Metal {
                 }
             }
         }
-        context.editorRepository.maxZAxis = context.editorRepository.audioData.maxFrequency / fScale;
+        context.editorRepository.maxZAxis = nyquistFrequency / fScale;
         context.editorRepository.maxYAxis = static_cast<unsigned int>(std::ceil(
             context.editorRepository.audioData.maxMagnitude / fScale));
     }
@@ -69,8 +74,32 @@ namespace Metal {
         if (context.editorRepository.isShowingOriginalWave) {
             processOriginalWave(builder);
         } else {
-            processTransformedSignal(fScale, builder);
+            processSpectrogram(fScale, builder);
         }
+    }
+
+    int VoxelProcessorService::estimateMinimumDepth(AbstractCurve &curve, float lengthScale) const {
+        if (!curve.hasDerivative()) {
+            return 12;
+        }
+
+        float dt = curve.getIteration();
+        float maxT = curve.getMaxT();
+        float &maxDerivative = context.editorRepository.maxDerivative;
+        maxDerivative = 0.0f;
+
+        glm::vec3 prev = curve.evaluate(0.0f);
+        for (float t = dt; t <= maxT; t += dt) {
+            glm::vec3 curr = curve.evaluate(t);
+            float derivative = glm::length((curr - prev) / dt);
+            maxDerivative = std::max(maxDerivative, derivative);
+            prev = curr;
+        }
+
+        float vmin = 1.0f / (2.0f * maxDerivative * WORLD_VOXEL_SCALE); // Nyquist voxel size
+        float length = lengthScale; // Assume unit cube or custom scale
+        int depth = static_cast<int>(std::ceil(std::log2(length / vmin)));
+        return std::clamp(depth, 1, 12); // Clamp to [1, 12] for safety
     }
 
     void VoxelProcessorService::refreshData() const {
@@ -87,22 +116,28 @@ namespace Metal {
 
     void VoxelProcessorService::process() {
         refreshData();
-
-        const auto fScale = static_cast<float>(8 + context.editorRepository.representationResolution);
-        auto builder = SparseVoxelOctreeBuilder(WORLD_VOXEL_SCALE, static_cast<int>(fScale));
+        SparseVoxelOctreeBuilder *builder = nullptr;
 
         if (context.editorRepository.isShowStaticCurve) {
             if (context.editorRepository.selectedCurve > -1) {
-                std::unique_ptr<AbstractCurve> &curve = context.editorRepository.curves[context.editorRepository.
-                    selectedCurve];
-                MaxAxis maxAxis = curve->addVoxels(builder);
+                std::unique_ptr<AbstractCurve> &curve = context
+                        .editorRepository
+                        .curves[context.editorRepository.selectedCurve];
+                context.editorRepository.representationResolution = estimateMinimumDepth(*curve.get());
+                builder = new SparseVoxelOctreeBuilder(
+                    WORLD_VOXEL_SCALE, context.editorRepository.representationResolution);
+
+                MaxAxis maxAxis = curve->addVoxels(*builder);
                 context.editorRepository.maxXAxis = maxAxis.x + 1;
                 context.editorRepository.maxYAxis = maxAxis.y + 1;
                 context.editorRepository.maxZAxis = maxAxis.z + 1;
             }
         } else {
-            processAudioInfo(fScale, builder);
+            const auto fScale = static_cast<float>(8 + context.editorRepository.representationResolution);
+            builder = new SparseVoxelOctreeBuilder(WORLD_VOXEL_SCALE, static_cast<int>(fScale));
+            processAudioInfo(fScale, *builder);
         }
+
         context.editorRepository.maxXAxis = std::min(
             static_cast<unsigned int>(context.editorRepository.maxXAxis),
             static_cast<unsigned int>(WORLD_VOXEL_SCALE / 2));
@@ -115,8 +150,11 @@ namespace Metal {
 
         context.cameraService.updateCameraTarget();
 
-        auto voxels = builder.buildBuffer();
-        context.coreBuffers.svoData->update(voxels.data());
-        builder.dispose();
+        if (builder != nullptr) {
+            auto voxels = builder->buildBuffer();
+            context.coreBuffers.svoData->update(voxels.data());
+            builder->dispose();
+            delete builder;
+        }
     }
 } // Metal

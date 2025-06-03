@@ -13,15 +13,14 @@ namespace Metal {
     };
 
     class AbstractCurve : public Inspectable {
-    protected:
         float maxT = 10.0f;
-        float iteration = .001;
+        float iteration = 0.001f;
 
+    public:
         virtual glm::vec3 evaluate(float t) const {
             return glm::vec3(0.0f);
         }
 
-    public:
         bool isSelected = false;
 
         virtual std::string getCurveName() {
@@ -38,7 +37,19 @@ namespace Metal {
         }
 
         float getIteration() {
-            return iteration;
+            return iteration / 100.f;
+        }
+
+        void setMaxT(float maxT) {
+            this->maxT = maxT;
+        }
+
+        void setIteration(float iteration) {
+            this->iteration = iteration;
+        }
+
+        virtual bool hasDerivative() {
+            return true;
         }
 
         virtual MaxAxis addVoxels(SparseVoxelOctreeBuilder &builder) {

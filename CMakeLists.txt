@@ -145,12 +145,16 @@ add_executable(
         src/service/controls/ControlService.cpp
         src/service/controls/ControlService.h
         src/service/voxel/curve/AbstractCurve.h
-        src/service/voxel/curve/SineCurve2D.h
+        src/service/voxel/curve/SineCurve.h
         src/context/editor/dock-spaces/viewport/components/CameraGizmoPanel.cpp
         src/context/editor/dock-spaces/viewport/components/CameraGizmoPanel.h
         src/service/voxel/curve/HelixCurve.h
-        src/service/voxel/curve/HarmonicPathCurve.h
         src/service/voxel/curve/LorenzAttractorCurve.h
+        src/service/voxel/curve/ThomasAttractorCurve.h
+        src/service/voxel/curve/TorusKnotCurve.h
+        src/service/voxel/curve/VivianiCurve.h
+        src/service/voxel/curve/ConicalHelixCurve.h
+        src/service/voxel/curve/SphericalSpiralCurve.h
 )
 
 

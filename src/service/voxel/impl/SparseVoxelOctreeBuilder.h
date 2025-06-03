@@ -12,7 +12,6 @@ namespace Metal {
     class SparseVoxelOctreeBuilder {
         OctreeNode root{};
         unsigned int nodeQuantity = 1;
-        unsigned int leafVoxelQuantity = 0;
         float voxelSize = 1.0f;
         unsigned int size{};
         int maxDepth = 0;
@@ -29,16 +28,10 @@ namespace Metal {
         void worldToChunkLocal(glm::vec3 &worldCoordinate) const;
 
     public:
-        std::unordered_map<std::string, OctreeNode *> repeatedStructures;
-
         SparseVoxelOctreeBuilder(unsigned int size, int maxDepth);
 
         [[nodiscard]] unsigned int getVoxelQuantity() const {
             return nodeQuantity;
-        }
-
-        [[nodiscard]] unsigned int getLeafVoxelQuantity() const {
-            return leafVoxelQuantity;
         }
 
         [[nodiscard]] float getVoxelSize() const {

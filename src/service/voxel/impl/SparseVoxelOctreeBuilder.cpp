@@ -18,7 +18,6 @@ namespace Metal {
 
         if (depth == maxDepth) {
             node->isLeaf = true;
-            ++leafVoxelQuantity;
             return;
         }
 
@@ -41,9 +40,6 @@ namespace Metal {
             node->addChild(child, childIndex);
             insertInternal(child, point, position, depth + 1);
 
-            if (child->depth == maxDepth - 1) {
-                leafVoxelQuantity++;
-            }
             if (!child->isLeaf) {
                 nodeQuantity++;
             }

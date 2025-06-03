@@ -30,12 +30,38 @@ namespace Metal {
         }
     }
 
+    void InspectorPanel::renderStaticCurveSettings() {
+        ImGui::Separator();
+        ImGui::Text(("Resolução da árvore: " + std::to_string(context->editorRepository.representationResolution)).c_str());
+        ImGui::Text(("Variação espacial máxima: " + std::to_string(context->editorRepository.maxDerivative)).c_str());
+        ImGui::Separator();
+        for (int i = 0; i < context->editorRepository.curves.size(); i++) {
+            std::unique_ptr<AbstractCurve> &curve = context->editorRepository.curves.at(i);
+            curve->isSelected = i == context->editorRepository.selectedCurve;
+            if (ImGui::Checkbox(curve->getCurveName().c_str(), &curve->isSelected)) {
+                context->editorRepository.selectedCurve = curve->isSelected ? i : -1;
+                context->editorRepository.registerChange();
+            }
+        }
+        if (context->editorRepository.selectedCurve > -1) {
+            ImGui::Separator();
+            std::unique_ptr<AbstractCurve> &curve = context->editorRepository.curves.at(
+                context->editorRepository.selectedCurve);
+            formPanel->setInspection(curve.get());
+            formPanel->onSync();
+            if (curve->isNotFrozen()) {
+                context->editorRepository.registerChange();
+                curve->freezeVersion();
+            }
+        }
+    }
+
     void InspectorPanel::onSync() {
         if (ImGui::Checkbox("Mostrar curva de exemplo?", &context->editorRepository.isShowStaticCurve)) {
             context->editorRepository.pathToAudio = "";
             updateAudioRelatedProperties();
+            context->editorRepository.onUpdate(nullptr, *context);
         }
-
 
         if (!context->editorRepository.isShowStaticCurve) {
             ImGui::TextColored(ImVec4(0, 1, 0, 1), Icons::info.c_str());
@@ -64,26 +90,7 @@ namespace Metal {
                 ImGui::Text("Frequência de Nyquist: %d", context->editorRepository.sampleRate / 2);
             }
         } else {
-            ImGui::Separator();
-            for (int i = 0; i < context->editorRepository.curves.size(); i++) {
-                std::unique_ptr<AbstractCurve> &curve = context->editorRepository.curves.at(i);
-                curve->isSelected = i == context->editorRepository.selectedCurve;
-                if (ImGui::Checkbox(curve->getCurveName().c_str(), &curve->isSelected)) {
-                    context->editorRepository.selectedCurve = curve->isSelected ? i : -1;
-                    context->editorRepository.registerChange();
-                }
-            }
-            if (context->editorRepository.selectedCurve > -1) {
-                ImGui::Separator();
-                std::unique_ptr<AbstractCurve> &curve = context->editorRepository.curves.at(
-                    context->editorRepository.selectedCurve);
-                formPanel->setInspection(curve.get());
-                formPanel->onSync();
-                if (curve->isNotFrozen()) {
-                    context->editorRepository.registerChange();
-                    curve->freezeVersion();
-                }
-            }
+            renderStaticCurveSettings();
         }
     }
 }

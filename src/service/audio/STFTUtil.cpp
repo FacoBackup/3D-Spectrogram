@@ -59,7 +59,6 @@ namespace Metal {
                 }
             }
 
-            // Store magnitudes in center sample of the window
             size_t center = i + windowSize / 2;
             if (center < data.data.size())
                 data.data[center].frequencies = std::move(magnitudes);

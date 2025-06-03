@@ -4,10 +4,14 @@
 #include "../../definitions.h"
 #include "../../common/inspection/Inspectable.h"
 #include "../../service/audio/AudioData.h"
-#include "../../service/voxel/curve/HarmonicPathCurve.h"
+#include "../../service/voxel/curve/ConicalHelixCurve.h"
 #include "../../service/voxel/curve/HelixCurve.h"
 #include "../../service/voxel/curve/LorenzAttractorCurve.h"
-#include "../../service/voxel/curve/SineCurve2D.h"
+#include "../../service/voxel/curve/ThomasAttractorCurve.h"
+#include "../../service/voxel/curve/SineCurve.h"
+#include "../../service/voxel/curve/SphericalSpiralCurve.h"
+#include "../../service/voxel/curve/TorusKnotCurve.h"
+#include "../../service/voxel/curve/VivianiCurve.h"
 
 #define ACTUAL_WINDOW_SIZE static_cast<int>(1u << (windowSizeScale + 9))
 #define ACTUAL_INTERPOLATION static_cast<int>(1u << (interpolationScale))
@@ -32,6 +36,7 @@ namespace Metal {
         int interpolationScale = 8;
         int interpolation = ACTUAL_INTERPOLATION;
         int representationResolution = 5;
+        float maxDerivative = 0;
         int hopSizeScale = 2;
         float minMagnitude = 0.6;
         int maxZAxis = SAMPLE_SIZE_SECONDS;
@@ -54,11 +59,13 @@ namespace Metal {
         int channels;
         int frames;
         int actualHopSize = actualWindowSize / hopSizeScale;
-        std::array<std::unique_ptr<AbstractCurve>, 4> curves = {
-            std::make_unique<SineCurve2D>(),
+        std::array<std::unique_ptr<AbstractCurve>, 6> curves = {
+            std::make_unique<SineCurve>(),
             std::make_unique<HelixCurve>(),
-            std::make_unique<HarmonicPathCurve>(),
-            std::make_unique<LorenzAttractorCurve>(),
+            std::make_unique<TorusKnotCurve>(),
+            std::make_unique<SphericalSpiralCurve>(),
+            std::make_unique<ConicalHelixCurve>(),
+            std::make_unique<VivianiCurve>()
         };
         int selectedCurve = -1;
         // METADATA

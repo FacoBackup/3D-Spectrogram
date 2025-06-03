@@ -15,14 +15,14 @@ namespace Metal {
         }
 
         glm::vec3 evaluate(float t) const override {
-            float x = radius * cos(t) + a;
-            float y = radius * sin(t) + a;
+            float x = radius * cos(t);
+            float y = radius * sin(t);
             float z = a * t;
             return glm::vec3(x, y, z);
         }
 
         std::string getCurveName() override {
-            return "x(t) = rcos(t) + a, y(t) = rsin(t) + a, z(t) = at";
+            return "Helix: x(t) = rcos(t), y(t) = rsin(t), z(t) = at";
         }
     };
 }
