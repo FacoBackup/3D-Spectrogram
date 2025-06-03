@@ -6,6 +6,7 @@
 #define FILTERING_PARAMS "Filtro"
 #define FILE_INFO "Informações do arquivo"
 #define DEBUG "Debug"
+#define SHOW_ORIGINAL_WAVE "Mostrar onda original?"
 
 namespace Metal {
     const char *EditorRepository::getTitle() {
@@ -25,17 +26,19 @@ namespace Metal {
             needsDataRefresh = true;
         }
 
-        if (isShowingOriginalWave) {
-            interpolationScale = 1;
-            representationResolution = 6;
-            return;
+        if (member != nullptr && member->name == SHOW_ORIGINAL_WAVE) {
+            if (isShowingOriginalWave) {
+                interpolationScale = 1;
+                representationResolution = 6;
+                return;
+            }
+            interpolationScale = 8;
+            representationResolution = 2;
         }
-        interpolationScale = 8;
-        representationResolution = 2;
     }
 
     void EditorRepository::registerFields() {
-        registerBool(isShowingOriginalWave, "", "Mostrar onda original?");
+        registerBool(isShowingOriginalWave, "", SHOW_ORIGINAL_WAVE);
         registerFloat(minMagnitude, STFT_PARAMS, "Magnitude minima", 0);
         registerInt(windowSizeScale, STFT_PARAMS, "Escala da janela", 1, 5);
         registerInt(hopSizeScale, STFT_PARAMS, "Escala do salto", 1, 10);
@@ -46,6 +49,7 @@ namespace Metal {
         registerInt(windowIndex, FILTERING_PARAMS, "Janela da análise", 0, SAMPLE_SIZE_SECONDS);
 
         registerInt(interpolationScale, RENDERING_PARAMS, "Escala da interpolação (Impacta desempenho)", 1);
+        registerBool(useNyquistForSpectrogramDepth, RENDERING_PARAMS, "Utilizar nyquist para resolução da árvore?");
         registerInt(representationResolution, RENDERING_PARAMS, "Resolução da representação (Impacta desempenho)", 1,
                     10);
         registerInt(interpolation, RENDERING_PARAMS, "Interpolação das amostras", 1, 100, true);

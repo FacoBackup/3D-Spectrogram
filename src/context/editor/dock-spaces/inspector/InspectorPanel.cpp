@@ -32,7 +32,7 @@ namespace Metal {
 
     void InspectorPanel::renderStaticCurveSettings() {
         ImGui::Separator();
-        ImGui::Text(("Resolução da árvore: " + std::to_string(context->editorRepository.representationResolution)).c_str());
+        ImGui::Text(("Resolução da árvore: " + std::to_string(context->editorRepository.actualTreeDepth)).c_str());
         ImGui::Text(("Variação espacial máxima: " + std::to_string(context->editorRepository.maxDerivative)).c_str());
         ImGui::Separator();
         for (int i = 0; i < context->editorRepository.curves.size(); i++) {

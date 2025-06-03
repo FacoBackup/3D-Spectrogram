@@ -14,11 +14,13 @@ namespace Metal {
 
         void processOriginalWave(SparseVoxelOctreeBuilder &builder);
 
+        int estimateSpectrogramOctreeDepth();
+
         void processSpectrogram(float fScale, SparseVoxelOctreeBuilder &builder);
 
         void processAudioInfo(float fScale, SparseVoxelOctreeBuilder &builder);
 
-        int estimateMinimumDepth(AbstractCurve &curve, float lengthScale = 1.0f) const;
+        int estimateMinimumDepth(AbstractCurve &curve) const;
 
         void refreshData() const;
 

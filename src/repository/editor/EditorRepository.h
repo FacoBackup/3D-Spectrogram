@@ -68,6 +68,8 @@ namespace Metal {
             std::make_unique<VivianiCurve>()
         };
         int selectedCurve = -1;
+        bool useNyquistForSpectrogramDepth = true;
+        int actualTreeDepth = 8;
         // METADATA
 
         void registerFields() override;

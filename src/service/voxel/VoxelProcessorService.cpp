@@ -31,6 +31,47 @@ namespace Metal {
         context.editorRepository.maxYAxis = 10;
     }
 
+    int VoxelProcessorService::estimateSpectrogramOctreeDepth() {
+        float maxDx = 0.0f, maxDy = 0.0f, maxDz = 0.0f;
+
+        glm::vec3 lastPoint{0.0f};
+        bool first = true;
+
+        for (const auto &point : context.editorRepository.audioData.data) {
+            if (point.frequencies.empty()) continue;
+
+            for (const auto &fq: point.frequencies) {
+                if (fq.frequency > (context.editorRepository.sampleRate / (2.0 * WORLD_VOXEL_SCALE))) continue;
+
+                const double frequency = fq.frequency;
+                double interpolatedMagnitude = fq.magnitude;
+
+                glm::vec3 currentPoint{
+                    point.timestamp,
+                    interpolatedMagnitude,
+                    frequency
+                };
+
+                if (!first) {
+                    glm::vec3 delta = glm::abs(currentPoint - lastPoint);
+                    maxDx = std::max(maxDx, delta.x);
+                    maxDy = std::max(maxDy, delta.y);
+                    maxDz = std::max(maxDz, delta.z);
+                }
+                lastPoint = currentPoint;
+                first = false;
+            }
+        }
+
+        float maxRate = std::max({maxDx, maxDy, maxDz});
+        if (maxRate == 0.0f) return 1; // Flat data fallback
+
+        float voxelSize = 1.0f / (2.0f * maxRate * WORLD_VOXEL_SCALE); // Nyquist voxel size
+        int depth = static_cast<int>(std::ceil(std::log2(1. / voxelSize)));
+        return std::clamp(depth, 1, 12);
+    }
+
+
     void VoxelProcessorService::processSpectrogram(const float fScale, SparseVoxelOctreeBuilder &builder) {
         const double sampleRate = context.editorRepository.sampleRate;
         const double nyquistFrequency = sampleRate / (WORLD_VOXEL_SCALE * 2.0);
@@ -78,7 +119,7 @@ namespace Metal {
         }
     }
 
-    int VoxelProcessorService::estimateMinimumDepth(AbstractCurve &curve, float lengthScale) const {
+    int VoxelProcessorService::estimateMinimumDepth(AbstractCurve &curve) const {
         if (!curve.hasDerivative()) {
             return 12;
         }
@@ -97,8 +138,7 @@ namespace Metal {
         }
 
         float vmin = 1.0f / (2.0f * maxDerivative * WORLD_VOXEL_SCALE); // Nyquist voxel size
-        float length = lengthScale; // Assume unit cube or custom scale
-        int depth = static_cast<int>(std::ceil(std::log2(length / vmin)));
+        int depth = static_cast<int>(std::ceil(std::log2(1. / vmin)));
         return std::clamp(depth, 1, 12); // Clamp to [1, 12] for safety
     }
 
@@ -123,9 +163,9 @@ namespace Metal {
                 std::unique_ptr<AbstractCurve> &curve = context
                         .editorRepository
                         .curves[context.editorRepository.selectedCurve];
-                context.editorRepository.representationResolution = estimateMinimumDepth(*curve.get());
+                context.editorRepository.actualTreeDepth = estimateMinimumDepth(*curve.get());
                 builder = new SparseVoxelOctreeBuilder(
-                    WORLD_VOXEL_SCALE, context.editorRepository.representationResolution);
+                    WORLD_VOXEL_SCALE, context.editorRepository.actualTreeDepth);
 
                 MaxAxis maxAxis = curve->addVoxels(*builder);
                 context.editorRepository.maxXAxis = maxAxis.x + 1;
@@ -133,7 +173,12 @@ namespace Metal {
                 context.editorRepository.maxZAxis = maxAxis.z + 1;
             }
         } else {
-            const auto fScale = static_cast<float>(8 + context.editorRepository.representationResolution);
+            context.editorRepository.actualTreeDepth = context.editorRepository.representationResolution;
+            if (context.editorRepository.useNyquistForSpectrogramDepth) {
+                context.editorRepository.actualTreeDepth = estimateSpectrogramOctreeDepth();
+            }
+            float fScale = static_cast<float>(context.editorRepository.actualTreeDepth);
+
             builder = new SparseVoxelOctreeBuilder(WORLD_VOXEL_SCALE, static_cast<int>(fScale));
             processAudioInfo(fScale, *builder);
         }
