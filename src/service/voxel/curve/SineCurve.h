@@ -21,7 +21,7 @@ namespace Metal {
         }
 
         std::string getCurveName() override {
-            return "Seno: x(t) = t, y(t) = sin(t) ";
+            return "Seno: x(t) = t, y(t) = sin(t) * a, z(t) = 0";
         }
     };
 }

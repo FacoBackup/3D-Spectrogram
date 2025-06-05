@@ -153,6 +153,7 @@ add_executable(
         src/service/voxel/curve/ThomasAttractorCurve.h
         src/service/voxel/curve/TorusKnotCurve.h
         src/service/voxel/curve/VivianiCurve.h
+        src/service/voxel/curve/HelixVerticalCurve.h
         src/service/voxel/curve/ConicalHelixCurve.h
         src/service/voxel/curve/SphericalSpiralCurve.h
 )

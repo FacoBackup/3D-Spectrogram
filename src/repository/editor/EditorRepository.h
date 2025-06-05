@@ -7,7 +7,7 @@
 #include "../../service/voxel/curve/ConicalHelixCurve.h"
 #include "../../service/voxel/curve/HelixCurve.h"
 #include "../../service/voxel/curve/LorenzAttractorCurve.h"
-#include "../../service/voxel/curve/ThomasAttractorCurve.h"
+#include "../../service/voxel/curve/HelixVerticalCurve.h"
 #include "../../service/voxel/curve/SineCurve.h"
 #include "../../service/voxel/curve/SphericalSpiralCurve.h"
 #include "../../service/voxel/curve/TorusKnotCurve.h"
@@ -59,13 +59,14 @@ namespace Metal {
         int channels;
         int frames;
         int actualHopSize = actualWindowSize / hopSizeScale;
-        std::array<std::unique_ptr<AbstractCurve>, 6> curves = {
+        std::array<std::unique_ptr<AbstractCurve>, 7> curves = {
             std::make_unique<SineCurve>(),
             std::make_unique<HelixCurve>(),
             std::make_unique<TorusKnotCurve>(),
             std::make_unique<SphericalSpiralCurve>(),
             std::make_unique<ConicalHelixCurve>(),
-            std::make_unique<VivianiCurve>()
+            std::make_unique<VivianiCurve>(),
+            std::make_unique<HelixVerticalCurve>()
         };
         int selectedCurve = -1;
         bool useNyquistForSpectrogramDepth = true;

@@ -22,7 +22,7 @@ namespace Metal {
         }
 
         std::string getCurveName() override {
-            return "Spherical Spiral: x=R*cos(k*t)*sin(t), y=R*sin(k*t)*sin(t), z=R*cos(t)";
+            return "Spherical Spiral: x(t) = rcos(kt)sin(t), y(t) = rsin(kt)sin(t), z(t) = rcos(t)";
         }
     };
 }
