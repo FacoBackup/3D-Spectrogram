@@ -201,7 +201,8 @@ void main() {
         }
     } else {
         bool shouldBlend = hitData.voxelPosition.x < 0 || hitData.voxelPosition.y < 0 || hitData.voxelPosition.z < 0;
-
-        finalColor = vec4(mix(finalColor.rgb, colorFromPosition(hitData.voxelPosition.xyz, hitData.voxelPosition.y - hitData.voxelSize == 0), shouldBlend ? .5 : 1), 1);
+        bool isBehind = globalData.cameraWorldPosition.y > 0 && (length(globalData.cameraWorldPosition - hitData.voxelPosition) > length(globalData.cameraWorldPosition - gridHitPoint));
+        float blend =(shouldBlend ? .5 : isBehind ? 0: 1);
+        finalColor = vec4(mix(finalColor.rgb, colorFromPosition(hitData.voxelPosition.xyz, hitData.voxelPosition.y - hitData.voxelSize == 0), blend), 1);
     }
 }

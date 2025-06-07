@@ -4,12 +4,12 @@
 
 namespace Metal {
     class SphericalSpiralCurve : public AbstractCurve {
-        float sphereRadius = 1.0f;
+        float sphereRadius = 2.0f;
         float k_factor = 5.0f;
 
     public:
         void registerFields() override {
-            center = {1, 2, 2};
+            center = {2, 2, 2};
 
             registerBaseFields();
             registerFloat(sphereRadius, "", "Sphere Radius (R)", 0.1f);
