@@ -16,13 +16,13 @@ namespace Metal {
     }
 
     void InformationPanel::onSync() {
-        if (context->editorRepository.isShowingOriginalWave) {
-            return;
-        }
-        if (context->editorRepository.isShowStaticCurve) {
+        if (context->globalRepository.isShowStaticCurve) {
             for (const auto &item: functionLabels) {
                 renderLabel(item);
             }
+            return;
+        }
+        if (context->spectrogramRepository.isShowingOriginalWave) {
             return;
         }
         for (const auto &item: spectrogramLabels) {

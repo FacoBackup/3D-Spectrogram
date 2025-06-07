@@ -39,7 +39,7 @@ namespace Metal {
 
     void CameraService::updateProjection() const {
         if (camera->isOrthographic) {
-            float size = camera->orthographicProjectionSize * context.editorRepository.minMagnitude;
+            float size = camera->orthographicProjectionSize * context.spectrogramRepository.minMagnitude;
             camera->projectionMatrix = glm::ortho(-size,
                                                   size,
                                                   -size / camera->aspectRatio,
@@ -94,12 +94,12 @@ namespace Metal {
 
     void CameraService::updateCameraTarget() {
         context.engineContext.camera.target = glm::vec3(
-            context.editorRepository.isShowingOriginalWave ?
+            context.spectrogramRepository.isShowingOriginalWave ?
             (SAMPLE_SIZE_SECONDS/2.f) * ORIGINAL_WAVE_SCALE/2.f
             :
-            context.editorRepository.maxXAxis / 2.f,
-                                                        static_cast<float>(context.editorRepository.maxYAxis / 2),
-                                                        static_cast<float>(context.editorRepository.maxZAxis / 2));
+            context.globalRepository.maxXAxis / 2.f,
+                                                        static_cast<float>(context.globalRepository.maxYAxis / 2),
+                                                        static_cast<float>(context.globalRepository.maxZAxis / 2));
         context.engineContext.camera.changed = true;
         context.engineContext.setCameraUpdated(true);
     }

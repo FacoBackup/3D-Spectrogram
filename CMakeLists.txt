@@ -54,7 +54,7 @@ add_executable(
         src/common/interface/Icons.h
         src/service/theme/ThemeService.cpp
         src/service/theme/ThemeService.h
-        src/repository/editor/EditorRepository.h
+        src/repository/editor/SpectrogramRepository.h
         src/enum/engine-definitions.h
         src/repository/abstract/RuntimeResource.h
         src/util/ShaderUtil.cpp
@@ -118,7 +118,7 @@ add_executable(
         src/context/engine/render-pass/impl/tools/VisualizerPass.cpp
         src/context/engine/render-pass/impl/tools/VisualizerPass.h
         src/dto/push-constant/VoxelDebugSettingsPushConstant.h
-        src/repository/editor/EditorRepository.cpp
+        src/repository/editor/SpectrogramRepository.cpp
         src/context/engine/passes/AbstractPass.cpp
         src/context/engine/passes/AbstractPass.h
         src/context/engine/passes/PassesService.cpp
@@ -156,6 +156,8 @@ add_executable(
         src/service/voxel/curve/HelixVerticalCurve.h
         src/service/voxel/curve/ConicalHelixCurve.h
         src/service/voxel/curve/SphericalSpiralCurve.h
+        src/repository/editor/GlobalRepository.cpp
+        src/repository/editor/GlobalRepository.h
 )
 
 

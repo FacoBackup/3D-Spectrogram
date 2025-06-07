@@ -9,7 +9,10 @@ namespace Metal {
     public:
         void registerFields() override {
             registerBaseFields();
-            registerFloat(radius_a, "", "Param Radius (a)", 0.1f);
+            center = {1, 2, 2};
+            maxT = 15;
+
+            registerFloat(radius_a, "", "Radius (a)", 0.1f);
         }
 
         glm::vec3 evaluate(float t) const override {
@@ -21,7 +24,7 @@ namespace Metal {
         }
 
         std::string getCurveName() override {
-            return "Viviani's Curve: x=a(1+cos(t)), y=a*sin(t), z=2a*sin(t/2)";
+            return "Viviani's Curve: x=a(1+cos(t)), y=asin(t), z=2asin(t/2)";
         }
     };
 }

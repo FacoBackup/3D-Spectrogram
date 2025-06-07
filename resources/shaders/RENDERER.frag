@@ -193,9 +193,6 @@ void main() {
     Ray ray = Ray(rayOrigin, rayDirection, 1./rayDirection);
     SurfaceInteraction hitData = trace(ray, settings.showRaySearchCount, settings.showRayTestCount, colorData, WORLD_VOXEL_SCALE);
 
-//    if (length(globalData.cameraWorldPosition - hitData.voxelPosition) > length(globalData.cameraWorldPosition - gridHitPoint)){
-//        return;
-//    }
 
     if (hitData.voxel == 0){
         if (settings.showRaySearchCount || settings.showRayTestCount){
@@ -203,6 +200,8 @@ void main() {
             finalColor.a = 1;
         }
     } else {
-        finalColor = vec4(colorFromPosition(hitData.voxelPosition.xyz, hitData.voxelPosition.y - hitData.voxelSize == 0), 1);
+        bool shouldBlend = hitData.voxelPosition.x < 0 || hitData.voxelPosition.y < 0 || hitData.voxelPosition.z < 0;
+
+        finalColor = vec4(mix(finalColor.rgb, colorFromPosition(hitData.voxelPosition.xyz, hitData.voxelPosition.y - hitData.voxelSize == 0), shouldBlend ? .5 : 1), 1);
     }
 }

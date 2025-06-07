@@ -16,6 +16,7 @@ namespace Metal {
 
     public:
         void registerFields() override {
+            center = {3, 2.5, 1};
             registerBaseFields();
             registerFloat(R_major, "", "Major Radius (R)", 0.1f);
             registerFloat(r_minor, "", "Minor Radius (r)", 0.05f);

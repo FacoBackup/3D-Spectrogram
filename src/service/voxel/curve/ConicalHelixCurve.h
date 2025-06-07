@@ -10,6 +10,8 @@ namespace Metal {
 
     public:
         void registerFields() override {
+            center = {2, 2, 0};
+
             registerBaseFields();
             registerFloat(initialRadius, "", "Initial Radius", 0.1f);
             registerFloat(taperFactor, "", "Taper Factor", 0.01f);

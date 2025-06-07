@@ -9,6 +9,8 @@ namespace Metal {
 
     public:
         void registerFields() override {
+            center = {1, 2, 2};
+
             registerBaseFields();
             registerFloat(sphereRadius, "", "Sphere Radius (R)", 0.1f);
             registerFloat(k_factor, "", "Spiral Factor (k)", 0.1f);

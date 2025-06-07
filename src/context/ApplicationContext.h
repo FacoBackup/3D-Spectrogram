@@ -20,7 +20,8 @@
 #include "./engine/passes/PassesService.h"
 
 #include "../repository/runtime/RuntimeRepository.h"
-#include "../repository/editor/EditorRepository.h"
+#include "../repository/editor/GlobalRepository.h"
+#include "../repository/editor/SpectrogramRepository.h"
 #include "../repository/notification/NotificationRepository.h"
 #include "editor/EditorPanel.h"
 #include "../service/audio/AudioProcessorService.h"
@@ -60,7 +61,8 @@ namespace Metal {
 
         // ----------- Repository
         RuntimeRepository runtimeRepository{};
-        EditorRepository editorRepository{};
+        SpectrogramRepository spectrogramRepository;
+        GlobalRepository globalRepository;
         NotificationRepository notificationRepository{};
         // ----------- Repository
 

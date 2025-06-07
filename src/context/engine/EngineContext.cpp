@@ -26,11 +26,12 @@ namespace Metal {
     void EngineContext::onSync() {
         updateCurrentTime();
 
-        if (context.editorRepository.isNotFrozen()) {
+        if (context.globalRepository.isNotFrozen() || context.spectrogramRepository.isNotFrozen()) {
             if ((currentTimeMs - lastTriggerTime) >= 1000) {
                 std::cout << (currentTimeMs - lastTriggerTime) << std::endl;
                 lastTriggerTime = currentTimeMs;
-                context.editorRepository.freezeVersion();
+                context.globalRepository.freezeVersion();
+                context.spectrogramRepository.freezeVersion();
                 context.voxelProcessorService.process();
             }
         } else {
@@ -47,10 +48,10 @@ namespace Metal {
     }
 
     int EngineContext::getMaxX() const {
-        if (context.editorRepository.isShowingOriginalWave) {
+        if (context.spectrogramRepository.isShowingOriginalWave) {
             return static_cast<int>(SAMPLE_SIZE_SECONDS * ORIGINAL_WAVE_SCALE / 2.f);
         }
-        return context.editorRepository.maxXAxis;
+        return context.globalRepository.maxXAxis;
     }
 
     void EngineContext::updateGlobalData() {
@@ -60,10 +61,10 @@ namespace Metal {
         globalDataUBO.invView = camera.invViewMatrix;
         globalDataUBO.cameraWorldPosition = camera.position;
         globalDataUBO.axisLengths.x = getMaxX();
-        globalDataUBO.axisLengths.y = context.editorRepository.maxYAxis;
-        globalDataUBO.axisLengths.z = context.editorRepository.maxZAxis;
+        globalDataUBO.axisLengths.y = context.globalRepository.maxYAxis;
+        globalDataUBO.axisLengths.z = context.globalRepository.maxZAxis;
         globalDataUBO.isOrtho = context.engineContext.camera.isOrthographic;
-        globalDataUBO.isStaticCurve = context.editorRepository.isShowStaticCurve;
+        globalDataUBO.isStaticCurve = context.globalRepository.isShowStaticCurve;
         context.coreBuffers.globalData->update(&globalDataUBO);
     }
 }

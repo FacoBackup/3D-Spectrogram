@@ -1,4 +1,4 @@
-#include "EditorRepository.h"
+#include "SpectrogramRepository.h"
 #include "../../common/interface/Icons.h"
 #include "../../context/ApplicationContext.h"
 #define STFT_PARAMS "Parâmetros da transformada"
@@ -9,35 +9,35 @@
 #define SHOW_ORIGINAL_WAVE "Mostrar onda original?"
 
 namespace Metal {
-    const char *EditorRepository::getTitle() {
-        return "Editor";
+    const char *SpectrogramRepository::getTitle() {
+        return "Configuração Espectrograma";
     }
 
-    const char *EditorRepository::getIcon() {
+    const char *SpectrogramRepository::getIcon() {
         return Icons::settings.c_str();
     }
 
-    void EditorRepository::onUpdate(InspectableMember *member, ApplicationContext &context) {
+    void SpectrogramRepository::onUpdate(InspectableMember *member, ApplicationContext &context) {
         actualWindowSize = ACTUAL_WINDOW_SIZE;
         interpolation = ACTUAL_INTERPOLATION;
         actualHopSize = actualWindowSize / hopSizeScale;
 
         if (member != nullptr && member->group != RENDERING_PARAMS && member->group != FILTERING_PARAMS) {
-            needsDataRefresh = true;
+            context.globalRepository.needsDataRefresh = true;
         }
 
         if (member != nullptr && member->name == SHOW_ORIGINAL_WAVE) {
             if (isShowingOriginalWave) {
                 interpolationScale = 1;
-                representationResolution = 6;
+                context.globalRepository.actualTreeDepth = 12;
                 return;
             }
             interpolationScale = 8;
-            representationResolution = 2;
+            context.globalRepository.actualTreeDepth = 10;
         }
     }
 
-    void EditorRepository::registerFields() {
+    void SpectrogramRepository::registerFields() {
         registerBool(isShowingOriginalWave, "", SHOW_ORIGINAL_WAVE);
         registerFloat(minMagnitude, STFT_PARAMS, "Magnitude minima", 0);
         registerInt(windowSizeScale, STFT_PARAMS, "Escala da janela", 1, 5);
@@ -49,9 +49,6 @@ namespace Metal {
         registerInt(windowIndex, FILTERING_PARAMS, "Janela da análise", 0, SAMPLE_SIZE_SECONDS);
 
         registerInt(interpolationScale, RENDERING_PARAMS, "Escala da interpolação (Impacta desempenho)", 1);
-        registerBool(useNyquistForSpectrogramDepth, RENDERING_PARAMS, "Utilizar nyquist para resolução da árvore?");
-        registerInt(representationResolution, RENDERING_PARAMS, "Resolução da representação (Impacta desempenho)", 1,
-                    10);
         registerInt(interpolation, RENDERING_PARAMS, "Interpolação das amostras", 1, 100, true);
 
         registerInt(voxelSearchCount, DEBUG, "Debug count divisor");
@@ -60,7 +57,6 @@ namespace Metal {
 
 
         registerText(pathToAudio, FILE_INFO, "Caminho do arquivo", true);
-        registerInt(maxXAxis, FILE_INFO, "Tamanho (segundos)", 0, 0, true);
         registerInt(channels, FILE_INFO, "Canais", 0, 0, true);
         registerInt(frames, FILE_INFO, "Frames", 0, 0, true);
         registerInt(sampleRate, FILE_INFO, "Sample rate", 0, 0, true);

@@ -54,7 +54,7 @@ namespace Metal::UIUtil {
     static void RenderTooltip(const std::string &text) {
         if (ImGui::IsItemHovered()) {
             ImGui::BeginTooltip();
-            ImGui::Text(text.c_str());
+            ImGui::Text("%s", text.c_str());
             ImGui::EndTooltip();
         }
     }
@@ -83,7 +83,7 @@ namespace Metal::UIUtil {
         ImGui::SameLine();
     }
 
-    static void Draw3DLabel(glm::vec3 worldPos, const char *text, const glm::mat4 projView, ImU32 color) {
+    static void Draw3DLabel(glm::vec3 worldPos, const char *text, const glm::mat4 &projView, ImU32 color) {
         glm::vec4 clip = projView * glm::vec4(worldPos, 1.0f);
 
         if (clip.w <= 0.0f)
@@ -94,10 +94,11 @@ namespace Metal::UIUtil {
         if (ndc.x < -1.0f || ndc.x > 1.0f ||
             ndc.y < -1.0f || ndc.y > 1.0f ||
             ndc.z < 0.0f || ndc.z > 1.0f)
-            return;
+            return; // Outside the view frustum
 
-        float x = (1.0f - (ndc.x * 0.5f + 0.5f)) * ImGui::GetWindowWidth(); // Flip X
-        float y = (1.0f - (ndc.y * 0.5f + 0.5f)) * ImGui::GetWindowHeight();
+        float x = (ndc.x * 0.5f + 0.5f) * ImGui::GetWindowWidth();
+        float y = (ndc.y * 0.5f + 0.5f) * ImGui::GetWindowHeight();
+
         ImGui::GetForegroundDrawList()->AddText({x, y}, color, text);
     }
 }

@@ -13,9 +13,10 @@ namespace Metal {
     };
 
     class AbstractCurve : public Inspectable {
+    protected:
         float maxT = 10.0f;
         float iteration = 0.001f;
-
+        glm::vec3 center = glm::vec3(0.0f);
     public:
         virtual glm::vec3 evaluate(float t) const {
             return glm::vec3(0.0f);
@@ -30,6 +31,7 @@ namespace Metal {
         void registerBaseFields() {
             registerFloat(iteration, "", "Tamanho da iteração", 0.001f);
             registerFloat(maxT, "", "Valor máximo de t", 0.001f);
+            registerVec3(center, "", "Centro");
         }
 
         float getMaxT() {
@@ -55,7 +57,7 @@ namespace Metal {
         virtual MaxAxis addVoxels(SparseVoxelOctreeBuilder &builder) {
             MaxAxis maxAxis{};
             for (float t = 0.0f; t <= getMaxT(); t += getIteration()) {
-                glm::vec3 point = evaluate(t);
+                glm::vec3 point = evaluate(t) + center;
                 if (point.x > maxAxis.x) {
                     maxAxis.x = point.x;
                 }

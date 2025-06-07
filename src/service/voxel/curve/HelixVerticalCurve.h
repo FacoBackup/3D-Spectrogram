@@ -9,6 +9,8 @@ namespace Metal {
 
     public:
         void registerFields() override {
+            center = {2, 0, 2};
+
             registerBaseFields();
             registerFloat(radius, "", "Raio", 0.01f);
             registerFloat(a, "", "Altura por volta", 0.01f);
@@ -18,7 +20,7 @@ namespace Metal {
             float x = radius * cos(t);
             float z = radius * sin(t);
             float y = a * t;
-            return glm::vec3(x, y, z);
+            return {x, y, z};
         }
 
         std::string getCurveName() override {

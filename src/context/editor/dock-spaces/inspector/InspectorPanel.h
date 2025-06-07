@@ -9,6 +9,7 @@ namespace Metal {
 
     class InspectorPanel final : public AbstractPanel {
         FormPanel *formPanel = nullptr;
+        FormPanel *formPanel2 = nullptr;
         AbstractPanel *timeStampPickerPanel = nullptr;
 
         void renderFileSelection() const;

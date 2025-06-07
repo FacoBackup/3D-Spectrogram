@@ -9,6 +9,8 @@ namespace Metal {
 
     public:
         void registerFields() override {
+            center = {2, 2, 0};
+
             registerBaseFields();
             registerFloat(radius, "", "Raio", 0.01f);
             registerFloat(a, "", "Altura por volta", 0.01f);

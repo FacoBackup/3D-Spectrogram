@@ -17,19 +17,19 @@ namespace Metal {
 
     void TimeStampPickerPanel::handleDrag(float timelineWidth) const {
         float delta = ImGui::GetIO().MouseDelta.x;
-        float deltaTime = (delta / timelineWidth) * context->editorRepository.maxXAxis;
+        float deltaTime = (delta / timelineWidth) * context->globalRepository.maxXAxis;
 
-        context->editorRepository.rangeStart += deltaTime;
-        context->editorRepository.rangeEnd += deltaTime;
+        context->spectrogramRepository.rangeStart += deltaTime;
+        context->spectrogramRepository.rangeEnd += deltaTime;
 
-        float rangeLength = context->editorRepository.rangeEnd - context->editorRepository.rangeStart;
-        if (context->editorRepository.rangeStart < 0.0f) {
-            context->editorRepository.rangeStart = 0.0f;
-            context->editorRepository.rangeEnd = rangeLength;
+        float rangeLength = context->spectrogramRepository.rangeEnd - context->spectrogramRepository.rangeStart;
+        if (context->spectrogramRepository.rangeStart < 0.0f) {
+            context->spectrogramRepository.rangeStart = 0.0f;
+            context->spectrogramRepository.rangeEnd = rangeLength;
         }
-        if (context->editorRepository.rangeEnd > context->editorRepository.maxXAxis) {
-            context->editorRepository.rangeEnd = context->editorRepository.maxXAxis;
-            context->editorRepository.rangeStart = context->editorRepository.rangeEnd - rangeLength;
+        if (context->spectrogramRepository.rangeEnd > context->globalRepository.maxXAxis) {
+            context->spectrogramRepository.rangeEnd = context->globalRepository.maxXAxis;
+            context->spectrogramRepository.rangeStart = context->spectrogramRepository.rangeEnd - rangeLength;
         }
     }
 
@@ -44,11 +44,11 @@ namespace Metal {
         renderBackground(timelineWidth, drawList, canvasPos, canvasSize, canvasEnd);
 
         auto timeToScreenX = [&](float t) -> float {
-            return canvasPos.x + (t / context->editorRepository.maxXAxis) * timelineWidth;
+            return canvasPos.x + (t / context->globalRepository.maxXAxis) * timelineWidth;
         };
 
-        float xStart = timeToScreenX(context->editorRepository.rangeStart);
-        float xEnd = timeToScreenX(context->editorRepository.rangeEnd);
+        float xStart = timeToScreenX(context->spectrogramRepository.rangeStart);
+        float xEnd = timeToScreenX(context->spectrogramRepository.rangeEnd);
 
         ImVec2 pMin = ImVec2(xStart, canvasPos.y);
         ImVec2 pMax = ImVec2(xEnd, canvasEnd.y);
@@ -61,11 +61,11 @@ namespace Metal {
 
         if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
             handleDrag(timelineWidth);
-            context->editorRepository.registerChange();
-            context->editorRepository.needsDataRefresh = true;
+            context->globalRepository.registerChange();
+            context->globalRepository.needsDataRefresh = true;
         }
 
-        ImGui::Text("%.2fs até %.2fs", context->editorRepository.rangeStart,
-                    context->editorRepository.rangeEnd);
+        ImGui::Text("%.2fs até %.2fs", context->spectrogramRepository.rangeStart,
+                    context->spectrogramRepository.rangeEnd);
     }
 } // Metal

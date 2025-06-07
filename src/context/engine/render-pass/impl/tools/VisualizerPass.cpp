@@ -17,9 +17,9 @@ namespace Metal {
     }
 
     void VisualizerPass::onSync() {
-        settings.searchCountDivisor = context.editorRepository.voxelSearchCount;
-        settings.showRaySearchCount = context.editorRepository.showRaySearchCountVoxels;
-        settings.showRayTestCount = context.editorRepository.showRayTestCountVoxels;
+        settings.searchCountDivisor = context.spectrogramRepository.voxelSearchCount;
+        settings.showRaySearchCount = context.spectrogramRepository.showRaySearchCountVoxels;
+        settings.showRayTestCount = context.spectrogramRepository.showRayTestCountVoxels;
         recordPushConstant(&settings);
         recordDrawSimpleInstanced(3, 1);
     }

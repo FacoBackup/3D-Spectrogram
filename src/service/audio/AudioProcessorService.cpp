@@ -7,7 +7,7 @@
 
 namespace Metal {
     AudioDataVector AudioProcessorService::readAudioData() const {
-        std::string filePath = context.editorRepository.pathToAudio;
+        std::string filePath = context.spectrogramRepository.pathToAudio;
         AudioDataVector audioData;
         SF_INFO sfinfo;
         SNDFILE *infile = nullptr;
@@ -50,10 +50,10 @@ namespace Metal {
         while ((framesRead = sf_readf_double(infile, buffer.data(), BUFFER_FRAMES)) > 0 && !breakWhile) {
             for (sf_count_t i = 0; i < framesRead; ++i) {
                 auto timestamp = static_cast<double>(totalFramesRead + i) / sfinfo.samplerate;
-                if (timestamp < context.editorRepository.rangeStart) {
+                if (timestamp < context.spectrogramRepository.rangeStart) {
                     continue;
                 }
-                if (timestamp > context.editorRepository.rangeEnd) {
+                if (timestamp > context.spectrogramRepository.rangeEnd) {
                     breakWhile = true;
                     break;
                 }
@@ -81,21 +81,21 @@ namespace Metal {
     }
 
     void AudioProcessorService::extractAudioData() const {
-        if (!context.editorRepository.pathToAudio.empty()) {
+        if (!context.spectrogramRepository.pathToAudio.empty()) {
             SF_INFO info = {};
-            SNDFILE *snd = sf_open(context.editorRepository.pathToAudio.c_str(), SFM_READ, &info);
+            SNDFILE *snd = sf_open(context.spectrogramRepository.pathToAudio.c_str(), SFM_READ, &info);
             if (!snd) {
-                context.editorRepository.pathToAudio = "";
+                context.spectrogramRepository.pathToAudio = "";
                 context.notificationRepository.addNotification("Não foi possível obter informações do arquivo");
             }
 
-            context.editorRepository.sampleRate = info.samplerate;
-            context.editorRepository.channels = info.channels;
-            context.editorRepository.frames = info.frames;
-            context.editorRepository.maxXAxis = static_cast<double>(info.frames) / info.samplerate;
+            context.spectrogramRepository.sampleRate = info.samplerate;
+            context.spectrogramRepository.channels = info.channels;
+            context.spectrogramRepository.frames = info.frames;
+            context.globalRepository.maxXAxis = static_cast<double>(info.frames) / info.samplerate;
 
-            if (static_cast<int>(context.editorRepository.maxXAxis) < SAMPLE_SIZE_SECONDS) {
-                context.editorRepository.pathToAudio = "";
+            if (static_cast<int>(context.globalRepository.maxXAxis) < SAMPLE_SIZE_SECONDS) {
+                context.spectrogramRepository.pathToAudio = "";
                 context.notificationRepository.addNotification(
                     "O tamanho audio é menor que " + std::to_string(SAMPLE_SIZE_SECONDS) + " segundos");
             }
