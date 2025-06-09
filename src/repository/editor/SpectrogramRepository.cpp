@@ -5,7 +5,6 @@
 #define RENDERING_PARAMS "Renderização"
 #define FILTERING_PARAMS "Filtro"
 #define FILE_INFO "Informações do arquivo"
-#define DEBUG "Debug"
 #define SHOW_ORIGINAL_WAVE "Mostrar onda original?"
 
 namespace Metal {
@@ -50,11 +49,6 @@ namespace Metal {
 
         registerInt(interpolationScale, RENDERING_PARAMS, "Escala da interpolação (Impacta desempenho)", 1);
         registerInt(interpolation, RENDERING_PARAMS, "Interpolação das amostras", 1, 100, true);
-
-        registerInt(voxelSearchCount, DEBUG, "Debug count divisor");
-        registerBool(showRaySearchCountVoxels, DEBUG, "Show ray search count");
-        registerBool(showRayTestCountVoxels, DEBUG, "Show ray test count");
-
 
         registerText(pathToAudio, FILE_INFO, "Caminho do arquivo", true);
         registerInt(channels, FILE_INFO, "Canais", 0, 0, true);

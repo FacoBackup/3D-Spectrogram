@@ -29,8 +29,15 @@ namespace Metal {
         int maxZAxis = SAMPLE_SIZE_SECONDS;
         int maxYAxis = SAMPLE_SIZE_SECONDS;
         float maxDerivative = 0;
+        int voxelCount = 0;
+        std::string memorySize;
         bool useNyquistForTreeDepth = true;
         int actualTreeDepth = 8;
+
+        // DEBUG
+        bool showRaySearchCountVoxels = false;
+        bool showRayTestCountVoxels = false;
+        int voxelSearchCount = 32;
 
         void registerFields() override;
 

@@ -14,7 +14,7 @@ namespace Metal {
 
         void processOriginalWave(SparseVoxelOctreeBuilder &builder);
 
-        int estimateSpectrogramOctreeDepth();
+        int estimateSpectrogramOctreeDepth() const;
 
         void processSpectrogram(float fScale, SparseVoxelOctreeBuilder &builder);
 

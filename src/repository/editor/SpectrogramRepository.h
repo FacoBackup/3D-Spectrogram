@@ -10,12 +10,6 @@
 
 namespace Metal {
     struct SpectrogramRepository final : Inspectable {
-        // DEBUG
-        bool showRaySearchCountVoxels = false;
-        bool showRayTestCountVoxels = false;
-        int voxelSearchCount = 32;
-        // DEBUG
-
         AudioDataVector audioData;
 
         // PROCESSING

@@ -193,13 +193,14 @@ void main() {
     Ray ray = Ray(rayOrigin, rayDirection, 1./rayDirection);
     SurfaceInteraction hitData = trace(ray, settings.showRaySearchCount, settings.showRayTestCount, colorData, WORLD_VOXEL_SCALE);
 
+    bool isDebugMode = settings.showRaySearchCount || settings.showRayTestCount;
 
-    if (hitData.voxel == 0){
-        if (settings.showRaySearchCount || settings.showRayTestCount){
+    if (isDebugMode){
+        if (isDebugMode){
             finalColor.rg = colorData/float(settings.searchCountDivisor);
             finalColor.a = 1;
         }
-    } else {
+    } else if(hitData.voxel != 0){
         bool shouldBlend = hitData.voxelPosition.x < 0 || hitData.voxelPosition.y < 0 || hitData.voxelPosition.z < 0;
         bool isBehind = globalData.cameraWorldPosition.y > 0 && (length(globalData.cameraWorldPosition - hitData.voxelPosition) > length(globalData.cameraWorldPosition - gridHitPoint));
         float blend =(shouldBlend ? .5 : isBehind ? 0: 1);

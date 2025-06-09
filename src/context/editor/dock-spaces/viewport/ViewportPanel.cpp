@@ -13,15 +13,27 @@
 
 
 namespace Metal {
+    glm::vec3 ViewportPanel::getXAxisLabelPosition(int i) const {
+        return glm::vec3{i, 0, context->globalRepository.maxZAxis};
+    }
+
+    glm::vec3 ViewportPanel::getYAxisLabelPosition(int i) const {
+        return {context->globalRepository.maxXAxis, i, context->globalRepository.maxZAxis};
+    }
+
+    glm::vec3 ViewportPanel::getZAxisLabelPosition(int i) const {
+        return {context->globalRepository.maxXAxis, 0, i};
+    }
+
     void ViewportPanel::renderSpectrogramAxisLabels() const {
         for (int i = 0; i <= context->globalRepository.maxZAxis; i += 2) {
             std::ostringstream ss;
             ss.precision(2);
-            ss << std::fixed << (i * WORLD_VOXEL_SCALE/2.f);
+            ss << std::fixed << (i * WORLD_VOXEL_SCALE / 2.f);
             std::string label = ss.str() + "hz";
 
             UIUtil::Draw3DLabel(
-                {context->globalRepository.maxXAxis, 0, i},
+                getZAxisLabelPosition(i),
                 label.c_str(),
                 context->engineContext.camera.projViewMatrix,
                 IM_COL32(0, 0, 255, 255)
@@ -29,21 +41,14 @@ namespace Metal {
         }
         for (int i = 2; i <= context->globalRepository.maxYAxis; i += 2) {
             UIUtil::Draw3DLabel(
-                {
-                    context->globalRepository.maxXAxis,
-                    i,
-                    context->globalRepository.maxZAxis
-                },
+                getYAxisLabelPosition(i),
                 (std::to_string(i)).c_str(),
                 context->engineContext.camera.projViewMatrix,
                 IM_COL32(0, 128, 0, 255)
             );
         }
         for (int i = 0; i <= context->globalRepository.maxXAxis; i += 2) {
-            UIUtil::Draw3DLabel({
-                                    i, 0,
-                                    context->globalRepository.maxZAxis
-                                },
+            UIUtil::Draw3DLabel(getXAxisLabelPosition(i),
                                 (std::to_string(i) + "s").c_str(),
                                 context->engineContext.camera.projViewMatrix,
                                 IM_COL32(255, 0, 0, 255)
@@ -94,25 +99,27 @@ namespace Metal {
     }
 
     void ViewportPanel::renderStaticCurveLabels() const {
-        for (int i = 0; i <= context->globalRepository.maxXAxis; i++) {
+        for (int i = 0; i < context->globalRepository.maxXAxis; i++) {
             UIUtil::Draw3DLabel(
-                {i, 0, 0},
+                getXAxisLabelPosition(i),
                 std::to_string(i).c_str(),
-                context->engineContext.camera.projViewMatrix, IM_COL32(128, 0, 0, 255)
+                context->engineContext.camera.projViewMatrix, IM_COL32(255, 0, 0, 255)
             );
         }
-        for (int i = 0; i <= context->globalRepository.maxYAxis; i++) {
+        for (int i = 1; i <= context->globalRepository.maxYAxis; i++) {
             UIUtil::Draw3DLabel(
-                {0, i, 0},
+                getYAxisLabelPosition(i),
+
                 std::to_string(i).c_str(),
                 context->engineContext.camera.projViewMatrix,IM_COL32(0, 128, 0, 255)
             );
         }
         for (int i = 0; i <= context->globalRepository.maxZAxis; i++) {
             UIUtil::Draw3DLabel(
-                {0, 0, i},
+                getZAxisLabelPosition(i),
+
                 std::to_string(i).c_str(),
-                context->engineContext.camera.projViewMatrix, IM_COL32(0, 0, 128, 255)
+                context->engineContext.camera.projViewMatrix, IM_COL32(0, 0, 255, 255)
             );
         }
     }

@@ -31,7 +31,7 @@ namespace Metal {
         context.globalRepository.maxYAxis = 10;
     }
 
-    int VoxelProcessorService::estimateSpectrogramOctreeDepth() {
+    int VoxelProcessorService::estimateSpectrogramOctreeDepth() const {
         float maxDx = 0.0f, maxDy = 0.0f, maxDz = 0.0f;
 
         glm::vec3 lastPoint{0.0f};
@@ -75,11 +75,6 @@ namespace Metal {
     void VoxelProcessorService::processSpectrogram(const float fScale, SparseVoxelOctreeBuilder &builder) {
         const double sampleRate = context.spectrogramRepository.sampleRate;
         const double nyquistFrequency = sampleRate / (WORLD_VOXEL_SCALE * 2.0);
-
-        STFTUtil::ComputeSTFT(context.spectrogramRepository.audioData,
-                              context.spectrogramRepository.actualWindowSize,
-                              context.spectrogramRepository.actualHopSize,
-                              context.spectrogramRepository.minMagnitude);
 
         float offset = .25;
         for (const auto &point: context.spectrogramRepository.audioData.data) {
@@ -154,6 +149,28 @@ namespace Metal {
         }
     }
 
+    std::string computeMemorySize(std::size_t numInts) {
+        constexpr std::size_t bytesPerInt = 4;
+        constexpr double bytesPerKB = 1024.0;
+        constexpr double bytesPerMB = 1024.0 * 1024.0;
+
+        std::size_t totalBytes = numInts * bytesPerInt;
+        double totalKB = totalBytes / bytesPerKB;
+        double totalMB = totalBytes / bytesPerMB;
+
+        std::ostringstream oss;
+        oss << std::fixed << std::setprecision(2);
+
+        if (totalBytes >= 1)
+            oss << "\n" <<  totalBytes << " B\n";
+        if (totalKB >= 1.0)
+            oss << totalKB << " KB\n";
+        if (totalMB >= 1.0)
+            oss << totalMB << " MB";
+
+        return oss.str();
+    }
+
     void VoxelProcessorService::process() {
         refreshData();
         SparseVoxelOctreeBuilder *builder = nullptr;
@@ -163,7 +180,9 @@ namespace Metal {
                 std::unique_ptr<AbstractCurve> &curve = context
                         .globalRepository
                         .curves[context.globalRepository.selectedCurve];
-                context.globalRepository.actualTreeDepth = estimateMinimumDepth(*curve.get());
+                if (context.globalRepository.useNyquistForTreeDepth) {
+                    context.globalRepository.actualTreeDepth = estimateMinimumDepth(*curve.get());
+                }
                 builder = new SparseVoxelOctreeBuilder(
                     WORLD_VOXEL_SCALE, context.globalRepository.actualTreeDepth);
 
@@ -197,6 +216,8 @@ namespace Metal {
         if (builder != nullptr) {
             auto voxels = builder->buildBuffer();
             context.coreBuffers.svoData->update(voxels.data());
+            context.globalRepository.voxelCount = builder->getVoxelQuantity();
+            context.globalRepository.memorySize = computeMemorySize(builder->getVoxelQuantity());
             builder->dispose();
             delete builder;
         }
